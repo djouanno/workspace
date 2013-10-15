@@ -49,8 +49,10 @@
             <artifactId>log4j</artifactId>
         </dependency>
     </dependencies>
+    
     <modules>
         <module>sweetsnake-server</module>
         <module>sweetsnake-client</module>
     </modules>
+    
 </project>
