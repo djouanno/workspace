@@ -1,4 +1,4 @@
-package fr.esir.project.sr.sweetsnake;
+package org.sweetsnake.client;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
