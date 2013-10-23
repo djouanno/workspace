@@ -5,7 +5,7 @@ import fr.esir.project.sr.sweetsnake.commons.Direction;
 public interface ISweetSnakeServer
 {
 
-    boolean connect(ISweetSnakeClient client);
+    boolean connect(ISweetSnakeClientListener client);
 
     void disconnect();
 
