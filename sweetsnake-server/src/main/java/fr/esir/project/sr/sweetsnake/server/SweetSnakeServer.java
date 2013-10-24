@@ -60,6 +60,20 @@ public class SweetSnakeServer implements ISweetSnakeServer
         gameSession.startGame();
     }
 
+    private IPlayer retrievePlayer(final String name) {
+        if (players.containsKey(name)) {
+            return players.get(name);
+        }
+        return null;
+    }
+
+    private ISweetSnakeGameSessionRequest retrieveRequest(final IPlayer player) {
+        if (pendingRequests.containsKey(player)) {
+            return pendingRequests.get(player);
+        }
+        return null;
+    }
+
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
@@ -107,12 +121,14 @@ public class SweetSnakeServer implements ISweetSnakeServer
         if (!players.containsKey(otherPlayer)) {
             throw new PlayerNotFoundException("unable to find the specified player");
         }
-        final IPlayer player = players.get(otherPlayer);
+        final IPlayer player = retrievePlayer(otherPlayer);
         if (player.getStatus() != Status.AVAILABLE) {
             throw new UnableToMountGameSessionException("player is not available");
         }
-        // TODO créer la request et l'ajouter aux pending
+        final ISweetSnakeGameSessionRequest request = new SweetSnakeGameSessionRequest(player.getName(), otherPlayer);
+        pendingRequests.put(player, request);
         player.setStatus(Status.PENDING);
+        log.info("Game session request between {} and {} is pending", player.getName(), otherPlayer);
     }
 
     @Override
@@ -131,8 +147,8 @@ public class SweetSnakeServer implements ISweetSnakeServer
     @Override
     public void cancelGameSessionRequest(final ISweetSnakeClientCallback client) {
         try {
-            final IPlayer player = players.get(client.getName());
-            final ISweetSnakeGameSessionRequest request = pendingRequests.get(player);
+            final IPlayer player = retrievePlayer(client.getName());
+            final ISweetSnakeGameSessionRequest request = retrieveRequest(player);
             if (request != null) {
                 pendingRequests.remove(request);
                 player.setStatus(Status.AVAILABLE);
