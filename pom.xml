@@ -1,103 +1,111 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <developers>
-        <developer>
-            <name>Damien Jouanno</name>
-            <email>damien.jouanno@gmail.com</email>
-            <organization>ESIR3-LSI</organization>
-        </developer>
-        <developer>
-            <name>Herminaël Rougier</name>
-            <email>rougier.h@gmail.com</email>
-            <organization>ESIR3-LSI</organization>
-        </developer>
-    </developers>
+  <developers>
+    <developer>
+      <name>Damien Jouanno</name>
+      <email>damien.jouanno@gmail.com</email>
+      <organization>ESIR3-LSI</organization>
+    </developer>
+    <developer>
+      <name>Herminaël Rougier</name>
+      <email>rougier.h@gmail.com</email>
+      <organization>ESIR3-LSI</organization>
+    </developer>
+  </developers>
 
-    <groupId>fr.esir.project.sr</groupId>
-    <artifactId>sweetsnake</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+  <groupId>fr.esir.project.sr</groupId>
+  <artifactId>sweetsnake</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-    <name>sweetsnake</name>
-    <url>http://maven.apache.org</url>
+  <name>sweetsnake</name>
+  <url>http://maven.apache.org</url>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <log4j.version>1.2.17</log4j.version>
-        <spring.version>3.2.4.RELEASE</spring.version>
-        <annotation.version>1.0</annotation.version>
-    </properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <logback.version>1.0.13</logback.version>
+    <spring.version>3.2.4.RELEASE</spring.version>
+    <annotation.version>1.0</annotation.version>
+  </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>jsr250-api</artifactId>
-                <version>${annotation.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
+  <dependencyManagement>
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> </dependency> -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr250-api</artifactId>
-        </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>jsr250-api</artifactId>
+        <version>${annotation.version}</version>
+      </dependency>
     </dependencies>
+  </dependencyManagement>
 
-    <modules>
-        <module>sweetsnake-server</module>
-        <module>sweetsnake-client</module>
-        <module>sweetsnake-commons</module>
-    </modules>
+  <dependencies>
+    <dependency>
+      <!-- JUnit -->
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Log -->
+    <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+    </dependency>
+    <!-- Spring --> 
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
+    <!-- javax -->
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>jsr250-api</artifactId>
+    </dependency>
+  </dependencies>
+
+  <modules>
+    <module>sweetsnake-server</module>
+    <module>sweetsnake-client</module>
+    <module>sweetsnake-commons</module>
+  </modules>
 
 </project>

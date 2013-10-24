@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,8 @@ import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeServer;
 @Component
 public class SweetSnakeClient implements ISweetSnakeClient
 {
+
+    private static final Logger       log = LoggerFactory.getLogger(SweetSnakeClient.class);
 
     @Autowired
     private ISweetSnakeClientListener listener;
@@ -28,7 +32,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
 
     @PostConstruct
     public void init() throws RemoteException {
-        System.out.println("POUET POUET");
+        log.info("Initialiazing a new SweetSnakeClient");
         server.connect(listener);
     }
 
@@ -38,27 +42,26 @@ public class SweetSnakeClient implements ISweetSnakeClient
     }
 
     @Override
-    public void addElement(IElement element) {
+    public void addElement(final IElement element) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void updateElement(IElement element) {
+    public void updateElement(final IElement element) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void removeElement(IElement element) {
+    public void removeElement(final IElement element) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void setScore(long score) {
-        // TODO Auto-generated method stub
-
+    public void setScore(final long score) {
+        log.debug("New client score set to {}", score);
     }
 
     @Override
