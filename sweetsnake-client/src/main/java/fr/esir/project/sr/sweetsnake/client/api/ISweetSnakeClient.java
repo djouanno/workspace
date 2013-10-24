@@ -5,16 +5,22 @@ import fr.esir.project.sr.sweetsnake.commons.api.IElement;
 public interface ISweetSnakeClient
 {
 
+    void connect();
+
+    void disconnect();
+
     void addElement(IElement element);
 
     void updateElement(IElement element);
 
     void removeElement(IElement element);
 
-    void setScore(long score);
+    String getName();
 
     long getScore();
 
-    String getName();
+    void setName(String name);
+
+    void setScore(long score);
 
 }

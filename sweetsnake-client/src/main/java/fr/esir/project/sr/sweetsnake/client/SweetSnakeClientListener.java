@@ -14,38 +14,62 @@ import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeClientListener;
 public class SweetSnakeClientListener extends UnicastRemoteObject implements ISweetSnakeClientListener
 {
 
+    /**********************************************************************************************
+     * [BLOCK] STATIC FIELDS
+     **********************************************************************************************/
+
     private static final long serialVersionUID = 2588126929388570038L;
+
+    /**********************************************************************************************
+     * [BLOCK] FIELDS
+     **********************************************************************************************/
 
     @Autowired
     private ISweetSnakeClient client;
+
+    /**********************************************************************************************
+     * [BLOCK] CONSTRUCTOR
+     **********************************************************************************************/
 
     protected SweetSnakeClientListener() throws RemoteException {
         super();
     }
 
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC METHODS
+     **********************************************************************************************/
+
     @Override
-    public void addElement(IElement element) throws RemoteException {
+    public void addElement(final IElement element) throws RemoteException {
         client.addElement(element);
     }
 
     @Override
-    public void updateElement(IElement element) throws RemoteException {
+    public void updateElement(final IElement element) throws RemoteException {
         client.updateElement(element);
     }
 
     @Override
-    public void removeElement(IElement element) throws RemoteException {
+    public void removeElement(final IElement element) throws RemoteException {
         client.removeElement(element);
     }
 
-    @Override
-    public void setScore(long score) throws RemoteException {
-        client.setScore(score);
-    }
+    /**********************************************************************************************
+     * [BLOCK] GETTERS
+     **********************************************************************************************/
 
     @Override
     public String getName() throws RemoteException {
         return client.getName();
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] SETTERS
+     **********************************************************************************************/
+
+    @Override
+    public void setScore(final long score) throws RemoteException {
+        client.setScore(score);
     }
 
 }

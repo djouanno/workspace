@@ -1,7 +1,5 @@
 package fr.esir.project.sr.sweetsnake.client;
 
-import java.rmi.RemoteException;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -27,10 +25,6 @@ public class SweetSnakeClientTest
     @Test
     public void rmiServiceTest() {
         Assert.assertNotNull("RMI Server must not be null", server);
-    }
-
-    @Test
-    public void connectTest() throws RemoteException {
     }
 
 }
