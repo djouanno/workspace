@@ -8,10 +8,11 @@ import org.springframework.stereotype.Component;
 
 import fr.esir.project.sr.sweetsnake.client.api.ISweetSnakeClient;
 import fr.esir.project.sr.sweetsnake.commons.api.IElement;
-import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeClientListener;
+import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
+import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeGameSessionRequest;
 
 @Component
-public class SweetSnakeClientListener extends UnicastRemoteObject implements ISweetSnakeClientListener
+public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISweetSnakeClientCallback
 {
 
     /**********************************************************************************************
@@ -31,13 +32,18 @@ public class SweetSnakeClientListener extends UnicastRemoteObject implements ISw
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    protected SweetSnakeClientListener() throws RemoteException {
+    protected SweetSnakeClientCallback() throws RemoteException {
         super();
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
+
+    @Override
+    public void requestGame(final ISweetSnakeGameSessionRequest request) {
+        // TODO
+    }
 
     @Override
     public void addElement(final IElement element) throws RemoteException {

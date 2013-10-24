@@ -1,6 +1,7 @@
 package fr.esir.project.sr.sweetsnake.server;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +12,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fr.esir.project.sr.sweetsnake.commons.Direction;
-import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeClientListener;
+import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
+import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeGameSessionRequest;
 import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeServer;
+import fr.esir.project.sr.sweetsnake.commons.enumerations.Direction;
+import fr.esir.project.sr.sweetsnake.commons.enumerations.Status;
+import fr.esir.project.sr.sweetsnake.commons.exceptions.PlayerNotFoundException;
 import fr.esir.project.sr.sweetsnake.commons.exceptions.UnableToConnectException;
-import fr.esir.project.sr.sweetsnake.server.api.ISweetSnakeServerGame;
+import fr.esir.project.sr.sweetsnake.commons.exceptions.UnableToMountGameSessionException;
+import fr.esir.project.sr.sweetsnake.server.api.IPlayer;
+import fr.esir.project.sr.sweetsnake.server.api.ISweetSnakeServerGameSession;
 
 @Component
 public class SweetSnakeServer implements ISweetSnakeServer
@@ -25,14 +31,15 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final Logger                    log = LoggerFactory.getLogger(SweetSnakeServer.class);
+    private static final Logger                         log = LoggerFactory.getLogger(SweetSnakeServer.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private Map<String, ISweetSnakeClientListener> clients;
-    private List<ISweetSnakeServerGame>            games;
+    private Map<String, IPlayer>                        players;
+    private List<ISweetSnakeServerGameSession>          gameSessions;
+    private Map<IPlayer, ISweetSnakeGameSessionRequest> pendingRequests;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -46,6 +53,13 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * [BLOCK] PRIVATE METHODS
      **********************************************************************************************/
 
+    private void startGameSession(final IPlayer player1, final IPlayer player2) throws PlayerNotFoundException {
+        final ISweetSnakeServerGameSession gameSession = new SweetSnakeServerGameSession(player1, player2);
+        gameSessions.add(gameSession);
+        // TODO
+        gameSession.startGame();
+    }
+
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
@@ -53,34 +67,35 @@ public class SweetSnakeServer implements ISweetSnakeServer
     @PostConstruct
     public void init() {
         log.info("Initialization of the SweetSnakeServer");
-        clients = new HashMap<String, ISweetSnakeClientListener>();
+        players = new HashMap<String, IPlayer>();
+        gameSessions = new ArrayList<ISweetSnakeServerGameSession>();
+        pendingRequests = new HashMap<IPlayer, ISweetSnakeGameSessionRequest>();
     }
 
     @Override
-    public void connect(final ISweetSnakeClientListener client) throws UnableToConnectException {
+    public void connect(final ISweetSnakeClientCallback client) throws UnableToConnectException {
         try {
             if (client.getName() == null) {
                 throw new UnableToConnectException("username cannot be null");
             }
-            log.info("New client with username : {} has connected", client.getName());
-            if (!clients.containsKey(client.getName())) {
-                clients.put(client.getName(), client);
-            } else {
+            if (players.containsKey(client.getName())) {
                 throw new UnableToConnectException("username " + client.getName() + " already taken");
             }
-            log.info("Number of clients connected : {}", clients.size());
+            players.put(client.getName(), new Player(client));
+            log.info("New client with username : {} has connected", client.getName());
+            log.info("Number of clients connected : {}", players.size());
         } catch (final Exception e) {
             log.error(e.getMessage(), e);
         }
     }
 
     @Override
-    public void disconnect(final ISweetSnakeClientListener client) {
+    public void disconnect(final ISweetSnakeClientCallback client) {
         try {
-            if (clients.containsKey(client.getName())) {
+            if (players.containsKey(client.getName())) {
+                players.remove(client.getName());
                 log.info("Client with username : {} has disconnected", client.getName());
-                clients.remove(client.getName());
-                log.info("Number of clients connected : {}", clients.size());
+                log.info("Number of clients connected : {}", players.size());
             }
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
@@ -88,18 +103,49 @@ public class SweetSnakeServer implements ISweetSnakeServer
     }
 
     @Override
-    public void startGame() {
-        // TODO Auto-generated method stub
+    public void requestGameSession(final ISweetSnakeClientCallback client, final String otherPlayer) throws PlayerNotFoundException, UnableToMountGameSessionException {
+        if (!players.containsKey(otherPlayer)) {
+            throw new PlayerNotFoundException("unable to find the specified player");
+        }
+        final IPlayer player = players.get(otherPlayer);
+        if (player.getStatus() != Status.AVAILABLE) {
+            throw new UnableToMountGameSessionException("player is not available");
+        }
+        // TODO créer la request et l'ajouter aux pending
+        player.setStatus(Status.PENDING);
     }
 
     @Override
-    public void exitGame() {
-        // TODO Auto-generated method stub
+    public void acceptGameSession(final ISweetSnakeClientCallback client, final ISweetSnakeGameSessionRequest request) throws UnableToMountGameSessionException {
+        if (!pendingRequests.containsValue(request)) {
+            throw new UnableToMountGameSessionException("request timed out");
+        }
+        // TODO
+    }
+
+    @Override
+    public void leaveGameSession(final ISweetSnakeClientCallback client) {
+        // TODO
+    }
+
+    @Override
+    public void cancelGameSessionRequest(final ISweetSnakeClientCallback client) {
+        try {
+            final IPlayer player = players.get(client.getName());
+            final ISweetSnakeGameSessionRequest request = pendingRequests.get(player);
+            if (request != null) {
+                pendingRequests.remove(request);
+                player.setStatus(Status.AVAILABLE);
+            }
+            log.info("Game session request canceled by player {}", player.getName());
+        } catch (final RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     @Override
     public void move(final Direction direction) {
-        // TODO Auto-generated method stub
+        // TODO
     }
 
     /**********************************************************************************************
