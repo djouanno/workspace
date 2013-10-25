@@ -7,16 +7,16 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-    <bean id="sweetSnakeService" class="fr.esir.project.sr.sweetsnake.server.SweetSnakeServer">
+    <bean id="sweetSnakeService" class="com.esir.sr.sweetsnake.server.SweetSnakeServer">
     </bean>
 
     <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
         <property name="serviceName" value="SweetSnakeServer" />
         <property name="service" ref="sweetSnakeService" />
-        <property name="serviceInterface" value="fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeServer" />
+        <property name="serviceInterface" value="com.esir.sr.sweetsnake.commons.api.ISweetSnakeServer" />
         <property name="registryPort" value="1199" />
     </bean>
     
-    <context:component-scan base-package="fr.esir.project.sr.sweetsnake.server" />
+    <context:component-scan base-package="com.esir.sr.sweetsnake.server" />
 
 </beans>

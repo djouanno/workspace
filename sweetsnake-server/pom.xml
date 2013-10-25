@@ -4,7 +4,7 @@
 
     <parent>
         <artifactId>sweetsnake</artifactId>
-        <groupId>fr.esir.project.sr</groupId>
+        <groupId>com.esir.sr</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <artifactId>sweetsnake-commons</artifactId>
-            <groupId>fr.esir.project.sr</groupId>
+            <groupId>com.esir.sr</groupId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

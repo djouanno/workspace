@@ -4,7 +4,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
     <bean id="sweetSnakeServiceRMI" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
         <property name="serviceUrl" value="rmi://localhost:1199/SweetSnakeServer" />
-        <property name="serviceInterface" value="fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeServer" />
+        <property name="serviceInterface" value="com.esir.sr.sweetsnake.commons.api.ISweetSnakeServer" />
     </bean>
 
 </beans>

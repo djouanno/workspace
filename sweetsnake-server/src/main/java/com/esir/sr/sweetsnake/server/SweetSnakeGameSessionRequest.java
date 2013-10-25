@@ -1,0 +1,64 @@
+package com.esir.sr.sweetsnake.server;
+
+import java.io.Serializable;
+
+import org.slf4j.LoggerFactory;
+
+import com.esir.sr.sweetsnake.commons.api.ISweetSnakeGameSessionRequest;
+
+public class SweetSnakeGameSessionRequest implements ISweetSnakeGameSessionRequest, Serializable
+{
+
+    /**********************************************************************************************
+     * [BLOCK] STATIC FIELDS
+     **********************************************************************************************/
+
+    private static final long             serialVersionUID = -6737578779683049874L;
+    private static final org.slf4j.Logger log              = LoggerFactory.getLogger(SweetSnakeGameSessionRequest.class);
+
+    /**********************************************************************************************
+     * [BLOCK] FIELDS
+     **********************************************************************************************/
+
+    private final String                  requestingPlayer, requestedPlayer;
+
+    /**********************************************************************************************
+     * [BLOCK] CONSTRUCTOR
+     **********************************************************************************************/
+
+    public SweetSnakeGameSessionRequest(final String _requestingPlayer, final String _requestedPlayer) {
+        log.info("Initializing new game session request between {} and {}", _requestingPlayer, _requestedPlayer);
+        requestingPlayer = _requestingPlayer;
+        requestedPlayer = _requestedPlayer;
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] PRIVATE METHODS
+     **********************************************************************************************/
+
+
+
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC METHODS
+     **********************************************************************************************/
+
+
+
+    /**********************************************************************************************
+     * [BLOCK] GETTERS
+     **********************************************************************************************/
+
+    @Override
+    public String getRequestingPlayerName() {
+        return requestingPlayer;
+    }
+
+    @Override
+    public String getRequestedPlayerName() {
+        return requestedPlayer;
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] SETTERS
+     **********************************************************************************************/
+}

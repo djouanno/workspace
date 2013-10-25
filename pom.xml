@@ -15,7 +15,7 @@
     </developer>
   </developers>
 
-  <groupId>fr.esir.project.sr</groupId>
+  <groupId>com.esir.sr</groupId>
   <artifactId>sweetsnake</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
