@@ -1,6 +1,7 @@
 package fr.esir.project.sr.sweetsnake.client.api;
 
 import fr.esir.project.sr.sweetsnake.commons.api.IElement;
+import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeGameSessionRequest;
 
 public interface ISweetSnakeClient
 {
@@ -8,6 +9,8 @@ public interface ISweetSnakeClient
     void connect();
 
     void disconnect();
+
+    void requestGame(ISweetSnakeGameSessionRequest request);
 
     void addElement(IElement element);
 

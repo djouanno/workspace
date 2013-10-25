@@ -12,7 +12,7 @@ import fr.esir.project.sr.sweetsnake.client.api.ISweetSnakeClient;
 import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeServer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:spring/sweetsnake-client-context.xml" })
+@ContextConfiguration(locations = { "classpath*:spring/sweetsnake-client-context-test.xml" })
 public class SweetSnakeClientTest
 {
 

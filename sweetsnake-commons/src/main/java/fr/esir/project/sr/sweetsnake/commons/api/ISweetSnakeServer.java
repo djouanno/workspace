@@ -1,5 +1,8 @@
 package fr.esir.project.sr.sweetsnake.commons.api;
 
+import java.util.List;
+
+import fr.esir.project.sr.sweetsnake.commons.dto.PlayerDTO;
 import fr.esir.project.sr.sweetsnake.commons.enumerations.Direction;
 import fr.esir.project.sr.sweetsnake.commons.exceptions.PlayerNotFoundException;
 import fr.esir.project.sr.sweetsnake.commons.exceptions.UnableToConnectException;
@@ -19,6 +22,8 @@ public interface ISweetSnakeServer
     void leaveGameSession(ISweetSnakeClientCallback client);
 
     void cancelGameSessionRequest(ISweetSnakeClientCallback client);
+
+    List<PlayerDTO> getPlayersList(ISweetSnakeClientCallback client);
 
     void move(Direction direction);
 

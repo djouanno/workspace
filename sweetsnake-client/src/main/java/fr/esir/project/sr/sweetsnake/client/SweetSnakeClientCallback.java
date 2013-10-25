@@ -42,7 +42,7 @@ public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISw
 
     @Override
     public void requestGame(final ISweetSnakeGameSessionRequest request) {
-        // TODO
+        client.requestGame(request);
     }
 
     @Override

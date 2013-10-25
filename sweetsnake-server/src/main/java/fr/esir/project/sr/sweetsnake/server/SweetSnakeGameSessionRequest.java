@@ -1,16 +1,20 @@
 package fr.esir.project.sr.sweetsnake.server;
 
+import java.io.Serializable;
+
 import org.slf4j.LoggerFactory;
 
 import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeGameSessionRequest;
 
-public class SweetSnakeGameSessionRequest implements ISweetSnakeGameSessionRequest
+public class SweetSnakeGameSessionRequest implements ISweetSnakeGameSessionRequest, Serializable
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(SweetSnakeGameSessionRequest.class);
+    private static final long             serialVersionUID = -6737578779683049874L;
+    private static final org.slf4j.Logger log              = LoggerFactory.getLogger(SweetSnakeGameSessionRequest.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS

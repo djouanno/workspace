@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import fr.esir.project.sr.sweetsnake.client.api.ISweetSnakeClient;
 import fr.esir.project.sr.sweetsnake.commons.api.IElement;
 import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
+import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeGameSessionRequest;
 import fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeServer;
 import fr.esir.project.sr.sweetsnake.commons.exceptions.UnableToConnectException;
 
@@ -75,6 +76,11 @@ public class SweetSnakeClient implements ISweetSnakeClient
     @Override
     public void disconnect() {
         server.disconnect(listener);
+    }
+
+    @Override
+    public void requestGame(final ISweetSnakeGameSessionRequest request) {
+        // TODO
     }
 
     @Override

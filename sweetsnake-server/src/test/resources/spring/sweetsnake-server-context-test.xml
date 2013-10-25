@@ -2,14 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans 
 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="sweetSnakeService" class="fr.esir.project.sr.sweetsnake.server.SweetSnakeServer">
-    </bean>
-
-    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-        <property name="serviceName" value="SweetSnakeServer" />
-        <property name="service" ref="sweetSnakeService" />
+    <bean id="sweetSnakeServiceRMI" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
+        <property name="serviceUrl" value="rmi://localhost:1199/SweetSnakeServer" />
         <property name="serviceInterface" value="fr.esir.project.sr.sweetsnake.commons.api.ISweetSnakeServer" />
-        <property name="registryPort" value="1199" />
     </bean>
 
 </beans>
