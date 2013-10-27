@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.commons.api.ISweetSnakeServer;
-import com.esir.sr.sweetsnake.commons.dto.PlayerDTO;
+import com.esir.sr.sweetsnake.commons.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
 import com.esir.sr.sweetsnake.commons.enumerations.Direction;
@@ -25,7 +25,7 @@ import com.esir.sr.sweetsnake.commons.exceptions.UnableToMountGameSessionExcepti
 import com.esir.sr.sweetsnake.server.api.ISweetSnakeGameSession;
 import com.esir.sr.sweetsnake.server.api.ISweetSnakeGameSessionRequest;
 import com.esir.sr.sweetsnake.server.api.ISweetSnakePlayer;
-import com.esir.sr.sweetsnake.server.factory.SweetSnakeGameSessionFactory;
+import com.esir.sr.sweetsnake.server.factory.SweetSnakeFactory;
 import com.esir.sr.sweetsnake.server.game.SweetSnakeGameSession;
 import com.esir.sr.sweetsnake.server.game.SweetSnakeGameSessionRequest;
 import com.esir.sr.sweetsnake.server.game.SweetSnakePlayer;
@@ -64,7 +64,7 @@ public class SweetSnakeServer implements ISweetSnakeServer
         final ISweetSnakeGameSession gameSession = new SweetSnakeGameSession(player1, player2);
         gameSessions.add(gameSession);
 
-        final SweetSnakeGameSessionDTO gameSessionDTO = SweetSnakeGameSessionFactory.convertGameSession(gameSession);
+        final SweetSnakeGameSessionDTO gameSessionDTO = SweetSnakeFactory.convertGameSession(gameSession);
 
         player1.setStatus(Status.PLAYING);
         player2.setStatus(Status.PLAYING);
@@ -133,7 +133,7 @@ public class SweetSnakeServer implements ISweetSnakeServer
     }
 
     @Override
-    public SweetSnakeGameSessionRequestDTO requestGameSession(final ISweetSnakeClientCallback client, final PlayerDTO otherPlayer) throws PlayerNotFoundException, UnableToMountGameSessionException {
+    public SweetSnakeGameSessionRequestDTO requestGameSession(final ISweetSnakeClientCallback client, final SweetSnakePlayerDTO otherPlayer) throws PlayerNotFoundException, UnableToMountGameSessionException {
         if (!players.containsKey(otherPlayer.getName())) {
             throw new PlayerNotFoundException("unable to find the specified player");
         }
@@ -152,7 +152,7 @@ public class SweetSnakeServer implements ISweetSnakeServer
         pendingRequests.put(player1, request);
         player1.setStatus(Status.PENDING);
 
-        final SweetSnakeGameSessionRequestDTO requestDTO = SweetSnakeGameSessionFactory.convertGameSessionRequest(request);
+        final SweetSnakeGameSessionRequestDTO requestDTO = SweetSnakeFactory.convertGameSessionRequest(request);
         player2.getClientCallback().requestGame(requestDTO);
         log.info("Game session request between {} and {} is pending", player1.getName(), player2.getName());
 
@@ -200,12 +200,12 @@ public class SweetSnakeServer implements ISweetSnakeServer
     }
 
     @Override
-    public List<PlayerDTO> getPlayersList(final ISweetSnakeClientCallback client) {
+    public List<SweetSnakePlayerDTO> getPlayersList(final ISweetSnakeClientCallback client) {
         final String clientName = retrieveClientName(client);
-        final List<PlayerDTO> playersList = new ArrayList<PlayerDTO>();
+        final List<SweetSnakePlayerDTO> playersList = new ArrayList<SweetSnakePlayerDTO>();
         for (final String player : players.keySet()) {
             if (!clientName.equals(player)) {
-                final PlayerDTO playerDTO = new PlayerDTO(player, players.get(player).getStatus());
+                final SweetSnakePlayerDTO playerDTO = SweetSnakeFactory.convertPlayer(players.get(player));
                 playersList.add(playerDTO);
             }
         }

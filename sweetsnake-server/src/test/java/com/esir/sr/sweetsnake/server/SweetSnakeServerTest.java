@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.commons.api.ISweetSnakeServer;
-import com.esir.sr.sweetsnake.commons.dto.PlayerDTO;
+import com.esir.sr.sweetsnake.commons.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
 import com.esir.sr.sweetsnake.commons.enumerations.Status;
 import com.esir.sr.sweetsnake.commons.exceptions.PlayerNotFoundException;
@@ -85,16 +85,16 @@ public class SweetSnakeServerTest
     public void getPlayersListTest() {
         log.debug("---------------------------- getPlayersListTest() ----------------------------");
 
-        List<PlayerDTO> playersList = server.getPlayersList(client1);
+        List<SweetSnakePlayerDTO> playersList = server.getPlayersList(client1);
         log.debug("Number of other players seen by client1 : {}", playersList.size());
-        for (final PlayerDTO player : playersList) {
+        for (final SweetSnakePlayerDTO player : playersList) {
             log.debug("Player[name={}, status={}]", player.getName(), player.getStatus());
         }
         Assert.assertTrue("Number of players must be positive", playersList.size() >= 0);
 
         playersList = server.getPlayersList(client2);
         log.debug("Number of other players seen by client2 : {}", playersList.size());
-        for (final PlayerDTO player : playersList) {
+        for (final SweetSnakePlayerDTO player : playersList) {
             log.debug("Player[name={}, status={}]", player.getName(), player.getStatus());
         }
         Assert.assertTrue("Number of players must be positive", playersList.size() >= 0);
@@ -104,7 +104,7 @@ public class SweetSnakeServerTest
     public void gameSessionTest() throws PlayerNotFoundException, UnableToMountGameSessionException, RemoteException {
         log.debug("---------------------------- gameSessionTest() ----------------------------");
 
-        final PlayerDTO player2DTO = new PlayerDTO(client2.getName(), Status.AVAILABLE);
+        final SweetSnakePlayerDTO player2DTO = new SweetSnakePlayerDTO(client2.getName(), Status.AVAILABLE);
         final SweetSnakeGameSessionRequestDTO requestDTO = server.requestGameSession(client1, player2DTO);
         server.acceptGameSession(client2, requestDTO);
     }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.esir.sr.sweetsnake.commons.enumerations.Status;
 
-public class PlayerDTO implements Serializable
+public class SweetSnakePlayerDTO implements Serializable
 {
 
     /**********************************************************************************************
@@ -24,7 +24,7 @@ public class PlayerDTO implements Serializable
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public PlayerDTO(final String _name, final Status _status) {
+    public SweetSnakePlayerDTO(final String _name, final Status _status) {
         name = _name;
         status = _status;
     }
