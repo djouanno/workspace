@@ -1,10 +1,11 @@
-package com.esir.sr.sweetsnake.server;
+package com.esir.sr.sweetsnake.server.session;
 
 import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeGameSessionRequest;
+import com.esir.sr.sweetsnake.server.api.ISweetSnakePlayer;
+import com.esir.sr.sweetsnake.server.api.ISweetSnakeGameSessionRequest;
 
 public class SweetSnakeGameSessionRequest implements ISweetSnakeGameSessionRequest, Serializable
 {
@@ -20,14 +21,14 @@ public class SweetSnakeGameSessionRequest implements ISweetSnakeGameSessionReque
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final String                  requestingPlayer, requestedPlayer;
+    private final ISweetSnakePlayer                 requestingPlayer, requestedPlayer;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public SweetSnakeGameSessionRequest(final String _requestingPlayer, final String _requestedPlayer) {
-        log.info("Initializing new game session request between {} and {}", _requestingPlayer, _requestedPlayer);
+    public SweetSnakeGameSessionRequest(final ISweetSnakePlayer _requestingPlayer, final ISweetSnakePlayer _requestedPlayer) {
+        log.info("Initializing new game session request between {} and {}", _requestingPlayer.getName(), _requestedPlayer.getName());
         requestingPlayer = _requestingPlayer;
         requestedPlayer = _requestedPlayer;
     }
@@ -49,12 +50,12 @@ public class SweetSnakeGameSessionRequest implements ISweetSnakeGameSessionReque
      **********************************************************************************************/
 
     @Override
-    public String getRequestingPlayerName() {
+    public ISweetSnakePlayer getRequestingPlayer() {
         return requestingPlayer;
     }
 
     @Override
-    public String getRequestedPlayerName() {
+    public ISweetSnakePlayer getRequestedPlayer() {
         return requestedPlayer;
     }
 

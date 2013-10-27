@@ -7,7 +7,7 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-    <bean id="sweetSnakeService" class="com.esir.sr.sweetsnake.server.SweetSnakeServer">
+    <bean id="sweetSnakeService" class="com.esir.sr.sweetsnake.server.rmi.SweetSnakeServer">
     </bean>
 
     <bean class="org.springframework.remoting.rmi.RmiServiceExporter">

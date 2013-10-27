@@ -3,10 +3,12 @@ package com.esir.sr.sweetsnake.commons.api;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
+
 public interface ISweetSnakeClientCallback extends Remote
 {
 
-    void requestGame(ISweetSnakeGameSessionRequest request);
+    void requestGame(SweetSnakeGameSessionRequestDTO request);
 
     void addElement(IElement element) throws RemoteException;
 

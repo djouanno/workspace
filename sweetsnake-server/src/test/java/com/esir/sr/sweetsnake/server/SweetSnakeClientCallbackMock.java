@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.commons.api.IElement;
 import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeGameSessionRequest;
+import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
 
 public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, Serializable
 {
@@ -38,7 +38,7 @@ public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, 
      **********************************************************************************************/
 
     @Override
-    public void requestGame(final ISweetSnakeGameSessionRequest request) {
+    public void requestGame(final SweetSnakeGameSessionRequestDTO request) {
         // TODO Auto-generated method stub
     }
 

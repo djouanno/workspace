@@ -2,43 +2,41 @@ package com.esir.sr.sweetsnake.commons.dto;
 
 import java.io.Serializable;
 
-import com.esir.sr.sweetsnake.commons.enumerations.Status;
 
-public class PlayerDTO implements Serializable
+public class SweetSnakeGameSessionDTO implements Serializable
 {
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long serialVersionUID = -7478382230116293470L;
+    private static final long serialVersionUID = 459664230963147646L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final String      name;
-    private final Status      status;
+    private final String      player1, player2;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public PlayerDTO(final String _name, final Status _status) {
-        name = _name;
-        status = _status;
+    public SweetSnakeGameSessionDTO(final String _player1, final String _player2) {
+        player1 = _player1;
+        player2 = _player2;
     }
 
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    public String getName() {
-        return name;
+    public String getPlayer1Name() {
+        return player1;
     }
 
-    public Status getStatus() {
-        return status;
+    public String getPlayer2Name() {
+        return player2;
     }
 
 }

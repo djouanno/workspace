@@ -6,29 +6,35 @@ import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.commons.enumerations.Status;
-import com.esir.sr.sweetsnake.server.api.IPlayer;
+import com.esir.sr.sweetsnake.server.api.ISweetSnakePlayer;
 
-public class Player implements IPlayer
+public class SweetSnakePlayer implements ISweetSnakePlayer
 {
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final org.slf4j.Logger   log = LoggerFactory.getLogger(Player.class);
+    private static final org.slf4j.Logger   log = LoggerFactory.getLogger(SweetSnakePlayer.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     private final ISweetSnakeClientCallback client;
+    private String                          name;
     private Status                          status;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public Player(final ISweetSnakeClientCallback _client) {
+    public SweetSnakePlayer(final ISweetSnakeClientCallback _client) {
         client = _client;
+        try {
+            name = client.getName();
+        } catch (final RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /**********************************************************************************************
@@ -54,12 +60,7 @@ public class Player implements IPlayer
 
     @Override
     public String getName() {
-        try {
-            return client.getName();
-        } catch (final RemoteException e) {
-            log.error(e.getMessage(), e);
-        }
-        return null;
+        return name;
     }
 
     @Override

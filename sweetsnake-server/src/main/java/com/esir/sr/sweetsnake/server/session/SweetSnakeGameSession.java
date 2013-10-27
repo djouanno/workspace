@@ -1,30 +1,32 @@
-package com.esir.sr.sweetsnake.server;
+package com.esir.sr.sweetsnake.server.session;
 
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.server.api.IPlayer;
-import com.esir.sr.sweetsnake.server.api.ISweetSnakeServerGameSession;
+import com.esir.sr.sweetsnake.server.api.ISweetSnakeGameSession;
+import com.esir.sr.sweetsnake.server.api.ISweetSnakePlayer;
 
-public class SweetSnakeServerGameSession implements ISweetSnakeServerGameSession
+public class SweetSnakeGameSession implements ISweetSnakeGameSession
 {
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(SweetSnakeServerGameSession.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(SweetSnakeGameSession.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final IPlayer                 player1, player2;
+    private final ISweetSnakePlayer       player1, player2;
+
+    // TODO matrice de jeu etc...
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public SweetSnakeServerGameSession(final IPlayer _player1, final IPlayer _player2) {
-        log.info("Initializing a new game session between players {} and {}", _player1.getName(), _player2.getName());
+    public SweetSnakeGameSession(final ISweetSnakePlayer _player1, final ISweetSnakePlayer _player2) {
+        log.info("Initializing a new game session between {} and {}", _player1.getName(), _player2.getName());
         player1 = _player1;
         player2 = _player2;
     }
@@ -41,7 +43,7 @@ public class SweetSnakeServerGameSession implements ISweetSnakeServerGameSession
 
     @Override
     public void startGame() {
-        log.info("Starting game between players {} and {}", player1.getName(), player2.getName());
+        log.info("Starting game session between {} and {}", player1.getName(), player2.getName());
         // TODO
     }
 
@@ -49,7 +51,15 @@ public class SweetSnakeServerGameSession implements ISweetSnakeServerGameSession
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
+    @Override
+    public ISweetSnakePlayer getPlayer1() {
+        return player1;
+    }
 
+    @Override
+    public ISweetSnakePlayer getPlayer2() {
+        return player2;
+    }
 
     /**********************************************************************************************
      * [BLOCK] SETTERS

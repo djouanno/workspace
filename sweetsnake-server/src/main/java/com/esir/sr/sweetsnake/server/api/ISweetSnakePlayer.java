@@ -4,7 +4,7 @@ import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.commons.enumerations.Status;
 
 
-public interface IPlayer
+public interface ISweetSnakePlayer
 {
 
     ISweetSnakeClientCallback getClientCallback();

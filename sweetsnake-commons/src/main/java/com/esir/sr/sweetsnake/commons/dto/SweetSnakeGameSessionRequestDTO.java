@@ -2,43 +2,41 @@ package com.esir.sr.sweetsnake.commons.dto;
 
 import java.io.Serializable;
 
-import com.esir.sr.sweetsnake.commons.enumerations.Status;
 
-public class PlayerDTO implements Serializable
+public class SweetSnakeGameSessionRequestDTO implements Serializable
 {
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long serialVersionUID = -7478382230116293470L;
+    private static final long serialVersionUID = 7736451985866305018L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final String      name;
-    private final Status      status;
+    private final String      requestingPlayerName, requestedPlayerName;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public PlayerDTO(final String _name, final Status _status) {
-        name = _name;
-        status = _status;
+    public SweetSnakeGameSessionRequestDTO(final String _requestingPlayerName, final String _requestedPlayerName) {
+        requestingPlayerName = _requestingPlayerName;
+        requestedPlayerName = _requestedPlayerName;
     }
 
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    public String getName() {
-        return name;
+    public String getRequestingPlayerName() {
+        return requestingPlayerName;
     }
 
-    public Status getStatus() {
-        return status;
+    public String getRequestedPlayerName() {
+        return requestedPlayerName;
     }
 
 }

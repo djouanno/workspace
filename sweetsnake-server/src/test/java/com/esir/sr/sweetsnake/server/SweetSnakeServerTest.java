@@ -1,5 +1,6 @@
 package com.esir.sr.sweetsnake.server;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -20,6 +21,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.commons.api.ISweetSnakeServer;
 import com.esir.sr.sweetsnake.commons.dto.PlayerDTO;
+import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.commons.enumerations.Status;
 import com.esir.sr.sweetsnake.commons.exceptions.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.commons.exceptions.UnableToConnectException;
 import com.esir.sr.sweetsnake.commons.exceptions.UnableToMountGameSessionException;
@@ -98,10 +101,12 @@ public class SweetSnakeServerTest
     }
 
     @Test
-    public void gameSessionTest() throws PlayerNotFoundException, UnableToMountGameSessionException {
+    public void gameSessionTest() throws PlayerNotFoundException, UnableToMountGameSessionException, RemoteException {
         log.debug("---------------------------- gameSessionTest() ----------------------------");
 
-        server.requestGameSession(client1, player2);
+        final PlayerDTO player2DTO = new PlayerDTO(client2.getName(), Status.AVAILABLE);
+        final SweetSnakeGameSessionRequestDTO requestDTO = server.requestGameSession(client1, player2DTO);
+        server.acceptGameSession(client2, requestDTO);
     }
 
 }
