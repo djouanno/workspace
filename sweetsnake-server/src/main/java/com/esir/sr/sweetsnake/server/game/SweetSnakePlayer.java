@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.server;
+package com.esir.sr.sweetsnake.server.game;
 
 import java.rmi.RemoteException;
 
