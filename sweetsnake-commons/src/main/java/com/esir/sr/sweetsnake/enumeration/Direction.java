@@ -3,17 +3,32 @@ package com.esir.sr.sweetsnake.enumeration;
 public enum Direction
 {
 
-    LEFT("left"), UP("up"), RIGHT("right"), DOWN("down");
+    LEFT(new int[] { -1, 0 }), UP(new int[] { 0, -1 }), RIGHT(new int[] { +1, 0 }), DOWN(new int[] { 0, +1 });
 
-    private String value = "unknown";
+    private int[] value = { 0, 0 };
 
-    Direction(final String _value) {
+    Direction(final int[] _value) {
         value = _value;
+    }
+
+    public int[] getValue() {
+        return value;
     }
 
     @Override
     public String toString() {
-        return value;
+        switch (this) {
+            case LEFT:
+                return "left";
+            case UP:
+                return "up";
+            case RIGHT:
+                return "right";
+            case DOWN:
+                return "down";
+            default:
+                return "unknown";
+        }
     }
 
 }

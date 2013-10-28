@@ -26,9 +26,9 @@ import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 import com.esir.sr.sweetsnake.exception.UnableToMountGameSessionException;
 import com.esir.sr.sweetsnake.factory.SweetSnakeFactory;
-import com.esir.sr.sweetsnake.game.SweetSnakeGameRequest;
-import com.esir.sr.sweetsnake.game.SweetSnakeGameSession;
-import com.esir.sr.sweetsnake.game.SweetSnakePlayer;
+import com.esir.sr.sweetsnake.session.SweetSnakeGameRequest;
+import com.esir.sr.sweetsnake.session.SweetSnakeGameSession;
+import com.esir.sr.sweetsnake.session.SweetSnakePlayer;
 
 @Component
 public class SweetSnakeServer implements ISweetSnakeServer

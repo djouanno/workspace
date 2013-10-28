@@ -1,28 +1,30 @@
-package com.esir.sr.sweetsnake.game;
+package com.esir.sr.sweetsnake.session;
 
-import java.rmi.RemoteException;
+import java.io.Serializable;
+
+import javax.annotation.PostConstruct;
 
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest;
 import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
 import com.esir.sr.sweetsnake.enumeration.Status;
 
-public class SweetSnakePlayer implements ISweetSnakePlayer
+public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializable
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final org.slf4j.Logger   log = LoggerFactory.getLogger(SweetSnakePlayer.class);
+    private static final long             serialVersionUID = -6737578779683049874L;
+    private static final org.slf4j.Logger log              = LoggerFactory.getLogger(SweetSnakeGameRequest.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final ISweetSnakeClientCallback client;
-    private String                          name;
-    private Status                          status;
+    private final ISweetSnakePlayer       requestingPlayer, requestedPlayer;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -30,15 +32,13 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
 
     /**
      * 
-     * @param _client
+     * @param _requestingPlayer
+     * @param _requestedPlayer
      */
-    public SweetSnakePlayer(final ISweetSnakeClientCallback _client) {
-        client = _client;
-        try {
-            name = client.getName();
-        } catch (final RemoteException e) {
-            log.error("unable to retrieve client name : {}", e.getMessage(), e);
-        }
+    public SweetSnakeGameRequest(final ISweetSnakePlayer _requestingPlayer, final ISweetSnakePlayer _requestedPlayer) {
+        log.info("Initializing new game session request between {} and {}", _requestingPlayer.getName(), _requestedPlayer.getName());
+        requestingPlayer = _requestingPlayer;
+        requestedPlayer = _requestedPlayer;
     }
 
     /**********************************************************************************************
@@ -54,9 +54,20 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
     /**
      * 
      */
+    @PostConstruct
+    public void init() {
+        requestingPlayer.setStatus(Status.PENDING);
+        requestedPlayer.setStatus(Status.INVITED);
+    }
+
+    /**
+     * 
+     */
     @Override
-    public String toString() {
-        return name + "[status=" + status + "]";
+    public void cancel() {
+        requestingPlayer.setStatus(Status.AVAILABLE);
+        requestedPlayer.setStatus(Status.AVAILABLE); // TODO pas sûr que ça soit
+                                                     // bon ça
     }
 
     /**********************************************************************************************
@@ -67,36 +78,22 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * 
      */
     @Override
-    public ISweetSnakeClientCallback getClientCallback() {
-        return client;
+    public ISweetSnakePlayer getRequestingPlayer() {
+        return requestingPlayer;
     }
 
     /**
      * 
      */
     @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * 
-     */
-    @Override
-    public Status getStatus() {
-        return status;
+    public ISweetSnakePlayer getRequestedPlayer() {
+        return requestedPlayer;
     }
 
     /**********************************************************************************************
      * [BLOCK] SETTERS
      **********************************************************************************************/
 
-    /**
-     * 
-     */
-    @Override
-    public void setStatus(final Status _status) {
-        status = _status;
-    }
+
 
 }

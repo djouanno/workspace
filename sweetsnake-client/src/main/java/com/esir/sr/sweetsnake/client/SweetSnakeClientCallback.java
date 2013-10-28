@@ -10,6 +10,7 @@ import com.esir.sr.sweetsnake.api.IElement;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 
 @Component
 public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISweetSnakeClientCallback
@@ -43,6 +44,11 @@ public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISw
     @Override
     public void requestGame(final SweetSnakeGameRequestDTO request) {
         client.requestGame(request);
+    }
+
+    @Override
+    public void startGame(final SweetSnakeGameSessionDTO session) {
+        client.startGame(session);
     }
 
     @Override

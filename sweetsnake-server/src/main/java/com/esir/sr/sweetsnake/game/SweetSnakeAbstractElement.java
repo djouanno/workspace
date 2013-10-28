@@ -1,44 +1,36 @@
 package com.esir.sr.sweetsnake.game;
 
-import java.io.Serializable;
-
-import javax.annotation.PostConstruct;
-
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest;
-import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
-import com.esir.sr.sweetsnake.enumeration.Status;
+import com.esir.sr.sweetsnake.api.ISweetSnakeElement;
+import com.esir.sr.sweetsnake.enumeration.Direction;
 
-public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializable
+public abstract class SweetSnakeAbstractElement implements ISweetSnakeElement
 {
-
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long             serialVersionUID = -6737578779683049874L;
-    private static final org.slf4j.Logger log              = LoggerFactory.getLogger(SweetSnakeGameRequest.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(SweetSnakeAbstractElement.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final ISweetSnakePlayer       requestingPlayer, requestedPlayer;
+    protected final Type                  type;
+    protected int                         x, y;
+
+    public enum Type
+    {
+        SNAKE, SWEET;
+    }
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    /**
-     * 
-     * @param _requestingPlayer
-     * @param _requestedPlayer
-     */
-    public SweetSnakeGameRequest(final ISweetSnakePlayer _requestingPlayer, final ISweetSnakePlayer _requestedPlayer) {
-        log.info("Initializing new game session request between {} and {}", _requestingPlayer.getName(), _requestedPlayer.getName());
-        requestingPlayer = _requestingPlayer;
-        requestedPlayer = _requestedPlayer;
+    public SweetSnakeAbstractElement(final Type _type) {
+        type = _type;
     }
 
     /**********************************************************************************************
@@ -51,49 +43,43 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /**
-     * 
-     */
-    @PostConstruct
-    public void init() {
-        requestingPlayer.setStatus(Status.PENDING);
-        requestedPlayer.setStatus(Status.INVITED);
-    }
-
-    /**
-     * 
-     */
     @Override
-    public void cancel() {
-        requestingPlayer.setStatus(Status.AVAILABLE);
-        requestedPlayer.setStatus(Status.AVAILABLE); // TODO pas sûr que ça soit
-                                                     // bon ça
-    }
+    public abstract void move(Direction direction);
 
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    /**
-     * 
-     */
-    @Override
-    public ISweetSnakePlayer getRequestingPlayer() {
-        return requestingPlayer;
+    public int getX() {
+        return x;
     }
 
-    /**
-     * 
-     */
-    @Override
-    public ISweetSnakePlayer getRequestedPlayer() {
-        return requestedPlayer;
+    public int getY() {
+        return y;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     /**********************************************************************************************
      * [BLOCK] SETTERS
      **********************************************************************************************/
 
+    @Override
+    public void setX(final int _x) {
+        x = _x;
+    }
 
+    @Override
+    public void setY(final int _y) {
+        y = _y;
+    }
+
+    @Override
+    public void setXY(final int _x, final int _y) {
+        x = _x;
+        y = _y;
+    }
 
 }

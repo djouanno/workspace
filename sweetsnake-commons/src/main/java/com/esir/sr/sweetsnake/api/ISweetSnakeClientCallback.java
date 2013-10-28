@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 
 public interface ISweetSnakeClientCallback extends Remote
 {
@@ -13,6 +14,12 @@ public interface ISweetSnakeClientCallback extends Remote
      * @param request
      */
     void requestGame(SweetSnakeGameRequestDTO request);
+
+    /**
+     * 
+     * @param session
+     */
+    void startGame(SweetSnakeGameSessionDTO session);
 
     /**
      * 
