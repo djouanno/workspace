@@ -1,10 +1,12 @@
 package com.esir.sr.sweetsnake.api;
 
-public interface ISweetSnakeGameSessionRequest
+public interface ISweetSnakeGameRequest
 {
 
     ISweetSnakePlayer getRequestingPlayer();
 
     ISweetSnakePlayer getRequestedPlayer();
+
+    void cancel();
 
 }

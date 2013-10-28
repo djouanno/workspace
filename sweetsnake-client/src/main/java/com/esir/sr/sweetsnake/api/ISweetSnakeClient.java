@@ -2,7 +2,7 @@ package com.esir.sr.sweetsnake.api;
 
 import com.esir.sr.sweetsnake.api.IElement;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
-import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 
 public interface ISweetSnakeClient
 {
@@ -11,7 +11,7 @@ public interface ISweetSnakeClient
 
     void disconnect();
 
-    void requestGame(SweetSnakeGameSessionRequestDTO request);
+    void requestGame(SweetSnakeGameRequestDTO request);
 
     void startGame(SweetSnakeGameSessionDTO session);
 

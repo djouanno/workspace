@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.api.ISweetSnakeServer;
-import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.Status;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
@@ -105,7 +105,7 @@ public class SweetSnakeServerTest
         log.debug("---------------------------- gameSessionTest() ----------------------------");
 
         final SweetSnakePlayerDTO player2DTO = new SweetSnakePlayerDTO(client2.getName(), Status.AVAILABLE);
-        final SweetSnakeGameSessionRequestDTO requestDTO = server.requestGameSession(client1, player2DTO);
+        final SweetSnakeGameRequestDTO requestDTO = server.requestGameSession(client1, player2DTO);
         server.acceptGameSession(client2, requestDTO);
     }
 

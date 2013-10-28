@@ -3,7 +3,7 @@ package com.esir.sr.sweetsnake.api;
 import java.util.List;
 
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
-import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.Direction;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
@@ -17,9 +17,9 @@ public interface ISweetSnakeServer
 
     void disconnect(ISweetSnakeClientCallback client);
 
-    SweetSnakeGameSessionRequestDTO requestGameSession(ISweetSnakeClientCallback client, SweetSnakePlayerDTO otherPlayer) throws PlayerNotFoundException, UnableToMountGameSessionException;
+    SweetSnakeGameRequestDTO requestGameSession(ISweetSnakeClientCallback client, SweetSnakePlayerDTO otherPlayer) throws PlayerNotFoundException, UnableToMountGameSessionException;
 
-    SweetSnakeGameSessionDTO acceptGameSession(ISweetSnakeClientCallback client, SweetSnakeGameSessionRequestDTO request) throws PlayerNotFoundException, UnableToMountGameSessionException;
+    SweetSnakeGameSessionDTO acceptGameSession(ISweetSnakeClientCallback client, SweetSnakeGameRequestDTO request) throws PlayerNotFoundException, UnableToMountGameSessionException;
 
     void leaveGameSession(ISweetSnakeClientCallback client);
 

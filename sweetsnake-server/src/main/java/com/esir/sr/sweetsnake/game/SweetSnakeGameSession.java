@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeGameSession;
 import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
+import com.esir.sr.sweetsnake.enumeration.Status;
 
 public class SweetSnakeGameSession implements ISweetSnakeGameSession
 {
@@ -44,6 +45,8 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
     @Override
     public void startGame() {
         log.info("Starting game session between {} and {}", player1.getName(), player2.getName());
+        player1.setStatus(Status.PLAYING);
+        player2.setStatus(Status.PLAYING);
         // TODO
     }
 

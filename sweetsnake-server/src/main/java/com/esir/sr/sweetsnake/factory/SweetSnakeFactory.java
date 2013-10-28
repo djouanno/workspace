@@ -1,10 +1,10 @@
 package com.esir.sr.sweetsnake.factory;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeGameSession;
-import com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionRequest;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest;
 import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
-import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 
 public class SweetSnakeFactory
@@ -14,8 +14,8 @@ public class SweetSnakeFactory
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    public static SweetSnakeGameSessionRequestDTO convertGameSessionRequest(final ISweetSnakeGameSessionRequest request) {
-        final SweetSnakeGameSessionRequestDTO requestDTO = new SweetSnakeGameSessionRequestDTO(request.getRequestingPlayer().getName(), request.getRequestedPlayer().getName());
+    public static SweetSnakeGameRequestDTO convertGameSessionRequest(final ISweetSnakeGameRequest request) {
+        final SweetSnakeGameRequestDTO requestDTO = new SweetSnakeGameRequestDTO(request.getRequestingPlayer().getName(), request.getRequestedPlayer().getName());
         return requestDTO;
     }
 

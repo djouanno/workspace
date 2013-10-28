@@ -3,7 +3,7 @@ package com.esir.sr.sweetsnake.dto;
 import java.io.Serializable;
 
 
-public class SweetSnakeGameSessionRequestDTO implements Serializable
+public class SweetSnakeGameRequestDTO implements Serializable
 {
 
     /**********************************************************************************************
@@ -22,7 +22,7 @@ public class SweetSnakeGameSessionRequestDTO implements Serializable
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public SweetSnakeGameSessionRequestDTO(final String _requestingPlayerName, final String _requestedPlayerName) {
+    public SweetSnakeGameRequestDTO(final String _requestingPlayerName, final String _requestedPlayerName) {
         requestingPlayerName = _requestingPlayerName;
         requestedPlayerName = _requestedPlayerName;
     }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.esir.sr.sweetsnake.api.IElement;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 
 @Component
 public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISweetSnakeClientCallback
@@ -41,7 +41,7 @@ public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISw
      **********************************************************************************************/
 
     @Override
-    public void requestGame(final SweetSnakeGameSessionRequestDTO request) {
+    public void requestGame(final SweetSnakeGameRequestDTO request) {
         client.requestGame(request);
     }
 

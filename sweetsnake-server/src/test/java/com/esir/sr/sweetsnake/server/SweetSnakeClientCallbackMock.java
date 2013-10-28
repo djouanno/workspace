@@ -3,11 +3,9 @@ package com.esir.sr.sweetsnake.server;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import org.slf4j.LoggerFactory;
-
 import com.esir.sr.sweetsnake.api.IElement;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 
 public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, Serializable
 {
@@ -16,14 +14,13 @@ public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, 
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long             serialVersionUID = 5763417596092778883L;
-    private static final org.slf4j.Logger log              = LoggerFactory.getLogger(SweetSnakeClientCallbackMock.class);
+    private static final long serialVersionUID = 5763417596092778883L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final String                  name;
+    private final String      name;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -38,7 +35,7 @@ public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, 
      **********************************************************************************************/
 
     @Override
-    public void requestGame(final SweetSnakeGameSessionRequestDTO request) {
+    public void requestGame(final SweetSnakeGameRequestDTO request) {
         // TODO Auto-generated method stub
     }
 

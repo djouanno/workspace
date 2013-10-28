@@ -47,7 +47,10 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-
+    @Override
+    public String toString() {
+        return name + "[status=" + status + "]";
+    }
 
     /**********************************************************************************************
      * [BLOCK] GETTERS

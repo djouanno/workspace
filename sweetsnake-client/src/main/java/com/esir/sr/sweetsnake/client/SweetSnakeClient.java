@@ -13,7 +13,7 @@ import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.api.ISweetSnakeServer;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
-import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
 @Component
@@ -80,7 +80,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
     }
 
     @Override
-    public void requestGame(final SweetSnakeGameSessionRequestDTO request) {
+    public void requestGame(final SweetSnakeGameRequestDTO request) {
         // TODO
     }
 
