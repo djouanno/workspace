@@ -1,11 +1,11 @@
-package com.esir.sr.sweetsnake.server.factory;
+package com.esir.sr.sweetsnake.factory;
 
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakePlayerDTO;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionDTO;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
-import com.esir.sr.sweetsnake.server.api.ISweetSnakeGameSession;
-import com.esir.sr.sweetsnake.server.api.ISweetSnakeGameSessionRequest;
-import com.esir.sr.sweetsnake.server.api.ISweetSnakePlayer;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameSession;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionRequest;
+import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 
 public class SweetSnakeFactory
 {

@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.commons.dto;
+package com.esir.sr.sweetsnake.dto;
 
 import java.io.Serializable;
 

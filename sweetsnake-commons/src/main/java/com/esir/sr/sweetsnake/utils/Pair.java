@@ -1,42 +1,47 @@
-package com.esir.sr.sweetsnake.commons.dto;
-
-import java.io.Serializable;
+package com.esir.sr.sweetsnake.utils;
 
 
-public class SweetSnakeGameSessionRequestDTO implements Serializable
+public class Pair<T, E>
 {
-
-    /**********************************************************************************************
-     * [BLOCK] STATIC FIELDS
-     **********************************************************************************************/
-
-    private static final long serialVersionUID = 7736451985866305018L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final String      requestingPlayerName, requestedPlayerName;
+    private T first;
+    private E second;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public SweetSnakeGameSessionRequestDTO(final String _requestingPlayerName, final String _requestedPlayerName) {
-        requestingPlayerName = _requestingPlayerName;
-        requestedPlayerName = _requestedPlayerName;
+    public Pair(final T _first, final E _second) {
+        first = _first;
+        second = _second;
     }
 
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    public String getRequestingPlayerName() {
-        return requestingPlayerName;
+    public T getFirst() {
+        return first;
     }
 
-    public String getRequestedPlayerName() {
-        return requestedPlayerName;
+    public E getSecond() {
+        return second;
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] SETTERS
+     **********************************************************************************************/
+
+    public void setFirst(final T _first) {
+        first = _first;
+    }
+
+    public void setSecond(final E _second) {
+        second = _second;
     }
 
 }

@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.client.api.ISweetSnakeClient;
-import com.esir.sr.sweetsnake.commons.api.IElement;
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeServer;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionDTO;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
-import com.esir.sr.sweetsnake.commons.exceptions.UnableToConnectException;
+import com.esir.sr.sweetsnake.api.IElement;
+import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
+import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
+import com.esir.sr.sweetsnake.api.ISweetSnakeServer;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
 @Component
 public class SweetSnakeClient implements ISweetSnakeClient

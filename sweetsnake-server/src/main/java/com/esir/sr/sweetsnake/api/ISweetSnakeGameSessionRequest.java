@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.server.api;
+package com.esir.sr.sweetsnake.api;
 
 public interface ISweetSnakeGameSessionRequest
 {

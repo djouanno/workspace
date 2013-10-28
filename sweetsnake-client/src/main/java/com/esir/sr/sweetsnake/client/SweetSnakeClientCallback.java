@@ -6,10 +6,10 @@ import java.rmi.server.UnicastRemoteObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.client.api.ISweetSnakeClient;
-import com.esir.sr.sweetsnake.commons.api.IElement;
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.api.IElement;
+import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
+import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
 
 @Component
 public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISweetSnakeClientCallback

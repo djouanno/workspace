@@ -1,14 +1,14 @@
-package com.esir.sr.sweetsnake.commons.api;
+package com.esir.sr.sweetsnake.api;
 
 import java.util.List;
 
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakePlayerDTO;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionDTO;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
-import com.esir.sr.sweetsnake.commons.enumerations.Direction;
-import com.esir.sr.sweetsnake.commons.exceptions.PlayerNotFoundException;
-import com.esir.sr.sweetsnake.commons.exceptions.UnableToConnectException;
-import com.esir.sr.sweetsnake.commons.exceptions.UnableToMountGameSessionException;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
+import com.esir.sr.sweetsnake.enumeration.Direction;
+import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
+import com.esir.sr.sweetsnake.exception.UnableToConnectException;
+import com.esir.sr.sweetsnake.exception.UnableToMountGameSessionException;
 
 public interface ISweetSnakeServer
 {

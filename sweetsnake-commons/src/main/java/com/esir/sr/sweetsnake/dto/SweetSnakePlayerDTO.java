@@ -1,8 +1,8 @@
-package com.esir.sr.sweetsnake.commons.dto;
+package com.esir.sr.sweetsnake.dto;
 
 import java.io.Serializable;
 
-import com.esir.sr.sweetsnake.commons.enumerations.Status;
+import com.esir.sr.sweetsnake.enumeration.Status;
 
 public class SweetSnakePlayerDTO implements Serializable
 {

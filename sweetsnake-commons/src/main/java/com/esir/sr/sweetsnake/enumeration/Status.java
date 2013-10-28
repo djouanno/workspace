@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.commons.enumerations;
+package com.esir.sr.sweetsnake.enumeration;
 
 
 public enum Status

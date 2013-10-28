@@ -1,20 +1,20 @@
-package com.esir.sr.sweetsnake.commons.exceptions;
+package com.esir.sr.sweetsnake.exception;
 
 
-public class UnableToConnectException extends Exception
+public class PlayerNotFoundException extends Exception
 {
 
-    private static final long serialVersionUID = 6715591274262381713L;
+    private static final long serialVersionUID = 4022247310885736041L;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public UnableToConnectException() {
+    public PlayerNotFoundException() {
         super();
     }
 
-    public UnableToConnectException(final String message) {
+    public PlayerNotFoundException(final String message) {
         super(message);
     }
 

@@ -1,47 +1,42 @@
-package com.esir.sr.sweetsnake.commons.utils;
+package com.esir.sr.sweetsnake.dto;
+
+import java.io.Serializable;
 
 
-public class Pair<T, E>
+public class SweetSnakeGameSessionRequestDTO implements Serializable
 {
+
+    /**********************************************************************************************
+     * [BLOCK] STATIC FIELDS
+     **********************************************************************************************/
+
+    private static final long serialVersionUID = 7736451985866305018L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private T first;
-    private E second;
+    private final String      requestingPlayerName, requestedPlayerName;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public Pair(final T _first, final E _second) {
-        first = _first;
-        second = _second;
+    public SweetSnakeGameSessionRequestDTO(final String _requestingPlayerName, final String _requestedPlayerName) {
+        requestingPlayerName = _requestingPlayerName;
+        requestedPlayerName = _requestedPlayerName;
     }
 
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    public T getFirst() {
-        return first;
+    public String getRequestingPlayerName() {
+        return requestingPlayerName;
     }
 
-    public E getSecond() {
-        return second;
-    }
-
-    /**********************************************************************************************
-     * [BLOCK] SETTERS
-     **********************************************************************************************/
-
-    public void setFirst(final T _first) {
-        first = _first;
-    }
-
-    public void setSecond(final E _second) {
-        second = _second;
+    public String getRequestedPlayerName() {
+        return requestedPlayerName;
     }
 
 }

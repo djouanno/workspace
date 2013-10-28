@@ -18,14 +18,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeServer;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakePlayerDTO;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
-import com.esir.sr.sweetsnake.commons.enumerations.Status;
-import com.esir.sr.sweetsnake.commons.exceptions.PlayerNotFoundException;
-import com.esir.sr.sweetsnake.commons.exceptions.UnableToConnectException;
-import com.esir.sr.sweetsnake.commons.exceptions.UnableToMountGameSessionException;
+import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
+import com.esir.sr.sweetsnake.api.ISweetSnakeServer;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
+import com.esir.sr.sweetsnake.enumeration.Status;
+import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
+import com.esir.sr.sweetsnake.exception.UnableToConnectException;
+import com.esir.sr.sweetsnake.exception.UnableToMountGameSessionException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:spring/sweetsnake-server-context-test.xml" })

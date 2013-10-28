@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.server.rmi;
+package com.esir.sr.sweetsnake.server;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -12,23 +12,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeServer;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakePlayerDTO;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionDTO;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
-import com.esir.sr.sweetsnake.commons.enumerations.Direction;
-import com.esir.sr.sweetsnake.commons.enumerations.Status;
-import com.esir.sr.sweetsnake.commons.exceptions.PlayerNotFoundException;
-import com.esir.sr.sweetsnake.commons.exceptions.UnableToConnectException;
-import com.esir.sr.sweetsnake.commons.exceptions.UnableToMountGameSessionException;
-import com.esir.sr.sweetsnake.server.api.ISweetSnakeGameSession;
-import com.esir.sr.sweetsnake.server.api.ISweetSnakeGameSessionRequest;
-import com.esir.sr.sweetsnake.server.api.ISweetSnakePlayer;
-import com.esir.sr.sweetsnake.server.factory.SweetSnakeFactory;
-import com.esir.sr.sweetsnake.server.game.SweetSnakeGameSession;
-import com.esir.sr.sweetsnake.server.game.SweetSnakeGameSessionRequest;
-import com.esir.sr.sweetsnake.server.game.SweetSnakePlayer;
+import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameSession;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionRequest;
+import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
+import com.esir.sr.sweetsnake.api.ISweetSnakeServer;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
+import com.esir.sr.sweetsnake.enumeration.Direction;
+import com.esir.sr.sweetsnake.enumeration.Status;
+import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
+import com.esir.sr.sweetsnake.exception.UnableToConnectException;
+import com.esir.sr.sweetsnake.exception.UnableToMountGameSessionException;
+import com.esir.sr.sweetsnake.factory.SweetSnakeFactory;
+import com.esir.sr.sweetsnake.game.SweetSnakeGameSession;
+import com.esir.sr.sweetsnake.game.SweetSnakeGameSessionRequest;
+import com.esir.sr.sweetsnake.game.SweetSnakePlayer;
 
 @Component
 public class SweetSnakeServer implements ISweetSnakeServer

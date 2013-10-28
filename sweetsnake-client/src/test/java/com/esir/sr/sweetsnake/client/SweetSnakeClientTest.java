@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.esir.sr.sweetsnake.client.api.ISweetSnakeClient;
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeServer;
+import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
+import com.esir.sr.sweetsnake.api.ISweetSnakeServer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:spring/sweetsnake-client-context-test.xml" })

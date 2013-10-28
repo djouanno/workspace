@@ -1,8 +1,8 @@
-package com.esir.sr.sweetsnake.client.api;
+package com.esir.sr.sweetsnake.api;
 
-import com.esir.sr.sweetsnake.commons.api.IElement;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionDTO;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.api.IElement;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
 
 public interface ISweetSnakeClient
 {

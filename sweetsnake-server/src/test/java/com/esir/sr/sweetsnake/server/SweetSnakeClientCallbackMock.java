@@ -5,9 +5,9 @@ import java.rmi.RemoteException;
 
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.commons.api.IElement;
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.commons.dto.SweetSnakeGameSessionRequestDTO;
+import com.esir.sr.sweetsnake.api.IElement;
+import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionRequestDTO;
 
 public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, Serializable
 {

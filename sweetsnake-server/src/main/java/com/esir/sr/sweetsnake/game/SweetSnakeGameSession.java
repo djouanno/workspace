@@ -1,9 +1,9 @@
-package com.esir.sr.sweetsnake.server.game;
+package com.esir.sr.sweetsnake.game;
 
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.server.api.ISweetSnakeGameSession;
-import com.esir.sr.sweetsnake.server.api.ISweetSnakePlayer;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameSession;
+import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
 
 public class SweetSnakeGameSession implements ISweetSnakeGameSession
 {

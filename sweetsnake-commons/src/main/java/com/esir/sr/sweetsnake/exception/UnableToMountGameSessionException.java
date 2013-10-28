@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.commons.exceptions;
+package com.esir.sr.sweetsnake.exception;
 
 
 public class UnableToMountGameSessionException extends Exception

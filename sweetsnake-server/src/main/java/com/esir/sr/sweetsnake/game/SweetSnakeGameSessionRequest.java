@@ -1,11 +1,11 @@
-package com.esir.sr.sweetsnake.server.game;
+package com.esir.sr.sweetsnake.game;
 
 import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.server.api.ISweetSnakePlayer;
-import com.esir.sr.sweetsnake.server.api.ISweetSnakeGameSessionRequest;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionRequest;
+import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
 
 public class SweetSnakeGameSessionRequest implements ISweetSnakeGameSessionRequest, Serializable
 {

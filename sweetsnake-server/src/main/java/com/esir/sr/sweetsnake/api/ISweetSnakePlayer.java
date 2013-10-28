@@ -1,7 +1,7 @@
-package com.esir.sr.sweetsnake.server.api;
+package com.esir.sr.sweetsnake.api;
 
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.commons.enumerations.Status;
+import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
+import com.esir.sr.sweetsnake.enumeration.Status;
 
 
 public interface ISweetSnakePlayer

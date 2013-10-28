@@ -1,12 +1,12 @@
-package com.esir.sr.sweetsnake.server.game;
+package com.esir.sr.sweetsnake.game;
 
 import java.rmi.RemoteException;
 
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.commons.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.commons.enumerations.Status;
-import com.esir.sr.sweetsnake.server.api.ISweetSnakePlayer;
+import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
+import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
+import com.esir.sr.sweetsnake.enumeration.Status;
 
 public class SweetSnakePlayer implements ISweetSnakePlayer
 {
