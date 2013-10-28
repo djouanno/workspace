@@ -4,20 +4,17 @@ package com.esir.sr.sweetsnake.enumeration;
 public enum Status
 {
 
-    AVAILABLE, PENDING, PLAYING;
+    AVAILABLE("available"), PENDING("pending"), PLAYING("playing");
+
+    private String value = "unknown";
+
+    Status(final String _value) {
+        value = _value;
+    }
 
     @Override
     public String toString() {
-        switch (this) {
-            case AVAILABLE:
-                return "available";
-            case PENDING:
-                return "pending game session";
-            case PLAYING:
-                return "playing";
-            default:
-                return "unknown";
-        }
+        return value;
     }
 
 }
