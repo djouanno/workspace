@@ -26,6 +26,11 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
+    /**
+     * 
+     * @param _player1
+     * @param _player2
+     */
     public SweetSnakeGameSession(final ISweetSnakePlayer _player1, final ISweetSnakePlayer _player2) {
         log.info("Initializing a new game session between {} and {}", _player1.getName(), _player2.getName());
         player1 = _player1;
@@ -42,6 +47,9 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     @Override
     public void startGame() {
         log.info("Starting game session between {} and {}", player1.getName(), player2.getName());
@@ -54,11 +62,17 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     @Override
     public ISweetSnakePlayer getPlayer1() {
         return player1;
     }
 
+    /**
+     * 
+     */
     @Override
     public ISweetSnakePlayer getPlayer2() {
         return player2;

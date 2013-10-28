@@ -30,6 +30,11 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
+    /**
+     * 
+     * @param _requestingPlayer
+     * @param _requestedPlayer
+     */
     public SweetSnakeGameRequest(final ISweetSnakePlayer _requestingPlayer, final ISweetSnakePlayer _requestedPlayer) {
         log.info("Initializing new game session request between {} and {}", _requestingPlayer.getName(), _requestedPlayer.getName());
         requestingPlayer = _requestingPlayer;
@@ -46,12 +51,18 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     @PostConstruct
     public void init() {
         requestingPlayer.setStatus(Status.PENDING);
         requestedPlayer.setStatus(Status.INVITED);
     }
 
+    /**
+     * 
+     */
     @Override
     public void cancel() {
         requestingPlayer.setStatus(Status.AVAILABLE);
@@ -63,11 +74,17 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     @Override
     public ISweetSnakePlayer getRequestingPlayer() {
         return requestingPlayer;
     }
 
+    /**
+     * 
+     */
     @Override
     public ISweetSnakePlayer getRequestedPlayer() {
         return requestedPlayer;
@@ -76,4 +93,7 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
     /**********************************************************************************************
      * [BLOCK] SETTERS
      **********************************************************************************************/
+
+
+
 }

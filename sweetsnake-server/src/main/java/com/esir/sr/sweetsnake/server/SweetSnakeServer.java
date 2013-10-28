@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
-import com.esir.sr.sweetsnake.api.ISweetSnakeGameSession;
 import com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameSession;
 import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
 import com.esir.sr.sweetsnake.api.ISweetSnakeServer;
-import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.Direction;
 import com.esir.sr.sweetsnake.enumeration.Status;
@@ -26,8 +26,8 @@ import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 import com.esir.sr.sweetsnake.exception.UnableToMountGameSessionException;
 import com.esir.sr.sweetsnake.factory.SweetSnakeFactory;
-import com.esir.sr.sweetsnake.game.SweetSnakeGameSession;
 import com.esir.sr.sweetsnake.game.SweetSnakeGameRequest;
+import com.esir.sr.sweetsnake.game.SweetSnakeGameSession;
 import com.esir.sr.sweetsnake.game.SweetSnakePlayer;
 
 @Component
@@ -38,20 +38,23 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final Logger                                   log = LoggerFactory.getLogger(SweetSnakeServer.class);
+    private static final Logger                            log = LoggerFactory.getLogger(SweetSnakeServer.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private Map<String, ISweetSnakePlayer>                        players;
+    private Map<String, ISweetSnakePlayer>                 players;
     private Map<ISweetSnakePlayer, ISweetSnakeGameRequest> gameRequests;
-    private List<ISweetSnakeGameSession>                          gameSessions;
+    private List<ISweetSnakeGameSession>                   gameSessions;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     protected SweetSnakeServer() {
         super();
     }
@@ -60,6 +63,11 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * [BLOCK] PRIVATE METHODS
      **********************************************************************************************/
 
+    /**
+     * 
+     * @param request
+     * @return
+     */
     private SweetSnakeGameSessionDTO startGameSession(final ISweetSnakeGameRequest request) {
         final ISweetSnakePlayer player1 = request.getRequestingPlayer(), player2 = request.getRequestedPlayer();
 
@@ -74,15 +82,25 @@ public class SweetSnakeServer implements ISweetSnakeServer
         return gameSessionDTO;
     }
 
+    /**
+     * 
+     * @param client
+     * @return
+     */
     private String retrieveClientName(final ISweetSnakeClientCallback client) {
         try {
             return client.getName();
         } catch (final RemoteException e) {
-            log.error(e.getMessage(), e);
+            log.error("unable to retrieve client name : {}", e.getMessage(), e);
         }
         return null;
     }
 
+    /**
+     * 
+     * @param name
+     * @return
+     */
     private ISweetSnakePlayer retrievePlayer(final String name) {
         if (players.containsKey(name)) {
             return players.get(name);
@@ -90,6 +108,11 @@ public class SweetSnakeServer implements ISweetSnakeServer
         return null;
     }
 
+    /**
+     * 
+     * @param player
+     * @return
+     */
     private ISweetSnakeGameRequest retrieveRequest(final ISweetSnakePlayer player) {
         if (gameRequests.containsKey(player)) {
             return gameRequests.get(player);
@@ -101,6 +124,9 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     @PostConstruct
     public void init() {
         log.info("Initialization of the SweetSnakeServer");
@@ -109,6 +135,9 @@ public class SweetSnakeServer implements ISweetSnakeServer
         gameRequests = new HashMap<ISweetSnakePlayer, ISweetSnakeGameRequest>();
     }
 
+    /**
+     * 
+     */
     @Override
     public void connect(final ISweetSnakeClientCallback client) throws UnableToConnectException {
         final String clientName = retrieveClientName(client);
@@ -124,6 +153,9 @@ public class SweetSnakeServer implements ISweetSnakeServer
         log.info("New client with username {} has connected", clientName);
     }
 
+    /**
+     * 
+     */
     @Override
     public void disconnect(final ISweetSnakeClientCallback client) {
         final String clientName = retrieveClientName(client);
@@ -133,6 +165,9 @@ public class SweetSnakeServer implements ISweetSnakeServer
         }
     }
 
+    /**
+     * 
+     */
     @Override
     public SweetSnakeGameRequestDTO requestGameSession(final ISweetSnakeClientCallback client, final SweetSnakePlayerDTO otherPlayer) throws PlayerNotFoundException, UnableToMountGameSessionException {
         if (!players.containsKey(otherPlayer.getName())) {
@@ -159,6 +194,9 @@ public class SweetSnakeServer implements ISweetSnakeServer
         return requestDTO;
     }
 
+    /**
+     * 
+     */
     @Override
     public SweetSnakeGameSessionDTO acceptGameSession(final ISweetSnakeClientCallback client, final SweetSnakeGameRequestDTO requestDTO) throws PlayerNotFoundException, UnableToMountGameSessionException {
         final ISweetSnakePlayer requestingPlayer = retrievePlayer(requestDTO.getRequestingPlayerName());
@@ -177,11 +215,17 @@ public class SweetSnakeServer implements ISweetSnakeServer
         return startGameSession(request);
     }
 
+    /**
+     * 
+     */
     @Override
     public void leaveGameSession(final ISweetSnakeClientCallback client) {
         // TODO
     }
 
+    /**
+     * 
+     */
     @Override
     public void cancelGameSessionRequest(final ISweetSnakeClientCallback client) {
         final String clientName = retrieveClientName(client);
@@ -194,11 +238,17 @@ public class SweetSnakeServer implements ISweetSnakeServer
         log.info("Game session request canceled by player {}", player);
     }
 
+    /**
+     * 
+     */
     @Override
     public void move(final Direction direction) {
         // TODO
     }
 
+    /**
+     * 
+     */
     @Override
     public List<SweetSnakePlayerDTO> getPlayersList(final ISweetSnakeClientCallback client) {
         final String clientName = retrieveClientName(client);
@@ -211,13 +261,5 @@ public class SweetSnakeServer implements ISweetSnakeServer
         }
         return playersList;
     }
-
-    /**********************************************************************************************
-     * [BLOCK] GETTERS
-     **********************************************************************************************/
-
-    /**********************************************************************************************
-     * [BLOCK] SETTERS
-     **********************************************************************************************/
 
 }

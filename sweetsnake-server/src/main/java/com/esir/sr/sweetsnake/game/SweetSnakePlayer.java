@@ -28,12 +28,16 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
+    /**
+     * 
+     * @param _client
+     */
     public SweetSnakePlayer(final ISweetSnakeClientCallback _client) {
         client = _client;
         try {
             name = client.getName();
         } catch (final RemoteException e) {
-            log.error(e.getMessage(), e);
+            log.error("unable to retrieve client name : {}", e.getMessage(), e);
         }
     }
 
@@ -47,6 +51,9 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     @Override
     public String toString() {
         return name + "[status=" + status + "]";
@@ -56,16 +63,25 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     @Override
     public ISweetSnakeClientCallback getClientCallback() {
         return client;
     }
 
+    /**
+     * 
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     * 
+     */
     @Override
     public Status getStatus() {
         return status;
@@ -75,6 +91,9 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * [BLOCK] SETTERS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     @Override
     public void setStatus(final Status _status) {
         status = _status;
