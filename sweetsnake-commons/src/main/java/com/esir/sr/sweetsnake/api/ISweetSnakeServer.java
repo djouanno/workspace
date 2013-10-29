@@ -6,9 +6,9 @@ import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.Direction;
+import com.esir.sr.sweetsnake.exception.BadGameSessionException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
-import com.esir.sr.sweetsnake.exception.UnableToMountGameSessionException;
 
 public interface ISweetSnakeServer
 {
@@ -32,9 +32,9 @@ public interface ISweetSnakeServer
      * @param otherPlayer
      * @return
      * @throws PlayerNotFoundException
-     * @throws UnableToMountGameSessionException
+     * @throws BadGameSessionException
      */
-    SweetSnakeGameRequestDTO requestGameSession(ISweetSnakeClientCallback client, SweetSnakePlayerDTO otherPlayer) throws PlayerNotFoundException, UnableToMountGameSessionException;
+    SweetSnakeGameRequestDTO requestGameSession(ISweetSnakeClientCallback client, SweetSnakePlayerDTO otherPlayer) throws PlayerNotFoundException, BadGameSessionException;
 
     /**
      * 
@@ -42,9 +42,9 @@ public interface ISweetSnakeServer
      * @param request
      * @return
      * @throws PlayerNotFoundException
-     * @throws UnableToMountGameSessionException
+     * @throws BadGameSessionException
      */
-    SweetSnakeGameSessionDTO acceptGameSession(ISweetSnakeClientCallback client, SweetSnakeGameRequestDTO request) throws PlayerNotFoundException, UnableToMountGameSessionException;
+    SweetSnakeGameSessionDTO acceptGameSession(ISweetSnakeClientCallback client, SweetSnakeGameRequestDTO request) throws PlayerNotFoundException, BadGameSessionException;
 
     /**
      * 
@@ -56,7 +56,7 @@ public interface ISweetSnakeServer
      * 
      * @param client
      */
-    void cancelGameSessionRequest(ISweetSnakeClientCallback client);
+    void cancelGameRequest(ISweetSnakeClientCallback client);
 
     /**
      * 
@@ -67,8 +67,10 @@ public interface ISweetSnakeServer
 
     /**
      * 
+     * @param client
+     * @param session
      * @param direction
      */
-    void move(Direction direction);
+    void requestMove(ISweetSnakeClientCallback client, SweetSnakeGameSessionDTO session, Direction direction) throws BadGameSessionException;
 
 }

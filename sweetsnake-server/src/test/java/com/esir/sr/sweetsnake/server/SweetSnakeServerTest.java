@@ -25,7 +25,7 @@ import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.Status;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
-import com.esir.sr.sweetsnake.exception.UnableToMountGameSessionException;
+import com.esir.sr.sweetsnake.exception.BadGameSessionException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:spring/sweetsnake-server-context-test.xml" })
@@ -101,7 +101,7 @@ public class SweetSnakeServerTest
     }
 
     @Test
-    public void gameSessionTest() throws PlayerNotFoundException, UnableToMountGameSessionException, RemoteException {
+    public void gameSessionTest() throws PlayerNotFoundException, BadGameSessionException, RemoteException {
         log.debug("---------------------------- gameSessionTest() ----------------------------");
 
         final SweetSnakePlayerDTO player2DTO = new SweetSnakePlayerDTO(client2.getName(), Status.AVAILABLE);

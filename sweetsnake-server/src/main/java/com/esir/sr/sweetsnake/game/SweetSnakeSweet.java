@@ -3,7 +3,6 @@ package com.esir.sr.sweetsnake.game;
 import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.enumeration.Direction;
-import com.esir.sr.sweetsnake.session.SweetSnakeGameSession;
 
 public class SweetSnakeSweet extends SweetSnakeAbstractElement
 {
@@ -37,8 +36,7 @@ public class SweetSnakeSweet extends SweetSnakeAbstractElement
 
     @Override
     public void move(final Direction direction) {
-        x = (x + direction.getValue()[0] + SweetSnakeGameSession.GRID_SIZE) % SweetSnakeGameSession.GRID_SIZE;
-        y = (y + direction.getValue()[1] + SweetSnakeGameSession.GRID_SIZE) % SweetSnakeGameSession.GRID_SIZE;
+        log.info("Moving sweet to the {}", direction);
     }
 
     /**********************************************************************************************

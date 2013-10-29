@@ -51,8 +51,10 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
@@ -63,16 +65,20 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#getClientCallback()
      */
     @Override
     public ISweetSnakeClientCallback getClientCallback() {
         return client;
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#getName()
      */
     @Override
     public String getName() {
@@ -91,8 +97,12 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * [BLOCK] SETTERS
      **********************************************************************************************/
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see
+     * com.esir.sr.sweetsnake.api.ISweetSnakePlayer#setStatus(com.esir.sr.sweetsnake.enumeration
+     * .Status)
      */
     @Override
     public void setStatus(final Status _status) {

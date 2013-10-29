@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import com.esir.sr.sweetsnake.api.IElement;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 
 public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, Serializable
 {
@@ -62,6 +63,12 @@ public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, 
     @Override
     public String getName() throws RemoteException {
         return name;
+    }
+
+    @Override
+    public void startGame(final SweetSnakeGameSessionDTO session) {
+        // TODO Auto-generated method stub
+
     }
 
 }

@@ -1,5 +1,7 @@
 package com.esir.sr.sweetsnake.api;
 
+import com.esir.sr.sweetsnake.enumeration.Direction;
+
 public interface ISweetSnakeGameSession
 {
 
@@ -7,17 +9,32 @@ public interface ISweetSnakeGameSession
      * 
      * @return
      */
-    public ISweetSnakePlayer getPlayer1();
+    ISweetSnakePlayer getPlayer1();
 
     /**
      * 
      * @return
      */
-    public ISweetSnakePlayer getPlayer2();
+    ISweetSnakePlayer getPlayer2();
 
     /**
      * 
      */
-    public void startGame();
+    void startGame();
+
+    void stopGame();
+
+    /**
+     * 
+     * @return
+     */
+    boolean isGameStarted();
+
+    /**
+     * 
+     * @param player
+     * @param direction
+     */
+    void movePlayer(ISweetSnakePlayer player, Direction direction);
 
 }

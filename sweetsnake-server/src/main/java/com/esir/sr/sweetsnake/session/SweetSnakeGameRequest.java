@@ -60,8 +60,10 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
         requestedPlayer.setStatus(Status.INVITED);
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest#cancel()
      */
     @Override
     public void cancel() {
@@ -74,16 +76,20 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest#getRequestingPlayer()
      */
     @Override
     public ISweetSnakePlayer getRequestingPlayer() {
         return requestingPlayer;
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest#getRequestedPlayer()
      */
     @Override
     public ISweetSnakePlayer getRequestedPlayer() {

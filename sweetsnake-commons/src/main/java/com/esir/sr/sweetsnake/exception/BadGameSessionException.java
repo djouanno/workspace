@@ -1,7 +1,7 @@
 package com.esir.sr.sweetsnake.exception;
 
 
-public class UnableToMountGameSessionException extends Exception
+public class BadGameSessionException extends Exception
 {
 
     private static final long serialVersionUID = 4022247310885736041L;
@@ -10,11 +10,11 @@ public class UnableToMountGameSessionException extends Exception
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public UnableToMountGameSessionException() {
+    public BadGameSessionException() {
         super();
     }
 
-    public UnableToMountGameSessionException(final String message) {
+    public BadGameSessionException(final String message) {
         super(message);
     }
 

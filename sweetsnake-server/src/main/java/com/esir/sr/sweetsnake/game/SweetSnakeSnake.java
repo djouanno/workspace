@@ -22,6 +22,9 @@ public class SweetSnakeSnake extends SweetSnakeAbstractElement
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     public SweetSnakeSnake() {
         super(Type.SNAKE);
     }
@@ -36,8 +39,16 @@ public class SweetSnakeSnake extends SweetSnakeAbstractElement
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.esir.sr.sweetsnake.game.SweetSnakeAbstractElement#move(com.esir.sr.sweetsnake.enumeration
+     * .Direction)
+     */
     @Override
     public void move(final Direction direction) {
+        log.info("Movie snake to the {}", direction);
         x = (x + direction.getValue()[0] + SweetSnakeGameSession.GRID_SIZE) % SweetSnakeGameSession.GRID_SIZE;
         y = (y + direction.getValue()[1] + SweetSnakeGameSession.GRID_SIZE) % SweetSnakeGameSession.GRID_SIZE;
     }
