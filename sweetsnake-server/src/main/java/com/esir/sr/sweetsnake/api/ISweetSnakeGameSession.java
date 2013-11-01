@@ -9,6 +9,12 @@ public interface ISweetSnakeGameSession
      * 
      * @return
      */
+    String getId();
+
+    /**
+     * 
+     * @return
+     */
     ISweetSnakePlayer getPlayer1();
 
     /**

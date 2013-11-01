@@ -16,13 +16,14 @@ public class SweetSnakeGameSessionDTO implements Serializable
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final String      player1, player2;
+    private final String      id, player1, player2;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public SweetSnakeGameSessionDTO(final String _player1, final String _player2) {
+    public SweetSnakeGameSessionDTO(final String _id, final String _player1, final String _player2) {
+        id = _id;
         player1 = _player1;
         player2 = _player2;
     }
@@ -30,6 +31,10 @@ public class SweetSnakeGameSessionDTO implements Serializable
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
+
+    public String getId() {
+        return id;
+    }
 
     public String getPlayer1Name() {
         return player1;

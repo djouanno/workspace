@@ -20,7 +20,7 @@ public class SweetSnakeFactory
      * @return
      */
     public static SweetSnakeGameRequestDTO convertGameSessionRequest(final ISweetSnakeGameRequest request) {
-        final SweetSnakeGameRequestDTO requestDTO = new SweetSnakeGameRequestDTO(request.getRequestingPlayer().getName(), request.getRequestedPlayer().getName());
+        final SweetSnakeGameRequestDTO requestDTO = new SweetSnakeGameRequestDTO(request.getId(), request.getRequestingPlayer().getName(), request.getRequestedPlayer().getName());
         return requestDTO;
     }
 
@@ -30,7 +30,7 @@ public class SweetSnakeFactory
      * @return
      */
     public static SweetSnakeGameSessionDTO convertGameSession(final ISweetSnakeGameSession session) {
-        final SweetSnakeGameSessionDTO sessionDTO = new SweetSnakeGameSessionDTO(session.getPlayer1().getName(), session.getPlayer2().getName());
+        final SweetSnakeGameSessionDTO sessionDTO = new SweetSnakeGameSessionDTO(session.getId(), session.getPlayer1().getName(), session.getPlayer2().getName());
         return sessionDTO;
     }
 

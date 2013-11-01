@@ -7,6 +7,12 @@ public interface ISweetSnakeGameRequest
      * 
      * @return
      */
+    String getId();
+
+    /**
+     * 
+     * @return
+     */
     ISweetSnakePlayer getRequestingPlayer();
 
     /**

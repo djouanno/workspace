@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <developers>
@@ -25,18 +24,28 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <junit.version>4.8</junit.version>
     <logback.version>1.0.13</logback.version>
     <spring.version>3.2.4.RELEASE</spring.version>
     <annotation.version>1.0</annotation.version>
+    <apache.commons.version>3.1</apache.commons.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <!-- Junit -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+      </dependency>
+      <!-- Loggers -->
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
         <version>${logback.version}</version>
       </dependency>
+      <!-- Spring -->
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context</artifactId>
@@ -57,28 +66,34 @@
         <artifactId>spring-test</artifactId>
         <version>${spring.version}</version>
       </dependency>
+      <!-- javax -->
       <dependency>
         <groupId>javax.annotation</groupId>
         <artifactId>jsr250-api</artifactId>
         <version>${annotation.version}</version>
       </dependency>
+      <!-- Apache -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${apache.commons.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
+    <!-- JUnit -->
     <dependency>
-      <!-- JUnit -->
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8</version>
       <scope>test</scope>
     </dependency>
-    <!-- Log -->
+    <!-- Loggers -->
     <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
     </dependency>
-    <!-- Spring --> 
+    <!-- Spring -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
@@ -99,6 +114,11 @@
     <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>jsr250-api</artifactId>
+    </dependency>
+    <!-- Apache -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
   </dependencies>
 

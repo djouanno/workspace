@@ -2,8 +2,8 @@ package com.esir.sr.sweetsnake.game;
 
 import org.slf4j.LoggerFactory;
 
+import com.esir.sr.sweetsnake.constants.SweetSnakeGameConstants;
 import com.esir.sr.sweetsnake.enumeration.Direction;
-import com.esir.sr.sweetsnake.session.SweetSnakeGameSession;
 
 public class SweetSnakeSnake extends SweetSnakeAbstractElement
 {
@@ -42,15 +42,13 @@ public class SweetSnakeSnake extends SweetSnakeAbstractElement
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.esir.sr.sweetsnake.game.SweetSnakeAbstractElement#move(com.esir.sr.sweetsnake.enumeration
-     * .Direction)
+     * @see com.esir.sr.sweetsnake.game.SweetSnakeAbstractElement#move(com.esir.sr.sweetsnake.enumeration .Direction)
      */
     @Override
     public void move(final Direction direction) {
-        log.info("Movie snake to the {}", direction);
-        x = (x + direction.getValue()[0] + SweetSnakeGameSession.GRID_SIZE) % SweetSnakeGameSession.GRID_SIZE;
-        y = (y + direction.getValue()[1] + SweetSnakeGameSession.GRID_SIZE) % SweetSnakeGameSession.GRID_SIZE;
+        log.info("Moving snake to the {}", direction);
+        x = (x + direction.getValue()[0] + SweetSnakeGameConstants.GRID_SIZE) % SweetSnakeGameConstants.GRID_SIZE;
+        y = (y + direction.getValue()[1] + SweetSnakeGameConstants.GRID_SIZE) % SweetSnakeGameConstants.GRID_SIZE;
     }
 
     /**********************************************************************************************

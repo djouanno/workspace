@@ -1,8 +1,8 @@
-package com.esir.sr.sweetsnake.server;
+package com.esir.sr.sweetsnake.utils;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class LaunchServer
+public class ServerLauncher
 {
 
     /**

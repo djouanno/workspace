@@ -14,6 +14,7 @@ import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.api.ISweetSnakeServer;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
 @Component
@@ -81,7 +82,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
         try {
             server.connect(listener);
         } catch (final UnableToConnectException e) {
-            log.error("Unable to connect : {}", e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -90,7 +91,11 @@ public class SweetSnakeClient implements ISweetSnakeClient
      */
     @Override
     public void disconnect() {
-        server.disconnect(listener);
+        try {
+            server.disconnect(listener);
+        } catch (final PlayerNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /**

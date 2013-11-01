@@ -16,13 +16,14 @@ public class SweetSnakeGameRequestDTO implements Serializable
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final String      requestingPlayerName, requestedPlayerName;
+    private final String      id, requestingPlayerName, requestedPlayerName;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public SweetSnakeGameRequestDTO(final String _requestingPlayerName, final String _requestedPlayerName) {
+    public SweetSnakeGameRequestDTO(final String _id, final String _requestingPlayerName, final String _requestedPlayerName) {
+        id = _id;
         requestingPlayerName = _requestingPlayerName;
         requestedPlayerName = _requestedPlayerName;
     }
@@ -30,6 +31,10 @@ public class SweetSnakeGameRequestDTO implements Serializable
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
+
+    public String getId() {
+        return id;
+    }
 
     public String getRequestingPlayerName() {
         return requestingPlayerName;

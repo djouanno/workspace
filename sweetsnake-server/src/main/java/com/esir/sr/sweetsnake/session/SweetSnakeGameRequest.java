@@ -2,12 +2,12 @@ package com.esir.sr.sweetsnake.session;
 
 import java.io.Serializable;
 
-import javax.annotation.PostConstruct;
-
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest;
 import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
+import com.esir.sr.sweetsnake.constants.SweetSnakePropertiesConstants;
 import com.esir.sr.sweetsnake.enumeration.Status;
 
 public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializable
@@ -24,6 +24,7 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
+    private final String                  id;
     private final ISweetSnakePlayer       requestingPlayer, requestedPlayer;
 
     /**********************************************************************************************
@@ -37,8 +38,11 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
      */
     public SweetSnakeGameRequest(final ISweetSnakePlayer _requestingPlayer, final ISweetSnakePlayer _requestedPlayer) {
         log.info("Initializing new game session request between {} and {}", _requestingPlayer.getName(), _requestedPlayer.getName());
+        id = RandomStringUtils.randomAlphanumeric(SweetSnakePropertiesConstants.GENERATED_ID_LENGTH);
         requestingPlayer = _requestingPlayer;
         requestedPlayer = _requestedPlayer;
+        requestingPlayer.setStatus(Status.PENDING);
+        requestedPlayer.setStatus(Status.INVITED);
     }
 
     /**********************************************************************************************
@@ -50,15 +54,6 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
-
-    /**
-     * 
-     */
-    @PostConstruct
-    public void init() {
-        requestingPlayer.setStatus(Status.PENDING);
-        requestedPlayer.setStatus(Status.INVITED);
-    }
 
     /*
      * (non-Javadoc)
@@ -75,6 +70,16 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest#getId()
+     */
+    @Override
+    public String getId() {
+        return id;
+    }
 
     /*
      * (non-Javadoc)

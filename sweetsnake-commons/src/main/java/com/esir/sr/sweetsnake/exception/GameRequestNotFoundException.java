@@ -1,20 +1,20 @@
 package com.esir.sr.sweetsnake.exception;
 
 
-public class BadGameSessionException extends Exception
+public class GameRequestNotFoundException extends Exception
 {
 
-    private static final long serialVersionUID = 4022247310885736041L;
+    private static final long serialVersionUID = 1565159930012015433L;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public BadGameSessionException() {
+    public GameRequestNotFoundException() {
         super();
     }
 
-    public BadGameSessionException(final String message) {
+    public GameRequestNotFoundException(final String message) {
         super(message);
     }
 

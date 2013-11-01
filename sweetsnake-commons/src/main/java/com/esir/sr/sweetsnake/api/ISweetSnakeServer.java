@@ -6,7 +6,9 @@ import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.Direction;
-import com.esir.sr.sweetsnake.exception.BadGameSessionException;
+import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
+import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
+import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
@@ -23,8 +25,9 @@ public interface ISweetSnakeServer
     /**
      * 
      * @param client
+     * @throws PlayerNotFoundException
      */
-    void disconnect(ISweetSnakeClientCallback client);
+    void disconnect(ISweetSnakeClientCallback client) throws PlayerNotFoundException;
 
     /**
      * 
@@ -32,9 +35,9 @@ public interface ISweetSnakeServer
      * @param otherPlayer
      * @return
      * @throws PlayerNotFoundException
-     * @throws BadGameSessionException
+     * @throws PlayerNotAvailableException
      */
-    SweetSnakeGameRequestDTO requestGameSession(ISweetSnakeClientCallback client, SweetSnakePlayerDTO otherPlayer) throws PlayerNotFoundException, BadGameSessionException;
+    SweetSnakeGameRequestDTO requestGameSession(ISweetSnakeClientCallback client, SweetSnakePlayerDTO otherPlayer) throws PlayerNotFoundException, PlayerNotAvailableException;
 
     /**
      * 
@@ -42,9 +45,9 @@ public interface ISweetSnakeServer
      * @param request
      * @return
      * @throws PlayerNotFoundException
-     * @throws BadGameSessionException
+     * @throws GameRequestNotFoundException
      */
-    SweetSnakeGameSessionDTO acceptGameSession(ISweetSnakeClientCallback client, SweetSnakeGameRequestDTO request) throws PlayerNotFoundException, BadGameSessionException;
+    SweetSnakeGameSessionDTO acceptGameSession(ISweetSnakeClientCallback client, SweetSnakeGameRequestDTO requestDTO) throws PlayerNotFoundException, GameRequestNotFoundException;
 
     /**
      * 
@@ -55,8 +58,10 @@ public interface ISweetSnakeServer
     /**
      * 
      * @param client
+     * @throws PlayerNotFoundException
+     * @throws GameRequestNotFoundException
      */
-    void cancelGameRequest(ISweetSnakeClientCallback client);
+    void cancelGameRequest(ISweetSnakeClientCallback client, SweetSnakeGameRequestDTO requestDTO) throws PlayerNotFoundException, GameRequestNotFoundException;
 
     /**
      * 
@@ -70,7 +75,9 @@ public interface ISweetSnakeServer
      * @param client
      * @param session
      * @param direction
+     * @throws PlayerNotFoundException
+     * @throws GameSessionNotFoundException
      */
-    void requestMove(ISweetSnakeClientCallback client, SweetSnakeGameSessionDTO session, Direction direction) throws BadGameSessionException;
+    void requestMove(ISweetSnakeClientCallback client, SweetSnakeGameSessionDTO session, Direction direction) throws PlayerNotFoundException, GameSessionNotFoundException;
 
 }

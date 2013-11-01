@@ -5,7 +5,7 @@ public enum Direction
 
     LEFT(new int[] { -1, 0 }), UP(new int[] { 0, -1 }), RIGHT(new int[] { +1, 0 }), DOWN(new int[] { 0, +1 });
 
-    private int[] value = { 0, 0 };
+    private int[] value;
 
     Direction(final int[] _value) {
         value = _value;
@@ -17,18 +17,24 @@ public enum Direction
 
     @Override
     public String toString() {
+        String direction;
         switch (this) {
             case LEFT:
-                return "left";
+                direction = "left";
+                break;
             case UP:
-                return "up";
+                direction = "up";
+                break;
             case RIGHT:
-                return "right";
+                direction = "right";
+                break;
             case DOWN:
-                return "down";
+                direction = "down";
+                break;
             default:
                 return "unknown";
         }
+        return direction + "[" + value[0] + "," + value[1] + "]";
     }
 
 }

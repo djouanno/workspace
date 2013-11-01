@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.server;
+package com.esir.sr.sweetsnake.utils;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;

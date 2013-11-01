@@ -1,28 +1,32 @@
 package com.esir.sr.sweetsnake.server;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameRequestsRegistry;
 import com.esir.sr.sweetsnake.api.ISweetSnakeGameSession;
+import com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionsRegistry;
 import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
+import com.esir.sr.sweetsnake.api.ISweetSnakePlayersRegistry;
 import com.esir.sr.sweetsnake.api.ISweetSnakeServer;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.Direction;
 import com.esir.sr.sweetsnake.enumeration.Status;
-import com.esir.sr.sweetsnake.exception.BadGameSessionException;
+import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
+import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
+import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 import com.esir.sr.sweetsnake.factory.SweetSnakeFactory;
@@ -38,15 +42,20 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final Logger                                   log = LoggerFactory.getLogger(SweetSnakeServer.class);
+    private static final Logger             log = LoggerFactory.getLogger(SweetSnakeServer.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private Map<String, ISweetSnakePlayer>                        players;
-    private Map<ISweetSnakePlayer, ISweetSnakeGameRequest>        gameRequests;
-    private Map<SweetSnakeGameSessionDTO, ISweetSnakeGameSession> gameSessions;
+    @Autowired
+    private ISweetSnakePlayersRegistry      players;
+
+    @Autowired
+    private ISweetSnakeGameRequestsRegistry gameRequests;
+
+    @Autowired
+    private ISweetSnakeGameSessionsRegistry gameSessions;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -60,26 +69,20 @@ public class SweetSnakeServer implements ISweetSnakeServer
     }
 
     /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
+     * [BLOCK] INIT METHODS
      **********************************************************************************************/
 
     /**
      * 
-     * @param request
-     * @return
      */
-    private SweetSnakeGameSessionDTO startGameSession(final ISweetSnakeGameRequest request) {
-        final ISweetSnakePlayer player1 = request.getRequestingPlayer(), player2 = request.getRequestedPlayer();
-
-        final ISweetSnakeGameSession gameSession = new SweetSnakeGameSession(player1, player2);
-        final SweetSnakeGameSessionDTO gameSessionDTO = SweetSnakeFactory.convertGameSession(gameSession);
-
-        gameSessions.put(gameSessionDTO, gameSession);
-        gameRequests.remove(player1);
-        gameSession.startGame();
-
-        return gameSessionDTO;
+    @PostConstruct
+    public void init() {
+        log.info("Initialization of the SweetSnakeServer");
     }
+
+    /**********************************************************************************************
+     * [BLOCK] PRIVATE METHODS
+     **********************************************************************************************/
 
     /**
      * 
@@ -90,61 +93,14 @@ public class SweetSnakeServer implements ISweetSnakeServer
         try {
             return client.getName();
         } catch (final RemoteException e) {
-            log.error("unable to retrieve client name : {}", e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
-        return null;
-    }
-
-    /**
-     * 
-     * @param name
-     * @return
-     */
-    private ISweetSnakePlayer retrievePlayer(final String name) {
-        if (players.containsKey(name)) {
-            return players.get(name);
-        }
-        return null;
-    }
-
-    /**
-     * 
-     * @param player
-     * @return
-     */
-    private ISweetSnakeGameRequest retrieveRequest(final ISweetSnakePlayer player) {
-        if (gameRequests.containsKey(player)) {
-            return gameRequests.get(player);
-        }
-        return null;
-    }
-
-    /**
-     * 
-     * @param sessionDTO
-     * @return
-     */
-    private ISweetSnakeGameSession retrieveSession(final SweetSnakeGameSessionDTO sessionDTO) {
-        if (gameSessions.containsKey(sessionDTO)) {
-            return gameSessions.get(sessionDTO);
-        }
-        return null;
+        return new String();
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
-
-    /**
-     * 
-     */
-    @PostConstruct
-    public void init() {
-        log.info("Initialization of the SweetSnakeServer");
-        players = new HashMap<String, ISweetSnakePlayer>();
-        gameSessions = new HashMap<SweetSnakeGameSessionDTO, ISweetSnakeGameSession>();
-        gameRequests = new HashMap<ISweetSnakePlayer, ISweetSnakeGameRequest>();
-    }
 
     /*
      * (non-Javadoc)
@@ -158,12 +114,12 @@ public class SweetSnakeServer implements ISweetSnakeServer
         if (clientName == null) {
             throw new UnableToConnectException("username cannot be null");
         }
-        if (players.containsKey(clientName)) {
+        if (players.contains(clientName)) {
             throw new UnableToConnectException("username " + clientName + " already taken");
         }
         final ISweetSnakePlayer player = new SweetSnakePlayer(client);
         player.setStatus(Status.AVAILABLE);
-        players.put(clientName, player);
+        players.add(player);
         log.info("New client with username {} has connected", clientName);
     }
 
@@ -174,12 +130,10 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * ISweetSnakeClientCallback)
      */
     @Override
-    public void disconnect(final ISweetSnakeClientCallback client) {
+    public void disconnect(final ISweetSnakeClientCallback client) throws PlayerNotFoundException {
         final String clientName = retrieveClientName(client);
-        if (players.containsKey(clientName)) {
-            players.remove(clientName);
-            log.info("Client with username {} has disconnected", clientName);
-        }
+        players.remove(clientName);
+        log.info("Client with username {} has disconnected", clientName);
     }
 
     /*
@@ -190,23 +144,16 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * .ISweetSnakeClientCallback, com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO)
      */
     @Override
-    public SweetSnakeGameRequestDTO requestGameSession(final ISweetSnakeClientCallback client, final SweetSnakePlayerDTO otherPlayer) throws PlayerNotFoundException, BadGameSessionException {
-        if (!players.containsKey(otherPlayer.getName())) {
-            throw new PlayerNotFoundException("unable to find the specified player");
-        }
+    public SweetSnakeGameRequestDTO requestGameSession(final ISweetSnakeClientCallback client, final SweetSnakePlayerDTO otherPlayer) throws PlayerNotFoundException, PlayerNotAvailableException {
+        final ISweetSnakePlayer player2 = players.get(otherPlayer.getName());
 
-        final ISweetSnakePlayer player2 = retrievePlayer(otherPlayer.getName());
         if (player2.getStatus() != Status.AVAILABLE) {
-            throw new BadGameSessionException("player is not available");
+            throw new PlayerNotAvailableException("player is not available");
         }
 
-        final ISweetSnakePlayer player1 = retrievePlayer(retrieveClientName(client));
-        if (gameRequests.containsKey(player1)) {
-            throw new BadGameSessionException("a request is already pending");
-        }
-
+        final ISweetSnakePlayer player1 = players.get(retrieveClientName(client));
         final ISweetSnakeGameRequest request = new SweetSnakeGameRequest(player1, player2);
-        gameRequests.put(player1, request);
+        gameRequests.add(request);
 
         final SweetSnakeGameRequestDTO requestDTO = SweetSnakeFactory.convertGameSessionRequest(request);
         player2.getClientCallback().requestGame(requestDTO);
@@ -223,21 +170,22 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * .ISweetSnakeClientCallback, com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
      */
     @Override
-    public SweetSnakeGameSessionDTO acceptGameSession(final ISweetSnakeClientCallback client, final SweetSnakeGameRequestDTO requestDTO) throws PlayerNotFoundException, BadGameSessionException {
-        final ISweetSnakePlayer requestingPlayer = retrievePlayer(requestDTO.getRequestingPlayerName());
-        if (requestingPlayer == null) {
-            throw new PlayerNotFoundException("player not found");
-        }
+    public SweetSnakeGameSessionDTO acceptGameSession(final ISweetSnakeClientCallback client, final SweetSnakeGameRequestDTO requestDTO) throws PlayerNotFoundException, GameRequestNotFoundException {
+        final ISweetSnakeGameRequest request = gameRequests.get(requestDTO.getId());
 
-        final ISweetSnakeGameRequest request = retrieveRequest(requestingPlayer);
-        if (request == null) {
-            throw new BadGameSessionException("request not available");
-        }
         if (!request.getRequestedPlayer().getName().equals(retrieveClientName(client))) {
-            throw new BadGameSessionException("no matching request");
+            throw new GameRequestNotFoundException("no matching request");
         }
 
-        return startGameSession(request);
+        final ISweetSnakePlayer player1 = request.getRequestingPlayer(), player2 = request.getRequestedPlayer();
+        final ISweetSnakeGameSession gameSession = new SweetSnakeGameSession(player1, player2);
+
+        gameSessions.add(gameSession);
+        gameRequests.remove(requestDTO.getId());
+
+        gameSession.startGame();
+
+        return SweetSnakeFactory.convertGameSession(gameSession);
     }
 
     /*
@@ -259,14 +207,12 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * .api.ISweetSnakeClientCallback)
      */
     @Override
-    public void cancelGameRequest(final ISweetSnakeClientCallback client) {
+    public void cancelGameRequest(final ISweetSnakeClientCallback client, final SweetSnakeGameRequestDTO requestDTO) throws PlayerNotFoundException, GameRequestNotFoundException {
         final String clientName = retrieveClientName(client);
-        final ISweetSnakePlayer player = retrievePlayer(clientName);
-        final ISweetSnakeGameRequest request = retrieveRequest(player);
-        if (request != null) {
-            request.cancel();
-            gameRequests.remove(request);
-        }
+        final ISweetSnakePlayer player = players.get(clientName);
+        final ISweetSnakeGameRequest request = gameRequests.get(requestDTO.getId());
+        request.cancel();
+        gameRequests.remove(requestDTO.getId());
         log.info("Game session request canceled by player {}", player);
     }
 
@@ -278,15 +224,14 @@ public class SweetSnakeServer implements ISweetSnakeServer
      * com.esir.sr.sweetsnake.enumeration.Direction)
      */
     @Override
-    public void requestMove(final ISweetSnakeClientCallback client, final SweetSnakeGameSessionDTO sessionDTO, final Direction direction) throws BadGameSessionException {
-        final ISweetSnakeGameSession session = retrieveSession(sessionDTO);
-        if (session == null) {
-            throw new BadGameSessionException("unavailable session");
-        }
-        final ISweetSnakePlayer player = retrievePlayer(retrieveClientName(client));
+    public void requestMove(final ISweetSnakeClientCallback client, final SweetSnakeGameSessionDTO sessionDTO, final Direction direction) throws PlayerNotFoundException, GameSessionNotFoundException {
+        final ISweetSnakeGameSession session = gameSessions.get(sessionDTO.getId());
+        final ISweetSnakePlayer player = players.get(retrieveClientName(client));
+
         if (player != session.getPlayer1() && player != session.getPlayer2()) {
-            throw new BadGameSessionException("unauthorized session");
+            throw new PlayerNotFoundException("unauthorized session for this player");
         }
+
         if (session.isGameStarted()) {
             session.movePlayer(player, direction);
         }
@@ -301,11 +246,15 @@ public class SweetSnakeServer implements ISweetSnakeServer
     @Override
     public List<SweetSnakePlayerDTO> getPlayersList(final ISweetSnakeClientCallback client) {
         final String clientName = retrieveClientName(client);
-        final List<SweetSnakePlayerDTO> playersList = new ArrayList<SweetSnakePlayerDTO>();
-        for (final String player : players.keySet()) {
+        final List<SweetSnakePlayerDTO> playersList = new LinkedList<SweetSnakePlayerDTO>();
+        for (final String player : players.getPlayersName()) {
             if (!clientName.equals(player)) {
-                final SweetSnakePlayerDTO playerDTO = SweetSnakeFactory.convertPlayer(players.get(player));
-                playersList.add(playerDTO);
+                try {
+                    final SweetSnakePlayerDTO playerDTO = SweetSnakeFactory.convertPlayer(players.get(player));
+                    playersList.add(playerDTO);
+                } catch (final PlayerNotFoundException e) {
+                    log.error(e.getMessage(), e);
+                }
             }
         }
         return playersList;
