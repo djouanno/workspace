@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
-import com.esir.sr.sweetsnake.enumeration.Status;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakePlayerStatus;
 
 public class SweetSnakePlayer implements ISweetSnakePlayer
 {
@@ -22,7 +22,7 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
 
     private final ISweetSnakeClientCallback client;
     private String                          name;
-    private Status                          status;
+    private SweetSnakePlayerStatus                          status;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -89,7 +89,7 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * 
      */
     @Override
-    public Status getStatus() {
+    public SweetSnakePlayerStatus getStatus() {
         return status;
     }
 
@@ -105,7 +105,7 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
      * .Status)
      */
     @Override
-    public void setStatus(final Status _status) {
+    public void setStatus(final SweetSnakePlayerStatus _status) {
         status = _status;
     }
 

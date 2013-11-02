@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.esir.sr.sweetsnake.api.ISweetSnakeGameRequest;
 import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
 import com.esir.sr.sweetsnake.constants.SweetSnakePropertiesConstants;
-import com.esir.sr.sweetsnake.enumeration.Status;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakePlayerStatus;
 
 public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializable
 {
@@ -41,8 +41,8 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
         id = RandomStringUtils.randomAlphanumeric(SweetSnakePropertiesConstants.GENERATED_ID_LENGTH);
         requestingPlayer = _requestingPlayer;
         requestedPlayer = _requestedPlayer;
-        requestingPlayer.setStatus(Status.PENDING);
-        requestedPlayer.setStatus(Status.INVITED);
+        requestingPlayer.setStatus(SweetSnakePlayerStatus.PENDING);
+        requestedPlayer.setStatus(SweetSnakePlayerStatus.INVITED);
     }
 
     /**********************************************************************************************
@@ -62,8 +62,8 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
      */
     @Override
     public void cancel() {
-        requestingPlayer.setStatus(Status.AVAILABLE);
-        requestedPlayer.setStatus(Status.AVAILABLE); // TODO pas sûr que ça soit
+        requestingPlayer.setStatus(SweetSnakePlayerStatus.AVAILABLE);
+        requestedPlayer.setStatus(SweetSnakePlayerStatus.AVAILABLE); // TODO pas sûr que ça soit
                                                      // bon ça
     }
 

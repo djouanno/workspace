@@ -1,14 +1,14 @@
 package com.esir.sr.sweetsnake.enumeration;
 
 
-public enum Status
+public enum SweetSnakePlayerStatus
 {
 
     AVAILABLE("available"), PENDING("pending"), INVITED("invited"), PLAYING("playing");
 
     private String value = "unknown";
 
-    Status(final String _value) {
+    SweetSnakePlayerStatus(final String _value) {
         value = _value;
     }
 

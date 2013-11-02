@@ -9,7 +9,6 @@
     </parent>
     
     <artifactId>sweetsnake-client</artifactId>
-    <version>${project.parent.version}</version>
     <name>sweetsnake-client</name>
     
     <url>http://maven.apache.org</url>
@@ -22,7 +21,12 @@
         <dependency>
             <artifactId>sweetsnake-commons</artifactId>
             <groupId>com.esir.sr</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>sweetsnake-ihm</artifactId>
+            <groupId>com.esir.sr</groupId>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

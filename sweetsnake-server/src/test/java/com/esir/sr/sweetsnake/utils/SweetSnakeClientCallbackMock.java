@@ -3,10 +3,10 @@ package com.esir.sr.sweetsnake.utils;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import com.esir.sr.sweetsnake.api.IElement;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
 
 public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, Serializable
 {
@@ -41,34 +41,33 @@ public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, 
     }
 
     @Override
-    public void addElement(final IElement element) throws RemoteException {
+    public void startGame(final SweetSnakeGameSessionDTO session) {
         // TODO Auto-generated method stub
+
     }
 
     @Override
-    public void updateElement(final IElement element) throws RemoteException {
+    public void confirmMove(final SweetSnakeDirection direction) throws RemoteException {
         // TODO Auto-generated method stub
+
     }
 
-    @Override
-    public void removeElement(final IElement element) throws RemoteException {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void setScore(final long score) throws RemoteException {
-        // TODO Auto-generated method stub
-    }
+    /**********************************************************************************************
+     * [BLOCK] GETTERS
+     **********************************************************************************************/
 
     @Override
     public String getName() throws RemoteException {
         return name;
     }
 
-    @Override
-    public void startGame(final SweetSnakeGameSessionDTO session) {
-        // TODO Auto-generated method stub
+    /**********************************************************************************************
+     * [BLOCK] SETTERS
+     **********************************************************************************************/
 
+    @Override
+    public void setScore(final long score) throws RemoteException {
+        // TODO Auto-generated method stub
     }
 
 }

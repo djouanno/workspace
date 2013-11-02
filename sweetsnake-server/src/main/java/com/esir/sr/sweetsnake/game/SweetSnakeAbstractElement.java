@@ -1,32 +1,22 @@
 package com.esir.sr.sweetsnake.game;
 
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeElement;
-import com.esir.sr.sweetsnake.enumeration.Direction;
+import com.esir.sr.sweetsnake.constants.SweetSnakePropertiesConstants;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeElementType;
 
 public abstract class SweetSnakeAbstractElement implements ISweetSnakeElement
 {
-    /**********************************************************************************************
-     * [BLOCK] STATIC FIELDS
-     **********************************************************************************************/
-
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(SweetSnakeAbstractElement.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    protected final Type                  type;
+    protected String                      id;
     protected int                         x, y;
-
-    /**
-     * 
-     */
-    public enum Type
-    {
-        SNAKE, SWEET;
-    }
+    protected final SweetSnakeElementType type;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -36,7 +26,8 @@ public abstract class SweetSnakeAbstractElement implements ISweetSnakeElement
      * 
      * @param _type
      */
-    public SweetSnakeAbstractElement(final Type _type) {
+    public SweetSnakeAbstractElement(final SweetSnakeElementType _type) {
+        id = RandomStringUtils.randomAlphanumeric(SweetSnakePropertiesConstants.GENERATED_ID_LENGTH);
         type = _type;
     }
 
@@ -53,17 +44,24 @@ public abstract class SweetSnakeAbstractElement implements ISweetSnakeElement
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.esir.sr.sweetsnake.api.ISweetSnakeElement#move(com.esir.sr.sweetsnake.enumeration.Direction
-     * )
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#move(com.esir.sr.sweetsnake.enumeration.Direction )
      */
     @Override
-    public abstract void move(Direction direction);
+    public abstract void move(SweetSnakeDirection direction);
 
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#getId()
+     */
+    @Override
+    public String getId() {
+        return id;
+    }
 
     /*
      * (non-Javadoc)
@@ -91,7 +89,7 @@ public abstract class SweetSnakeAbstractElement implements ISweetSnakeElement
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#getType()
      */
     @Override
-    public Type getType() {
+    public SweetSnakeElementType getType() {
         return type;
     }
 

@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.utils;
+package com.esir.sr.sweetsnake.server;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

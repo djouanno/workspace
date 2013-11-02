@@ -1,16 +1,22 @@
 package com.esir.sr.sweetsnake.api;
 
-import com.esir.sr.sweetsnake.enumeration.Direction;
-import com.esir.sr.sweetsnake.game.SweetSnakeAbstractElement.Type;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeElementType;
 
 public interface ISweetSnakeElement
 {
 
     /**
      * 
+     * @return
+     */
+    String getId();
+
+    /**
+     * 
      * @param direction
      */
-    void move(Direction direction);
+    void move(SweetSnakeDirection direction);
 
     /**
      * 
@@ -47,6 +53,6 @@ public interface ISweetSnakeElement
      * 
      * @return
      */
-    Type getType();
+    SweetSnakeElementType getType();
 
 }

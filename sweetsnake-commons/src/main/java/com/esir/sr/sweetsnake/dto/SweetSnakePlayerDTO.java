@@ -2,7 +2,7 @@ package com.esir.sr.sweetsnake.dto;
 
 import java.io.Serializable;
 
-import com.esir.sr.sweetsnake.enumeration.Status;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakePlayerStatus;
 
 public class SweetSnakePlayerDTO implements Serializable
 {
@@ -18,13 +18,13 @@ public class SweetSnakePlayerDTO implements Serializable
      **********************************************************************************************/
 
     private final String      name;
-    private final Status      status;
+    private final SweetSnakePlayerStatus      status;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
-    public SweetSnakePlayerDTO(final String _name, final Status _status) {
+    public SweetSnakePlayerDTO(final String _name, final SweetSnakePlayerStatus _status) {
         name = _name;
         status = _status;
     }
@@ -37,7 +37,7 @@ public class SweetSnakePlayerDTO implements Serializable
         return name;
     }
 
-    public Status getStatus() {
+    public SweetSnakePlayerStatus getStatus() {
         return status;
     }
 

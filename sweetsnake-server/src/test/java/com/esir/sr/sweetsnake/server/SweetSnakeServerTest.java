@@ -23,8 +23,8 @@ import com.esir.sr.sweetsnake.api.ISweetSnakeServer;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
-import com.esir.sr.sweetsnake.enumeration.Direction;
-import com.esir.sr.sweetsnake.enumeration.Status;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakePlayerStatus;
 import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
 import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
 import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
@@ -109,10 +109,10 @@ public class SweetSnakeServerTest
     public void gameSessionTest() throws PlayerNotFoundException, PlayerNotAvailableException, GameRequestNotFoundException, GameSessionNotFoundException, RemoteException {
         log.debug("---------------------------- gameSessionTest() ----------------------------");
 
-        final SweetSnakePlayerDTO player2DTO = new SweetSnakePlayerDTO(client2.getName(), Status.AVAILABLE);
+        final SweetSnakePlayerDTO player2DTO = new SweetSnakePlayerDTO(client2.getName(), SweetSnakePlayerStatus.AVAILABLE);
         final SweetSnakeGameRequestDTO requestDTO = server.requestGameSession(client1, player2DTO);
         final SweetSnakeGameSessionDTO sessionDTO = server.acceptGameSession(client2, requestDTO);
 
-        server.requestMove(client1, sessionDTO, Direction.RIGHT);
+        server.requestMove(client1, sessionDTO, SweetSnakeDirection.RIGHT);
     }
 }

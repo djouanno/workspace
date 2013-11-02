@@ -1,13 +1,13 @@
 package com.esir.sr.sweetsnake.enumeration;
 
-public enum Direction
+public enum SweetSnakeDirection
 {
 
     LEFT(new int[] { -1, 0 }), UP(new int[] { 0, -1 }), RIGHT(new int[] { +1, 0 }), DOWN(new int[] { 0, +1 });
 
     private int[] value;
 
-    Direction(final int[] _value) {
+    SweetSnakeDirection(final int[] _value) {
         value = _value;
     }
 

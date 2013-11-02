@@ -1,7 +1,11 @@
 package com.esir.sr.sweetsnake.api;
 
+import java.util.List;
+
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
+import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
 public interface ISweetSnakeClient
 {
@@ -9,7 +13,7 @@ public interface ISweetSnakeClient
     /**
      * 
      */
-    void connect();
+    void connect(String username) throws UnableToConnectException;
 
     /**
      * 
@@ -30,21 +34,9 @@ public interface ISweetSnakeClient
 
     /**
      * 
-     * @param element
+     * @param direction
      */
-    void addElement(IElement element);
-
-    /**
-     * 
-     * @param element
-     */
-    void updateElement(IElement element);
-
-    /**
-     * 
-     * @param element
-     */
-    void removeElement(IElement element);
+    void confirmMove(SweetSnakeDirection direction);
 
     /**
      * 
@@ -60,14 +52,14 @@ public interface ISweetSnakeClient
 
     /**
      * 
-     * @param name
-     */
-    void setName(String name);
-
-    /**
-     * 
      * @param score
      */
     void setScore(long score);
+
+    /**
+     * 
+     * @return
+     */
+    List<String> getPlayersList();
 
 }

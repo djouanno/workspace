@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -24,12 +25,28 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.7</java.version>
+    <compiler.plugin.version>3.1</compiler.plugin.version>
     <junit.version>4.8</junit.version>
     <logback.version>1.0.13</logback.version>
     <spring.version>3.2.4.RELEASE</spring.version>
     <annotation.version>1.0</annotation.version>
     <apache.commons.version>3.1</apache.commons.version>
   </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${compiler.plugin.version}</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencyManagement>
     <dependencies>
@@ -126,6 +143,7 @@
     <module>sweetsnake-server</module>
     <module>sweetsnake-client</module>
     <module>sweetsnake-commons</module>
+    <module>sweetsnake-ihm</module>
   </modules>
 
 </project>

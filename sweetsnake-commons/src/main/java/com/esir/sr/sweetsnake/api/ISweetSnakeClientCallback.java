@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
 
 public interface ISweetSnakeClientCallback extends Remote
 {
@@ -12,35 +13,24 @@ public interface ISweetSnakeClientCallback extends Remote
     /**
      * 
      * @param request
+     * @throws RemoteException
      */
-    void requestGame(SweetSnakeGameRequestDTO request);
+    void requestGame(SweetSnakeGameRequestDTO request) throws RemoteException;
 
     /**
      * 
      * @param session
+     * @throws RemoteException
      */
-    void startGame(SweetSnakeGameSessionDTO session);
+    void startGame(SweetSnakeGameSessionDTO session) throws RemoteException;
+
 
     /**
      * 
-     * @param element
+     * @param direction
      * @throws RemoteException
      */
-    void addElement(IElement element) throws RemoteException;
-
-    /**
-     * 
-     * @param element
-     * @throws RemoteException
-     */
-    void updateElement(IElement element) throws RemoteException;
-
-    /**
-     * 
-     * @param element
-     * @throws RemoteException
-     */
-    void removeElement(IElement element) throws RemoteException;
+    void confirmMove(SweetSnakeDirection direction) throws RemoteException;
 
     /**
      * 

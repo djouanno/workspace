@@ -1,6 +1,6 @@
 package com.esir.sr.sweetsnake.api;
 
-import com.esir.sr.sweetsnake.enumeration.Status;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakePlayerStatus;
 
 
 public interface ISweetSnakePlayer
@@ -22,12 +22,12 @@ public interface ISweetSnakePlayer
      * 
      * @return
      */
-    Status getStatus();
+    SweetSnakePlayerStatus getStatus();
 
     /**
      * 
      * @param status
      */
-    void setStatus(Status status);
+    void setStatus(SweetSnakePlayerStatus status);
 
 }

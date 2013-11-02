@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.client;
+package com.esir.sr.sweetsnake.callback;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -6,11 +6,11 @@ import java.rmi.server.UnicastRemoteObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.api.IElement;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
 
 @Component
 public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISweetSnakeClientCallback
@@ -42,28 +42,18 @@ public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISw
      **********************************************************************************************/
 
     @Override
-    public void requestGame(final SweetSnakeGameRequestDTO request) {
+    public void requestGame(final SweetSnakeGameRequestDTO request) throws RemoteException {
         client.requestGame(request);
     }
 
     @Override
-    public void startGame(final SweetSnakeGameSessionDTO session) {
+    public void startGame(final SweetSnakeGameSessionDTO session) throws RemoteException {
         client.startGame(session);
     }
 
     @Override
-    public void addElement(final IElement element) throws RemoteException {
-        client.addElement(element);
-    }
-
-    @Override
-    public void updateElement(final IElement element) throws RemoteException {
-        client.updateElement(element);
-    }
-
-    @Override
-    public void removeElement(final IElement element) throws RemoteException {
-        client.removeElement(element);
+    public void confirmMove(final SweetSnakeDirection direction) throws RemoteException {
+        client.confirmMove(direction);
     }
 
     /**********************************************************************************************

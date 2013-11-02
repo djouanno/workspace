@@ -5,7 +5,7 @@ import java.util.List;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
-import com.esir.sr.sweetsnake.enumeration.Direction;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
 import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
 import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
 import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
@@ -78,6 +78,6 @@ public interface ISweetSnakeServer
      * @throws PlayerNotFoundException
      * @throws GameSessionNotFoundException
      */
-    void requestMove(ISweetSnakeClientCallback client, SweetSnakeGameSessionDTO session, Direction direction) throws PlayerNotFoundException, GameSessionNotFoundException;
+    void requestMove(ISweetSnakeClientCallback client, SweetSnakeGameSessionDTO session, SweetSnakeDirection direction) throws PlayerNotFoundException, GameSessionNotFoundException;
 
 }

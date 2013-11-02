@@ -1,6 +1,6 @@
 package com.esir.sr.sweetsnake.api;
 
-import com.esir.sr.sweetsnake.enumeration.Direction;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
 
 public interface ISweetSnakeGameSession
 {
@@ -41,6 +41,6 @@ public interface ISweetSnakeGameSession
      * @param player
      * @param direction
      */
-    void movePlayer(ISweetSnakePlayer player, Direction direction);
+    void movePlayer(ISweetSnakePlayer player, SweetSnakeDirection direction);
 
 }

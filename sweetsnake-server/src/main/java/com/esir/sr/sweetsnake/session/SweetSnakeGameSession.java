@@ -1,5 +1,6 @@
 package com.esir.sr.sweetsnake.session;
 
+import java.rmi.RemoteException;
 import java.util.Random;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -10,8 +11,8 @@ import com.esir.sr.sweetsnake.api.ISweetSnakeGameSession;
 import com.esir.sr.sweetsnake.api.ISweetSnakePlayer;
 import com.esir.sr.sweetsnake.constants.SweetSnakeGameConstants;
 import com.esir.sr.sweetsnake.constants.SweetSnakePropertiesConstants;
-import com.esir.sr.sweetsnake.enumeration.Direction;
-import com.esir.sr.sweetsnake.enumeration.Status;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakePlayerStatus;
 import com.esir.sr.sweetsnake.factory.SweetSnakeFactory;
 import com.esir.sr.sweetsnake.game.SweetSnakeSnake;
 import com.esir.sr.sweetsnake.game.SweetSnakeSweet;
@@ -106,14 +107,18 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
             gameMap[j][k].setXY(j, k);
         }
 
-        player1.getClientCallback().startGame(SweetSnakeFactory.convertGameSession(this));
-        player2.getClientCallback().startGame(SweetSnakeFactory.convertGameSession(this));
+        try {
+            player1.getClientCallback().startGame(SweetSnakeFactory.convertGameSession(this));
+            player2.getClientCallback().startGame(SweetSnakeFactory.convertGameSession(this));
 
-        // TODO maybe reconfirm from client side to synchronize game start
-        gameStarted = true;
+            // TODO maybe reconfirm from client side to synchronize game start
+            gameStarted = true;
 
-        player1.setStatus(Status.PLAYING);
-        player2.setStatus(Status.PLAYING);
+            player1.setStatus(SweetSnakePlayerStatus.PLAYING);
+            player2.setStatus(SweetSnakePlayerStatus.PLAYING);
+        } catch (final RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /*
@@ -133,7 +138,7 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
      * com.esir.sr.sweetsnake.enumeration.Direction)
      */
     @Override
-    public void movePlayer(final ISweetSnakePlayer player, final Direction direction) {
+    public void movePlayer(final ISweetSnakePlayer player, final SweetSnakeDirection direction) {
         final ISweetSnakeElement playerSnake = retrievePlayerSnake(player);
         if (playerSnake == null) {
             log.error("Can't find player's snake"); // TODO throw exception
