@@ -1,10 +1,8 @@
 package com.esir.sr.sweetsnake.client;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +17,7 @@ import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
+import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
@@ -74,18 +73,10 @@ public class SweetSnakeClient implements ISweetSnakeClient
         log.info("Initialiazing a new SweetSnakeClient");
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
-     */
-    @PreDestroy
-    public void destroy() {
-        log.info("Destroying the current SweetSnakeClient : {}", username);
-        disconnect();
-    }
-
-    /**
-     * @throws UnableToConnectException
-     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#connect(java.lang.String)
      */
     @Override
     public void connect(final String _username) throws UnableToConnectException {
@@ -94,16 +85,14 @@ public class SweetSnakeClient implements ISweetSnakeClient
         }
         log.debug("Connecting with username {}", _username);
         username = new String(_username);
-        try {
-            server.connect(callback);
-            ihm.successfullyConnected();
-        } catch (final UnableToConnectException e) {
-            log.error(e.getMessage(), e);
-        }
+        server.connect(callback);
+        ihm.successfullyConnected();
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#disconnect()
      */
     @Override
     public void disconnect() {
@@ -114,24 +103,45 @@ public class SweetSnakeClient implements ISweetSnakeClient
         }
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO)
+     */
+    @Override
+    public void requestGame(final SweetSnakePlayerDTO player) {
+        try {
+            server.requestGameSession(callback, player);
+            ihm.displayInfoMessage("Your request has been sent to " + player.getName());
+        } catch (PlayerNotFoundException | PlayerNotAvailableException e) {
+            ihm.displayErrorMessage(e.getMessage());
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
      */
     @Override
     public void requestGame(final SweetSnakeGameRequestDTO request) {
         // TODO
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#startGame(com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO)
      */
     @Override
     public void startGame(final SweetSnakeGameSessionDTO session) {
         // TODO
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#confirmMove(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
      */
     @Override
     public void confirmMove(final SweetSnakeDirection direction) {
@@ -142,40 +152,44 @@ public class SweetSnakeClient implements ISweetSnakeClient
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#getName()
      */
     @Override
     public String getName() {
         return username;
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#getScore()
      */
     @Override
     public long getScore() {
         return 0;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#getPlayersList()
+     */
     @Override
-    public List<String> getPlayersList() {
-        final List<String> players = new LinkedList<String>();
-        final List<SweetSnakePlayerDTO> playersDTO = server.getPlayersList(callback);
-
-        for (final SweetSnakePlayerDTO playerDTO : playersDTO) {
-            players.add(new String(playerDTO.getName() + " [" + playerDTO.getStatus() + "]"));
-        }
-
-        return players;
+    public List<SweetSnakePlayerDTO> getPlayersList() {
+        return server.getPlayersList(callback);
     }
 
     /**********************************************************************************************
      * [BLOCK] SETTERS
      **********************************************************************************************/
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#setScore(long)
      */
     @Override
     public void setScore(final long score) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
+import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
@@ -21,6 +22,14 @@ public interface ISweetSnakeClient
     void disconnect();
 
     /**
+     * from the ihm
+     * 
+     * @param player
+     */
+    void requestGame(SweetSnakePlayerDTO player);
+
+    /**
+     * from the server
      * 
      * @param request
      */
@@ -60,6 +69,6 @@ public interface ISweetSnakeClient
      * 
      * @return
      */
-    List<String> getPlayersList();
+    List<SweetSnakePlayerDTO> getPlayersList();
 
 }

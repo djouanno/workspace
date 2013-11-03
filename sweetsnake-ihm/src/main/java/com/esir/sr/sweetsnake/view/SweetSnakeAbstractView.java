@@ -5,13 +5,11 @@ import java.awt.Dimension;
 import javax.annotation.PostConstruct;
 import javax.swing.JPanel;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
 import com.esir.sr.sweetsnake.api.ISweetSnakeIhm;
 import com.esir.sr.sweetsnake.api.ISweetSnakeView;
-import com.esir.sr.sweetsnake.constants.SweetSnakeGameConstants;
 
 public abstract class SweetSnakeAbstractView extends JPanel implements ISweetSnakeView
 {
@@ -20,18 +18,19 @@ public abstract class SweetSnakeAbstractView extends JPanel implements ISweetSna
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long             serialVersionUID = 3803484058346507862L;
-    private static final org.slf4j.Logger log              = LoggerFactory.getLogger(SweetSnakeAbstractView.class);
+    private static final long   serialVersionUID = 3803484058346507862L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     @Autowired
-    protected ISweetSnakeIhm              ihm;
+    protected ISweetSnakeIhm    ihm;
 
     @Autowired
-    protected ISweetSnakeClient           client;
+    protected ISweetSnakeClient client;
+
+    protected Dimension         dimension;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -47,8 +46,11 @@ public abstract class SweetSnakeAbstractView extends JPanel implements ISweetSna
 
     @PostConstruct
     public void initAbs() {
-        setSize(new Dimension(SweetSnakeGameConstants.CELL_SIZE * (SweetSnakeGameConstants.GRID_SIZE + 1), SweetSnakeGameConstants.CELL_SIZE * (SweetSnakeGameConstants.GRID_SIZE + 1)));
-        setPreferredSize(new Dimension(SweetSnakeGameConstants.CELL_SIZE * (SweetSnakeGameConstants.GRID_SIZE + 1), SweetSnakeGameConstants.CELL_SIZE * (SweetSnakeGameConstants.GRID_SIZE + 1)));
+        dimension = new Dimension(414, 392); // TODO calculate or retrieve this (424 x 402 - ihm offset)
+        setSize(dimension);
+        setPreferredSize(dimension);
+        setOpaque(false);
+        setFocusable(true);
     }
 
     /**********************************************************************************************
