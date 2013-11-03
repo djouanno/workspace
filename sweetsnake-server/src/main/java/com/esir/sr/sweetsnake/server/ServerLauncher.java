@@ -10,7 +10,8 @@ public class ServerLauncher
      */
     @SuppressWarnings("resource")
     public static void main(final String[] args) {
-        new ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-server-context.xml");
+        final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-server-context.xml");
+        context.registerShutdownHook();
     }
 
 }

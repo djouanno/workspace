@@ -1,28 +1,41 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>sweetsnake</artifactId>
-        <groupId>com.esir.sr</groupId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <artifactId>sweetsnake</artifactId>
+    <groupId>com.esir.sr</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>sweetsnake-server</artifactId>
-    <name>sweetsnake-server</name>
+  <artifactId>sweetsnake-server</artifactId>
+  <name>sweetsnake-server</name>
 
-    <url>http://maven.apache.org</url>
+  <url>http://maven.apache.org</url>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-    <dependencies>
-        <dependency>
-            <artifactId>sweetsnake-commons</artifactId>
-            <groupId>com.esir.sr</groupId>
-            <version>${project.parent.version}</version>
-        </dependency>
-    </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec.plugin.version}</version>
+        <configuration>
+          <mainClass>com.esir.sr.sweetsnake.server.ServerLauncher</mainClass>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <artifactId>sweetsnake-commons</artifactId>
+      <groupId>com.esir.sr</groupId>
+      <version>${project.parent.version}</version>
+    </dependency>
+  </dependencies>
 
 </project>

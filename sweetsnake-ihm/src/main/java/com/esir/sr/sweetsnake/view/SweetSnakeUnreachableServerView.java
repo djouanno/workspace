@@ -58,6 +58,7 @@ public class SweetSnakeUnreachableServerView extends SweetSnakeAbstractView
     @PostConstruct
     @Override
     protected void init() {
+        super.init();
         log.info("Initializing a new SweetSnakeUnreachableServerView");
     }
 

@@ -3,6 +3,7 @@ package com.esir.sr.sweetsnake.client;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,17 @@ public class SweetSnakeClient implements ISweetSnakeClient
             ihm.serverNotReachable();
         } else {
             ihm.serverReachable();
+        }
+    }
+
+    /**
+     * 
+     */
+    @PreDestroy
+    protected void destroy() {
+        log.info("Destroying SweetSnakeClient");
+        if (connected) {
+            disconnect();
         }
     }
 

@@ -1,6 +1,8 @@
 package com.esir.sr.sweetsnake.view;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -11,8 +13,10 @@ import java.awt.event.FocusListener;
 
 import javax.annotation.PostConstruct;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +44,7 @@ public class SweetSnakeConnectionView extends SweetSnakeAbstractView
      **********************************************************************************************/
 
     private SweetSnakeImagePanel logoPL;
+    private JLabel               connectLB;
     private JTextField           usernameTF;
     private JButton              connectBTN;
 
@@ -79,6 +84,7 @@ public class SweetSnakeConnectionView extends SweetSnakeAbstractView
         final GridBagConstraints gbc = new GridBagConstraints();
 
         initLogoPL();
+        initConnectLB();
         initUsernameTF();
         initConnectBTN();
 
@@ -89,16 +95,21 @@ public class SweetSnakeConnectionView extends SweetSnakeAbstractView
         gbc.insets = new Insets(0, 0, 30, 0);
         add(logoPL, gbc);
 
+        // label
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 10, 0);
+        add(connectLB, gbc);
+
         // text field
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.insets = new Insets(0, 0, 0, 5);
         add(usernameTF, gbc);
 
         // button
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         add(connectBTN, gbc);
     }
@@ -117,11 +128,21 @@ public class SweetSnakeConnectionView extends SweetSnakeAbstractView
     /**
      * 
      */
+    private void initConnectLB() {
+        connectLB = new JLabel("Connect to server");
+        connectLB.setForeground(Color.white);
+        connectLB.setFont(new Font("sans-serif", Font.BOLD, 16));
+    }
+
+    /**
+     * 
+     */
     private void initUsernameTF() {
         usernameTF = new JTextField(new String(USERNAME_TF_TEXT));
+        usernameTF.setBorder(new LineBorder(Color.black));
         usernameTF.addFocusListener(new FocusClearListener());
-        usernameTF.setSize(new Dimension(200, 30));
-        usernameTF.setPreferredSize(new Dimension(200, 30));
+        usernameTF.setSize(new Dimension(200, 28));
+        usernameTF.setPreferredSize(new Dimension(200, 28));
     }
 
     /**
@@ -130,8 +151,6 @@ public class SweetSnakeConnectionView extends SweetSnakeAbstractView
     private void initConnectBTN() {
         connectBTN = new JButton(CONNECT_BTN_TEXT);
         connectBTN.addActionListener(new ConnectListener());
-        connectBTN.setSize(new Dimension(100, 30));
-        connectBTN.setPreferredSize(new Dimension(100, 30));
     }
 
     /**********************************************************************************************

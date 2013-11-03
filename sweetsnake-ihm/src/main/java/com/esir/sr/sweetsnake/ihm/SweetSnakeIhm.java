@@ -6,6 +6,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -74,6 +75,12 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
     protected void init() {
         log.info("Initializing a new SweetSnakeIhm");
         initFrameParameters();
+    }
+
+    @PreDestroy
+    protected void destroy() {
+        log.info("Destroying SweetSnakeIhm");
+        dispose();
     }
 
     /**********************************************************************************************
@@ -210,6 +217,8 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
      * [BLOCK] INTERNAL LISTENERS
      **********************************************************************************************/
 
+    // TODO remove this listener, used to passby eclipse runtime bug which does not call
+    // shutdown hooks on exit
     private class windowListener implements WindowListener
     {
         @Override

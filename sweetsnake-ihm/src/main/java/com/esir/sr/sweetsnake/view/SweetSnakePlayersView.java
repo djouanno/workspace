@@ -68,6 +68,7 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
     @Override
     @PostConstruct
     protected void init() {
+        super.init();
         log.info("Initializing a new SweetSnakePlayersView");
     }
 

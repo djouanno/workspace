@@ -8,9 +8,10 @@ public class ClientLauncher
     /**
      * @param args
      */
-    @SuppressWarnings("resource")
     public static void main(final String[] args) {
-        new ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-client-context.xml");
+        @SuppressWarnings("resource")
+        final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-client-context.xml");
+        context.registerShutdownHook();
     }
 
 }
