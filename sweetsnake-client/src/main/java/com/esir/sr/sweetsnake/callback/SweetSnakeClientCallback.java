@@ -33,6 +33,10 @@ public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISw
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
+    /**
+     * 
+     * @throws RemoteException
+     */
     protected SweetSnakeClientCallback() throws RemoteException {
         super();
     }
@@ -41,34 +45,52 @@ public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISw
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
+     */
     @Override
     public void requestGame(final SweetSnakeGameRequestDTO request) throws RemoteException {
         client.requestGame(request);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#startGame(com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO)
+     */
     @Override
     public void startGame(final SweetSnakeGameSessionDTO session) throws RemoteException {
         client.startGame(session);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#confirmMove(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     */
     @Override
     public void confirmMove(final SweetSnakeDirection direction) throws RemoteException {
         client.confirmMove(direction);
     }
 
-    /**********************************************************************************************
-     * [BLOCK] GETTERS
-     **********************************************************************************************/
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#getUsername()
+     */
     @Override
-    public String getName() throws RemoteException {
-        return client.getName();
+    public String getUsername() throws RemoteException {
+        return client.getUsername();
     }
 
-    /**********************************************************************************************
-     * [BLOCK] SETTERS
-     **********************************************************************************************/
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#setScore(long)
+     */
     @Override
     public void setScore(final long score) throws RemoteException {
         client.setScore(score);

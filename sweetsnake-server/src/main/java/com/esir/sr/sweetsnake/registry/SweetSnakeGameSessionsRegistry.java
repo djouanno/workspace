@@ -37,7 +37,7 @@ public class SweetSnakeGameSessionsRegistry implements ISweetSnakeGameSessionsRe
     /**
      * 
      */
-    public SweetSnakeGameSessionsRegistry() {
+    protected SweetSnakeGameSessionsRegistry() {
         super();
     }
 
@@ -45,7 +45,7 @@ public class SweetSnakeGameSessionsRegistry implements ISweetSnakeGameSessionsRe
      * 
      */
     @PostConstruct
-    public void init() {
+    protected void init() {
         log.info("Initializing game sessions registry");
         sessions = new LinkedHashMap<String, ISweetSnakeGameSession>();
     }
@@ -67,9 +67,7 @@ public class SweetSnakeGameSessionsRegistry implements ISweetSnakeGameSessionsRe
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionsRegistry#add(com.esir.sr.sweetsnake.api
-     * .ISweetSnakeGameSession)
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionsRegistry#add(com.esir.sr.sweetsnake.api .ISweetSnakeGameSession)
      */
     @Override
     public void add(final ISweetSnakeGameSession session) {

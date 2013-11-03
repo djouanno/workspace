@@ -1,6 +1,9 @@
 package com.esir.sr.sweetsnake.session;
 
 import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +13,7 @@ import com.esir.sr.sweetsnake.enumeration.SweetSnakePlayerStatus;
 
 public class SweetSnakePlayer implements ISweetSnakePlayer
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
@@ -22,7 +26,8 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
 
     private final ISweetSnakeClientCallback client;
     private String                          name;
-    private SweetSnakePlayerStatus                          status;
+    private SweetSnakePlayerStatus          status;
+    private Set<String>                     sentRequestsIds, receivedRequestsIds;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -35,21 +40,57 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
     public SweetSnakePlayer(final ISweetSnakeClientCallback _client) {
         client = _client;
         try {
-            name = client.getName();
+            name = client.getUsername();
+            sentRequestsIds = new TreeSet<String>();
+            receivedRequestsIds = new TreeSet<String>();
         } catch (final RemoteException e) {
             log.error("unable to retrieve client name : {}", e.getMessage(), e);
         }
     }
 
     /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
-     **********************************************************************************************/
-
-
-
-    /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#addSentRequestId(java.lang.String)
+     */
+    @Override
+    public void addSentRequestId(final String requestId) {
+        sentRequestsIds.add(requestId);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#addReceivedRequestId(java.lang.String)
+     */
+    @Override
+    public void addReceivedRequestId(final String requestId) {
+        receivedRequestsIds.add(requestId);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#removeSentRequestId(java.lang.String)
+     */
+    @Override
+    public void removeSentRequestId(final String requestId) {
+        sentRequestsIds.remove(requestId);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#removeReceivedRequestId(java.lang.String)
+     */
+    @Override
+    public void removeReceivedRequestId(final String requestId) {
+        receivedRequestsIds.remove(requestId);
+    }
 
     /*
      * (non-Javadoc)
@@ -85,12 +126,34 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
         return name;
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#getStatus()
      */
     @Override
     public SweetSnakePlayerStatus getStatus() {
         return status;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#getSentRequestsIds()
+     */
+    @Override
+    public Set<String> getSentRequestsIds() {
+        return Collections.unmodifiableSet(sentRequestsIds);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#getReceivedRequestsIds()
+     */
+    @Override
+    public Set<String> getReceivedRequestsIds() {
+        return Collections.unmodifiableSet(receivedRequestsIds);
     }
 
     /**********************************************************************************************
@@ -100,9 +163,7 @@ public class SweetSnakePlayer implements ISweetSnakePlayer
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.esir.sr.sweetsnake.api.ISweetSnakePlayer#setStatus(com.esir.sr.sweetsnake.enumeration
-     * .Status)
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#setStatus(com.esir.sr.sweetsnake.enumeration .Status)
      */
     @Override
     public void setStatus(final SweetSnakePlayerStatus _status) {

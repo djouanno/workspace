@@ -20,6 +20,7 @@ import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
 import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
+import com.esir.sr.sweetsnake.service.SweetSnakeRmiService;
 
 @Component
 public class SweetSnakeClient implements ISweetSnakeClient
@@ -39,15 +40,18 @@ public class SweetSnakeClient implements ISweetSnakeClient
     private ISweetSnakeClientCallback callback;
 
     @Autowired
+    private SweetSnakeRmiService      rmiService;
+
     private ISweetSnakeServer         server;
 
     @Autowired
     private ISweetSnakeIhm            ihm;
 
     private String                    username;
+    private boolean                   connected;
 
     /**********************************************************************************************
-     * [BLOCK] CONSTRUCTOR
+     * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
 
     /**
@@ -55,6 +59,20 @@ public class SweetSnakeClient implements ISweetSnakeClient
      */
     protected SweetSnakeClient() {
         super();
+    }
+
+    /**
+     * 
+     */
+    @PostConstruct
+    protected void init() {
+        log.info("Initialiazing a new SweetSnakeClient");
+        server = rmiService.getRmiService();
+        if (server == null) {
+            ihm.serverNotReachable();
+        } else {
+            ihm.serverReachable();
+        }
     }
 
     /**********************************************************************************************
@@ -65,12 +83,22 @@ public class SweetSnakeClient implements ISweetSnakeClient
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#reachServer()
      */
-    @PostConstruct
-    public void init() {
-        log.info("Initialiazing a new SweetSnakeClient");
+    @Override
+    public void reachServer() {
+        if (server == null) {
+            rmiService.retryReach();
+            server = rmiService.getRmiService();
+            if (server == null) {
+                ihm.serverNotReachable();
+            } else {
+                ihm.serverReachable();
+            }
+        }
     }
 
     /*
@@ -86,6 +114,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
         log.debug("Connecting with username {}", _username);
         username = new String(_username);
         server.connect(callback);
+        connected = true;
         ihm.successfullyConnected();
     }
 
@@ -111,7 +140,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
     @Override
     public void requestGame(final SweetSnakePlayerDTO player) {
         try {
-            server.requestGameSession(callback, player);
+            server.requestGame(callback, player);
             ihm.displayInfoMessage("Your request has been sent to " + player.getName());
         } catch (PlayerNotFoundException | PlayerNotAvailableException e) {
             ihm.displayErrorMessage(e.getMessage());
@@ -148,6 +177,16 @@ public class SweetSnakeClient implements ISweetSnakeClient
         ihm.moveSnake(direction);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#isConnected()
+     */
+    @Override
+    public boolean isConnected() {
+        return connected;
+    }
+
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
@@ -158,7 +197,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#getName()
      */
     @Override
-    public String getName() {
+    public String getUsername() {
         return username;
     }
 

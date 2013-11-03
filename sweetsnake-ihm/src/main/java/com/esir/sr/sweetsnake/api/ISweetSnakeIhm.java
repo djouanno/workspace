@@ -6,6 +6,10 @@ import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
 public interface ISweetSnakeIhm
 {
 
+    void serverReachable();
+
+    void serverNotReachable();
+
     void successfullyConnected();
 
     void requestGame(SweetSnakePlayerDTO requestedPlayer);

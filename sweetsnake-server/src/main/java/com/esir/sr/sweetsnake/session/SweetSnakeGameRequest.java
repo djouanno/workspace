@@ -37,19 +37,13 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
      * @param _requestedPlayer
      */
     public SweetSnakeGameRequest(final ISweetSnakePlayer _requestingPlayer, final ISweetSnakePlayer _requestedPlayer) {
-        log.info("Initializing new game session request between {} and {}", _requestingPlayer.getName(), _requestedPlayer.getName());
+        log.info("Initializing new game request between {} and {}", _requestingPlayer.getName(), _requestedPlayer.getName());
         id = RandomStringUtils.randomAlphanumeric(SweetSnakePropertiesConstants.GENERATED_ID_LENGTH);
         requestingPlayer = _requestingPlayer;
         requestedPlayer = _requestedPlayer;
         requestingPlayer.setStatus(SweetSnakePlayerStatus.PENDING);
         requestedPlayer.setStatus(SweetSnakePlayerStatus.INVITED);
     }
-
-    /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
-     **********************************************************************************************/
-
-
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
@@ -64,7 +58,17 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
     public void cancel() {
         requestingPlayer.setStatus(SweetSnakePlayerStatus.AVAILABLE);
         requestedPlayer.setStatus(SweetSnakePlayerStatus.AVAILABLE); // TODO pas sûr que ça soit
-                                                     // bon ça
+        // bon ça (vérifier plus de trucs
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "request[id=" + id + ", requestingPlayer=" + requestingPlayer + ", requestedPlayer=" + requestedPlayer + "]";
     }
 
     /**********************************************************************************************
@@ -100,11 +104,5 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
     public ISweetSnakePlayer getRequestedPlayer() {
         return requestedPlayer;
     }
-
-    /**********************************************************************************************
-     * [BLOCK] SETTERS
-     **********************************************************************************************/
-
-
 
 }

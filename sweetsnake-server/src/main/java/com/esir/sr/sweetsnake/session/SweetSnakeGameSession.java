@@ -20,6 +20,7 @@ import com.esir.sr.sweetsnake.utils.Pair;
 
 public class SweetSnakeGameSession implements ISweetSnakeGameSession
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
@@ -200,11 +201,5 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
     public boolean isGameStarted() {
         return gameStarted;
     }
-
-    /**********************************************************************************************
-     * [BLOCK] SETTERS
-     **********************************************************************************************/
-
-
 
 }

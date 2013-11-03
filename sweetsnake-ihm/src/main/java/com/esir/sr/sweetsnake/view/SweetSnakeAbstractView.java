@@ -2,14 +2,13 @@ package com.esir.sr.sweetsnake.view;
 
 import java.awt.Dimension;
 
-import javax.annotation.PostConstruct;
 import javax.swing.JPanel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
-import com.esir.sr.sweetsnake.api.ISweetSnakeIhm;
 import com.esir.sr.sweetsnake.api.ISweetSnakeView;
+import com.esir.sr.sweetsnake.ihm.SweetSnakeIhm;
 
 public abstract class SweetSnakeAbstractView extends JPanel implements ISweetSnakeView
 {
@@ -25,27 +24,28 @@ public abstract class SweetSnakeAbstractView extends JPanel implements ISweetSna
      **********************************************************************************************/
 
     @Autowired
-    protected ISweetSnakeIhm    ihm;
+    protected ISweetSnakeClient client;
 
     @Autowired
-    protected ISweetSnakeClient client;
+    protected SweetSnakeIhm     ihm;
 
     protected Dimension         dimension;
 
     /**********************************************************************************************
-     * [BLOCK] CONSTRUCTOR
+     * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
 
-    public SweetSnakeAbstractView() {
+    /**
+     * 
+     */
+    protected SweetSnakeAbstractView() {
         super();
     }
 
-    /**********************************************************************************************
-     * [BLOCK] INIT METHOD
-     **********************************************************************************************/
-
-    @PostConstruct
-    public void initAbs() {
+    /**
+     * 
+     */
+    protected void init() {
         dimension = new Dimension(414, 392); // TODO calculate or retrieve this (424 x 402 - ihm offset)
         setSize(dimension);
         setPreferredSize(dimension);

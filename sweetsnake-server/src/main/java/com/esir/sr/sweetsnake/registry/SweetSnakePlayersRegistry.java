@@ -37,7 +37,7 @@ public class SweetSnakePlayersRegistry implements ISweetSnakePlayersRegistry
     /**
      * 
      */
-    public SweetSnakePlayersRegistry() {
+    protected SweetSnakePlayersRegistry() {
         super();
     }
 
@@ -45,7 +45,7 @@ public class SweetSnakePlayersRegistry implements ISweetSnakePlayersRegistry
      * 
      */
     @PostConstruct
-    public void init() {
+    protected void init() {
         log.info("Initializing players registry");
         players = new LinkedHashMap<String, ISweetSnakePlayer>();
     }
@@ -67,8 +67,7 @@ public class SweetSnakePlayersRegistry implements ISweetSnakePlayersRegistry
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayersRegistry#add(com.esir.sr.sweetsnake.api.
-     * ISweetSnakePlayer)
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayersRegistry#add(com.esir.sr.sweetsnake.api. ISweetSnakePlayer)
      */
     @Override
     public void add(final ISweetSnakePlayer player) {

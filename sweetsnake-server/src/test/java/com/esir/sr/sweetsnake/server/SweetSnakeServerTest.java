@@ -109,9 +109,9 @@ public class SweetSnakeServerTest
     public void gameSessionTest() throws PlayerNotFoundException, PlayerNotAvailableException, GameRequestNotFoundException, GameSessionNotFoundException, RemoteException {
         log.debug("---------------------------- gameSessionTest() ----------------------------");
 
-        final SweetSnakePlayerDTO player2DTO = new SweetSnakePlayerDTO(client2.getName(), SweetSnakePlayerStatus.AVAILABLE);
-        final SweetSnakeGameRequestDTO requestDTO = server.requestGameSession(client1, player2DTO);
-        final SweetSnakeGameSessionDTO sessionDTO = server.acceptGameSession(client2, requestDTO);
+        final SweetSnakePlayerDTO player2DTO = new SweetSnakePlayerDTO(client2.getUsername(), SweetSnakePlayerStatus.AVAILABLE);
+        final SweetSnakeGameRequestDTO requestDTO = server.requestGame(client1, player2DTO);
+        final SweetSnakeGameSessionDTO sessionDTO = server.acceptGame(client2, requestDTO);
 
         server.requestMove(client1, sessionDTO, SweetSnakeDirection.RIGHT);
     }

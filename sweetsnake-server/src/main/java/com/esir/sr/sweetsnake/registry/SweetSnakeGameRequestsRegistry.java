@@ -31,13 +31,13 @@ public class SweetSnakeGameRequestsRegistry implements ISweetSnakeGameRequestsRe
     private Map<String, ISweetSnakeGameRequest> requests;
 
     /**********************************************************************************************
-     * [BLOCK] CONSTRUCTOR
+     * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
 
     /**
      * 
      */
-    public SweetSnakeGameRequestsRegistry() {
+    protected SweetSnakeGameRequestsRegistry() {
         super();
     }
 
@@ -45,7 +45,7 @@ public class SweetSnakeGameRequestsRegistry implements ISweetSnakeGameRequestsRe
      * 
      */
     @PostConstruct
-    public void init() {
+    protected void init() {
         log.info("Initializing game requests registry");
         requests = new LinkedHashMap<String, ISweetSnakeGameRequest>();
     }
@@ -67,13 +67,12 @@ public class SweetSnakeGameRequestsRegistry implements ISweetSnakeGameRequestsRe
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.esir.sr.sweetsnake.api.ISweetSnakeGameRequestsRegistry#add(com.esir.sr.sweetsnake.api
-     * .ISweetSnakeGameRequest)
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameRequestsRegistry#add(com.esir.sr.sweetsnake.api .ISweetSnakeGameRequest)
      */
     @Override
     public void add(final ISweetSnakeGameRequest request) {
         requests.put(request.getId(), request);
+        log.debug("Request {} has been added", requests.get(request.getId()));
     }
 
     /*
@@ -99,6 +98,7 @@ public class SweetSnakeGameRequestsRegistry implements ISweetSnakeGameRequestsRe
         if (!contains(id)) {
             throw new GameRequestNotFoundException("request not found");
         }
+        log.debug("Request {} has been removed", requests.get(id));
         requests.remove(id);
     }
 

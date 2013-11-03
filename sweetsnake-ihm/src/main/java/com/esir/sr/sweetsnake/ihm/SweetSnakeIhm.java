@@ -22,8 +22,9 @@ import com.esir.sr.sweetsnake.component.SweetSnakeImagePanel;
 import com.esir.sr.sweetsnake.constants.SweetSnakeIhmConstants;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
-import com.esir.sr.sweetsnake.view.SweetSnakeHomeView;
+import com.esir.sr.sweetsnake.view.SweetSnakeConnectionView;
 import com.esir.sr.sweetsnake.view.SweetSnakePlayersView;
+import com.esir.sr.sweetsnake.view.SweetSnakeUnreachableServerView;
 
 @Component
 public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
@@ -33,41 +34,44 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long     serialVersionUID = -4189434181017519666L;
-    private static final Logger   log              = LoggerFactory.getLogger(SweetSnakeIhm.class);
+    private static final long               serialVersionUID = -4189434181017519666L;
+    private static final Logger             log              = LoggerFactory.getLogger(SweetSnakeIhm.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     @Autowired
-    private ISweetSnakeClient     client;
+    private ISweetSnakeClient               client;
 
     @Autowired
-    private SweetSnakeHomeView    homeView;
+    private SweetSnakeUnreachableServerView serverNotReachableView;
 
     @Autowired
-    private SweetSnakePlayersView playersView;
+    private SweetSnakeConnectionView        connectionView;
 
-    private Dimension             dimension;
+    @Autowired
+    private SweetSnakePlayersView           playersView;
+
+    private Dimension                       dimension;
 
     /**********************************************************************************************
-     * [BLOCK] CONSTRUCTOR
+     * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
 
     /**
      * 
      */
-    public SweetSnakeIhm() {
+    protected SweetSnakeIhm() {
         super();
     }
 
-    /**********************************************************************************************
-     * [BLOCK] INIT METHODS
-     **********************************************************************************************/
 
+    /**
+     * 
+     */
     @PostConstruct
-    public void init() {
+    protected void init() {
         log.info("Initializing a new SweetSnakeIhm");
         initFrameParameters();
     }
@@ -76,6 +80,9 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
      * [BLOCK] PRIVATE METHODS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     private void initFrameParameters() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -90,12 +97,14 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
         setBounds(X, Y, dimension.width, dimension.height);
         setContentPane(new SweetSnakeImagePanel(SweetSnakeIhmConstants.BG_PATH));
 
-        // swithView(new SweetSnakeHomeView()); // TODO virer ça
-        switchView(homeView); // TODO remettre ça
         addWindowListener(new windowListener());
         setVisible(true);
     }
 
+    /**
+     * 
+     * @param view
+     */
     private void switchView(final ISweetSnakeView view) {
         view.build();
         getContentPane().removeAll();
@@ -107,37 +116,94 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#serverReachable()
+     */
+    @Override
+    public void serverReachable() {
+        switchView(connectionView);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#serverNotReachable()
+     */
+    @Override
+    public void serverNotReachable() {
+        switchView(serverNotReachableView);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#successfullyConnected()
+     */
     @Override
     public void successfullyConnected() {
         switchView(playersView);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO)
+     */
     @Override
     public void requestGame(final SweetSnakePlayerDTO requestedPlayer) {
         client.requestGame(requestedPlayer);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#moveSnake(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     */
     @Override
     public void moveSnake(final SweetSnakeDirection direction) {
         // TODO
         refreshUI();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#displayInfoMessage(java.lang.String)
+     */
     @Override
     public void displayInfoMessage(final String message) {
         JOptionPane.showMessageDialog(this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#displayErrorMessage(java.lang.String)
+     */
     @Override
     public void displayErrorMessage(final String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#refreshUI()
+     */
     @Override
     public void refreshUI() {
         revalidate();
         repaint();
         pack();
+    }
+
+    /**
+     * 
+     */
+    public void reachServer() {
+        client.reachServer();
     }
 
     /**********************************************************************************************
@@ -156,7 +222,9 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
 
         @Override
         public void windowClosing(final WindowEvent arg0) {
-            client.disconnect();
+            if (client.isConnected()) {
+                client.disconnect();
+            }
         }
 
         @Override

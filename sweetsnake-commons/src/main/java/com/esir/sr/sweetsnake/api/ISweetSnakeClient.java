@@ -14,6 +14,11 @@ public interface ISweetSnakeClient
     /**
      * 
      */
+    void reachServer();
+
+    /**
+     * 
+     */
     void connect(String username) throws UnableToConnectException;
 
     /**
@@ -51,7 +56,13 @@ public interface ISweetSnakeClient
      * 
      * @return
      */
-    String getName();
+    String getUsername();
+
+    /**
+     * 
+     * @return
+     */
+    boolean isConnected();
 
     /**
      * 

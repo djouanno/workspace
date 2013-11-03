@@ -31,6 +31,10 @@ public class SweetSnakeImagePanel extends JPanel
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
+    /**
+     * 
+     * @param imagePath
+     */
     public SweetSnakeImagePanel(final String imagePath) {
         try {
             final BufferedImage bimage = ImageIO.read(SweetSnakeImagePanel.class.getResource(imagePath));
@@ -48,6 +52,11 @@ public class SweetSnakeImagePanel extends JPanel
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+     */
     @Override
     protected void paintComponent(final Graphics g) {
         super.paintComponent(g);

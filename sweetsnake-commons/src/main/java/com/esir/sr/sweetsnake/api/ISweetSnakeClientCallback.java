@@ -44,6 +44,6 @@ public interface ISweetSnakeClientCallback extends Remote
      * @return
      * @throws RemoteException
      */
-    String getName() throws RemoteException;
+    String getUsername() throws RemoteException;
 
 }

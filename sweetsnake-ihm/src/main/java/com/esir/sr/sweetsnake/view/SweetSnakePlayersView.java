@@ -14,7 +14,11 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -43,24 +47,39 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
     private JList<SweetSnakePlayerDTO>            playersJLT;
     private DefaultListModel<SweetSnakePlayerDTO> playersJLTModel;
     private JButton                               refreshListBTN, requestBTN;
+    private SweetSnakePlayerDTO                   selectedPlayer;
 
     /**********************************************************************************************
-     * [BLOCK] CONSTRUCTOR
+     * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
 
-    public SweetSnakePlayersView() {
+    /**
+     * 
+     */
+    protected SweetSnakePlayersView() {
         super();
     }
 
-    /**********************************************************************************************
-     * [BLOCK] INIT METHOD
-     **********************************************************************************************/
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#init()
+     */
+    @Override
     @PostConstruct
-    public void init() {
+    protected void init() {
         log.info("Initializing a new SweetSnakePlayersView");
     }
 
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC METHODS
+     **********************************************************************************************/
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#build()
+     */
     @Override
     public void build() {
         setLayout(new BorderLayout());
@@ -78,14 +97,9 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
         topPL.add(playersListIPL);
 
         final List<SweetSnakePlayerDTO> players = client.getPlayersList();
-        /*
-         * final List<SweetSnakePlayerDTO> players = new LinkedList<SweetSnakePlayerDTO>(); players.add(new
-         * SweetSnakePlayerDTO("player1", SweetSnakePlayerStatus.AVAILABLE)); players.add(new SweetSnakePlayerDTO("player2",
-         * SweetSnakePlayerStatus.PLAYING));
-         */
 
         initPlayersJLT(players);
-        centerPL.add(playersJLT);
+        centerPL.add(new JScrollPane(playersJLT));
 
         final GridBagConstraints gbc = new GridBagConstraints();
 
@@ -113,15 +127,24 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
      * [BLOCK] PRIVATE METHODS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     private void initTopPL() {
         topPL = new JPanel();
         topPL.setOpaque(false);
     }
 
+    /**
+     * 
+     */
     private void initPlayersListIPL() {
         playersListIPL = new SweetSnakeImagePanel(SweetSnakeIhmConstants.PLAYERS_LIST_PATH);
     }
 
+    /**
+     * 
+     */
     private void initCenterPL() {
         centerPL = new JPanel();
         centerPL.setOpaque(false);
@@ -129,27 +152,49 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
         centerPL.setBorder(new EmptyBorder(0, 0, 10, 0));
     }
 
+    /**
+     * 
+     * @param players
+     */
     private void initPlayersJLT(final List<SweetSnakePlayerDTO> players) {
         playersJLTModel = new DefaultListModel<SweetSnakePlayerDTO>();
         for (final SweetSnakePlayerDTO player : players) {
             playersJLTModel.addElement(player);
         }
         playersJLT = new JList<SweetSnakePlayerDTO>(playersJLTModel);
+        playersJLT.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        playersJLT.setFocusable(true);
+        playersJLT.addListSelectionListener(new ListSelectionListener() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void valueChanged(final ListSelectionEvent e) {
+                selectedPlayer = ((JList<SweetSnakePlayerDTO>) e.getSource()).getSelectedValue();
+            }
+        });
         // playersJLT.setOpaque(false);
         // ((javax.swing.DefaultListCellRenderer) playersJLT.getCellRenderer()).setOpaque(false);
     }
 
+    /**
+     * 
+     */
     private void initBottomPL() {
         bottomPL = new JPanel();
         bottomPL.setLayout(new GridBagLayout());
         bottomPL.setOpaque(false);
     }
 
+    /**
+     * 
+     */
     private void initRefreshListBTN() {
         refreshListBTN = new JButton("refresh list");
         refreshListBTN.addActionListener(new RefreshListener());
     }
 
+    /**
+     * 
+     */
     private void initRequestBTN() {
         requestBTN = new JButton("request game");
         requestBTN.addActionListener(new RequestGameListener());
@@ -168,6 +213,7 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
             for (final SweetSnakePlayerDTO player : players) {
                 playersJLTModel.addElement(player);
             }
+            playersJLT.setFocusable(true);
         }
     }
 
@@ -175,15 +221,10 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
     {
         @Override
         public void actionPerformed(final ActionEvent e) {
-            // FIXME does not work :/
-            log.debug("selected index : {}", playersJLT.getSelectedIndex());
-            log.debug("selected value : {}", playersJLT.getSelectedValue());
-            log.debug("model size : {}", playersJLTModel.size());
-            final SweetSnakePlayerDTO requestedPlayer = playersJLTModel.get(playersJLT.getSelectedIndex());
-            if (requestedPlayer == null) {
-                JOptionPane.showMessageDialog((java.awt.Component) ihm, "Please select an opponent first", "Error", JOptionPane.ERROR_MESSAGE);
+            if (selectedPlayer == null) {
+                JOptionPane.showMessageDialog(ihm, "Please select an opponent first", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                ihm.requestGame(requestedPlayer);
+                ihm.requestGame(selectedPlayer);
             }
         }
     }

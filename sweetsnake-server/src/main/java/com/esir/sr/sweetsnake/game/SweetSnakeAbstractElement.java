@@ -26,16 +26,10 @@ public abstract class SweetSnakeAbstractElement implements ISweetSnakeElement
      * 
      * @param _type
      */
-    public SweetSnakeAbstractElement(final SweetSnakeElementType _type) {
+    protected SweetSnakeAbstractElement(final SweetSnakeElementType _type) {
         id = RandomStringUtils.randomAlphanumeric(SweetSnakePropertiesConstants.GENERATED_ID_LENGTH);
         type = _type;
     }
-
-    /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
-     **********************************************************************************************/
-
-
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS

@@ -3,8 +3,6 @@ package com.esir.sr.sweetsnake.component;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import javax.annotation.PostConstruct;
-
 import com.esir.sr.sweetsnake.api.ISweetSnakeIhm;
 import com.esir.sr.sweetsnake.enumeration.SweetSnakeElementType;
 
@@ -21,6 +19,10 @@ public class SweetSnakeSnake extends SweetSnakeAbstractElement
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
+    /**
+     * 
+     * @param ihm
+     */
     public SweetSnakeSnake(final ISweetSnakeIhm ihm) {
         super(ihm);
         type = SweetSnakeElementType.SWEET;
@@ -30,11 +32,11 @@ public class SweetSnakeSnake extends SweetSnakeAbstractElement
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    @PostConstruct
-    public void init() {
-        System.out.println("IHM IS NULL : " + (ihm == null));
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.component.SweetSnakeAbstractElement#drawShape(java.awt.Graphics, int, int, int, int)
+     */
     @Override
     public void drawShape(final Graphics g, final int x, final int y, final int w, final int h) {
         g.setColor(Color.BLUE);

@@ -26,31 +26,40 @@ public class SweetSnakeGameView extends SweetSnakeAbstractView
     ISweetSnakeElement[][]                gameMap;
 
     /**********************************************************************************************
-     * [BLOCK] CONSTRUCTOR
+     * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
 
-    public SweetSnakeGameView() {
+    /**
+     * 
+     */
+    protected SweetSnakeGameView() {
         super();
     }
 
-    /**********************************************************************************************
-     * [BLOCK] INIT METHOD
-     **********************************************************************************************/
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#init()
+     */
     @PostConstruct
-    public void init() {
+    @Override
+    protected void init() {
+        super.init();
         log.info("Initializing a new SweetSnakeGameView");
-        // TODO
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#build()
+     */
     @Override
     public void build() {
         gameMap = new ISweetSnakeElement[SweetSnakeGameConstants.GRID_SIZE][SweetSnakeGameConstants.GRID_SIZE];
-        // TODO
     }
 
 }

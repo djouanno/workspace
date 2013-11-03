@@ -19,6 +19,10 @@ public class SweetSnakeSweet extends SweetSnakeAbstractElement
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
+    /**
+     * 
+     * @param ihm
+     */
     public SweetSnakeSweet(final ISweetSnakeIhm ihm) {
         super(ihm);
         type = SweetSnakeElementType.SWEET;
@@ -28,6 +32,11 @@ public class SweetSnakeSweet extends SweetSnakeAbstractElement
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.component.SweetSnakeAbstractElement#drawShape(java.awt.Graphics, int, int, int, int)
+     */
     @Override
     public void drawShape(final Graphics g, final int x, final int y, final int w, final int h) {
         g.setColor(Color.RED);

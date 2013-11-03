@@ -57,7 +57,7 @@ public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, 
      **********************************************************************************************/
 
     @Override
-    public String getName() throws RemoteException {
+    public String getUsername() throws RemoteException {
         return name;
     }
 

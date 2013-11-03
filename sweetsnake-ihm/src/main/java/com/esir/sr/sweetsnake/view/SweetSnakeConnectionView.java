@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
@@ -22,40 +23,44 @@ import com.esir.sr.sweetsnake.constants.SweetSnakeIhmConstants;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
 @Component
-public class SweetSnakeHomeView extends SweetSnakeAbstractView
+public class SweetSnakeConnectionView extends SweetSnakeAbstractView
 {
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long             serialVersionUID = -2207414981436525337L;
-    private static final org.slf4j.Logger log              = LoggerFactory.getLogger(SweetSnakeHomeView.class);
-    private static final String           USERNAME_TF_TEXT = "Choose an username";
-    private static final String           CONNECT_BTN_TEXT = "Connect";
+    private static final long    serialVersionUID = -2207414981436525337L;
+    private static final Logger  log              = LoggerFactory.getLogger(SweetSnakeConnectionView.class);
+    private static final String  USERNAME_TF_TEXT = "Choose an username";
+    private static final String  CONNECT_BTN_TEXT = "Connect";
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private SweetSnakeImagePanel          logoPL;
-    private JTextField                    usernameTF;
-    private JButton                       connectBTN;
+    private SweetSnakeImagePanel logoPL;
+    private JTextField           usernameTF;
+    private JButton              connectBTN;
 
     /**********************************************************************************************
-     * [BLOCK] CONSTRUCTOR
+     * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
 
-    public SweetSnakeHomeView() {
+    /**
+     * 
+     */
+    protected SweetSnakeConnectionView() {
         super();
     }
 
-    /**********************************************************************************************
-     * [BLOCK] INIT METHOD
-     **********************************************************************************************/
-
+    /**
+     * 
+     */
     @PostConstruct
-    public void init() {
+    @Override
+    protected void init() {
+        super.init();
         log.info("Initializing a new SweetSnakeHomeView");
     }
 
@@ -63,6 +68,11 @@ public class SweetSnakeHomeView extends SweetSnakeAbstractView
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#build()
+     */
     @Override
     public void build() {
         setLayout(new GridBagLayout());
@@ -97,10 +107,16 @@ public class SweetSnakeHomeView extends SweetSnakeAbstractView
      * [BLOCK] PRIVATE METHODS
      **********************************************************************************************/
 
+    /**
+     * 
+     */
     private void initLogoPL() {
         logoPL = new SweetSnakeImagePanel(SweetSnakeIhmConstants.LOGO_PATH);
     }
 
+    /**
+     * 
+     */
     private void initUsernameTF() {
         usernameTF = new JTextField(new String(USERNAME_TF_TEXT));
         usernameTF.addFocusListener(new FocusClearListener());
@@ -108,6 +124,9 @@ public class SweetSnakeHomeView extends SweetSnakeAbstractView
         usernameTF.setPreferredSize(new Dimension(200, 30));
     }
 
+    /**
+     * 
+     */
     private void initConnectBTN() {
         connectBTN = new JButton(CONNECT_BTN_TEXT);
         connectBTN.addActionListener(new ConnectListener());
@@ -146,7 +165,7 @@ public class SweetSnakeHomeView extends SweetSnakeAbstractView
                 client.connect(username);
                 ihm.successfullyConnected();
             } catch (final UnableToConnectException e1) {
-                JOptionPane.showMessageDialog((java.awt.Component) ihm, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(ihm, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
