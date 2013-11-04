@@ -27,7 +27,7 @@ import com.esir.sr.sweetsnake.component.SweetSnakeImagePanel;
 import com.esir.sr.sweetsnake.constants.SweetSnakeIhmConstants;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 
-@Component
+@Component("playersView")
 public class SweetSnakePlayersView extends SweetSnakeAbstractView
 {
 
@@ -79,10 +79,10 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#build()
+     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#buildImpl()
      */
     @Override
-    public void build() {
+    public void buildImpl() {
         setLayout(new BorderLayout());
 
         initTopPL();

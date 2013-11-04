@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.esir.sr.sweetsnake.api.ISweetSnakeElement;
 import com.esir.sr.sweetsnake.constants.SweetSnakeGameConstants;
 
-@Component
+@Component("gameView")
 public class SweetSnakeGameView extends SweetSnakeAbstractView
 {
 
@@ -55,10 +55,10 @@ public class SweetSnakeGameView extends SweetSnakeAbstractView
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#build()
+     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#buildImpl()
      */
     @Override
-    public void build() {
+    public void buildImpl() {
         gameMap = new ISweetSnakeElement[SweetSnakeGameConstants.GRID_SIZE][SweetSnakeGameConstants.GRID_SIZE];
     }
 

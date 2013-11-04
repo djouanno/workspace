@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
 import com.esir.sr.sweetsnake.api.ISweetSnakeView;
+import com.esir.sr.sweetsnake.constants.SweetSnakeIhmConstants;
 import com.esir.sr.sweetsnake.ihm.SweetSnakeIhm;
 
 public abstract class SweetSnakeAbstractView extends JPanel implements ISweetSnakeView
@@ -30,6 +31,7 @@ public abstract class SweetSnakeAbstractView extends JPanel implements ISweetSna
     protected SweetSnakeIhm     ihm;
 
     protected Dimension         dimension;
+    protected boolean           isBuilded;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -46,9 +48,6 @@ public abstract class SweetSnakeAbstractView extends JPanel implements ISweetSna
      * 
      */
     protected void init() {
-        dimension = new Dimension(414, 392); // TODO calculate or retrieve this (424 x 402 - ihm offset)
-        setSize(dimension);
-        setPreferredSize(dimension);
         setOpaque(false);
         setFocusable(true);
     }
@@ -63,6 +62,20 @@ public abstract class SweetSnakeAbstractView extends JPanel implements ISweetSna
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeView#build()
      */
     @Override
-    public abstract void build();
+    public void build() {
+        if (!isBuilded) {
+            final Dimension frameDimension = ihm.getContentPane().getSize();
+            dimension = new Dimension(frameDimension.width - SweetSnakeIhmConstants.IHM_OFFSET, frameDimension.height - SweetSnakeIhmConstants.IHM_OFFSET);
+            setSize(dimension);
+            setPreferredSize(dimension);
+            buildImpl();
+        }
+
+    }
+
+    /**
+     * 
+     */
+    protected abstract void buildImpl();
 
 }

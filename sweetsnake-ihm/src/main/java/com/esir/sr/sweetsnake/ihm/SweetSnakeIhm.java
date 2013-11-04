@@ -2,8 +2,6 @@ package com.esir.sr.sweetsnake.ihm;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,6 +12,7 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
@@ -23,9 +22,6 @@ import com.esir.sr.sweetsnake.component.SweetSnakeImagePanel;
 import com.esir.sr.sweetsnake.constants.SweetSnakeIhmConstants;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
-import com.esir.sr.sweetsnake.view.SweetSnakeConnectionView;
-import com.esir.sr.sweetsnake.view.SweetSnakePlayersView;
-import com.esir.sr.sweetsnake.view.SweetSnakeUnreachableServerView;
 
 @Component
 public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
@@ -35,26 +31,29 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long               serialVersionUID = -4189434181017519666L;
-    private static final Logger             log              = LoggerFactory.getLogger(SweetSnakeIhm.class);
+    private static final long   serialVersionUID = -4189434181017519666L;
+    private static final Logger log              = LoggerFactory.getLogger(SweetSnakeIhm.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     @Autowired
-    private ISweetSnakeClient               client;
+    private ISweetSnakeClient   client;
 
     @Autowired
-    private SweetSnakeUnreachableServerView serverNotReachableView;
+    @Qualifier("unreachableServerView")
+    private ISweetSnakeView     serverNotReachableView;
 
     @Autowired
-    private SweetSnakeConnectionView        connectionView;
+    @Qualifier("connectionView")
+    private ISweetSnakeView     connectionView;
 
     @Autowired
-    private SweetSnakePlayersView           playersView;
+    @Qualifier("playersView")
+    private ISweetSnakeView     playersView;
 
-    private Dimension                       dimension;
+    private Dimension           dimension;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -67,7 +66,6 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
         super();
     }
 
-
     /**
      * 
      */
@@ -77,10 +75,12 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
         initFrameParameters();
     }
 
+    /**
+     * 
+     */
     @PreDestroy
     protected void destroy() {
         log.info("Destroying SweetSnakeIhm");
-        dispose();
     }
 
     /**********************************************************************************************
@@ -104,7 +104,6 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
         setBounds(X, Y, dimension.width, dimension.height);
         setContentPane(new SweetSnakeImagePanel(SweetSnakeIhmConstants.BG_PATH));
 
-        addWindowListener(new windowListener());
         setVisible(true);
     }
 
@@ -216,41 +215,5 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
     /**********************************************************************************************
      * [BLOCK] INTERNAL LISTENERS
      **********************************************************************************************/
-
-    // TODO remove this listener, used to passby eclipse runtime bug which does not call
-    // shutdown hooks on exit
-    private class windowListener implements WindowListener
-    {
-        @Override
-        public void windowActivated(final WindowEvent arg0) {
-        }
-
-        @Override
-        public void windowClosed(final WindowEvent arg0) {
-        }
-
-        @Override
-        public void windowClosing(final WindowEvent arg0) {
-            if (client.isConnected()) {
-                client.disconnect();
-            }
-        }
-
-        @Override
-        public void windowDeactivated(final WindowEvent arg0) {
-        }
-
-        @Override
-        public void windowDeiconified(final WindowEvent arg0) {
-        }
-
-        @Override
-        public void windowIconified(final WindowEvent arg0) {
-        }
-
-        @Override
-        public void windowOpened(final WindowEvent arg0) {
-        }
-    }
 
 }

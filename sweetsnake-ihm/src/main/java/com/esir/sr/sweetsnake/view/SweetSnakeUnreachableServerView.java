@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import com.esir.sr.sweetsnake.component.SweetSnakeImagePanel;
 import com.esir.sr.sweetsnake.constants.SweetSnakeIhmConstants;
 
-@Component
+@Component("unreachableServerView")
 public class SweetSnakeUnreachableServerView extends SweetSnakeAbstractView
 {
 
@@ -37,7 +37,6 @@ public class SweetSnakeUnreachableServerView extends SweetSnakeAbstractView
     private SweetSnakeImagePanel logoPL;
     private JLabel               errorLB;
     private JButton              retryBTN;
-    private boolean              isBuilded;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -69,14 +68,10 @@ public class SweetSnakeUnreachableServerView extends SweetSnakeAbstractView
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#build()
+     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#buildImpl()
      */
     @Override
-    public void build() {
-        if (isBuilded) {
-            return;
-        }
-
+    public void buildImpl() {
         setLayout(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 

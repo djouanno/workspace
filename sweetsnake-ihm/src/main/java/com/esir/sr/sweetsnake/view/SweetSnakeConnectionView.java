@@ -26,7 +26,7 @@ import com.esir.sr.sweetsnake.component.SweetSnakeImagePanel;
 import com.esir.sr.sweetsnake.constants.SweetSnakeIhmConstants;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
-@Component
+@Component("connectionView")
 public class SweetSnakeConnectionView extends SweetSnakeAbstractView
 {
 
@@ -76,10 +76,10 @@ public class SweetSnakeConnectionView extends SweetSnakeAbstractView
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#build()
+     * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#buildImpl()
      */
     @Override
-    public void build() {
+    public void buildImpl() {
         setLayout(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 

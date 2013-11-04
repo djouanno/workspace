@@ -7,7 +7,8 @@ public class SweetSnakeIhmConstants
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final int   IHM_OFFSET        = 10;
+    /** **/
+    public static final int    IHM_OFFSET        = 10;
 
     /** */
     public static final int    IHM_WIDTH         = SweetSnakeGameConstants.CELL_SIZE * (SweetSnakeGameConstants.GRID_SIZE + 1) + IHM_OFFSET;
