@@ -58,6 +58,17 @@ public class SweetSnakeClientCallback extends UnicastRemoteObject implements ISw
     /*
      * (non-Javadoc)
      * 
+     * @see
+     * com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#requestRefused(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
+     */
+    @Override
+    public void requestRefused(final SweetSnakeGameRequestDTO request) throws RemoteException {
+        client.requestRefused(request);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#startGame(com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO)
      */
     @Override

@@ -39,7 +39,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>com.esir.sr.sweetsnake.server.ClientLauncher</mainClass>
+              <mainClass>com.esir.sr.sweetsnake.client.ClientLauncher</mainClass>
             </manifest>
           </archive>
         </configuration>

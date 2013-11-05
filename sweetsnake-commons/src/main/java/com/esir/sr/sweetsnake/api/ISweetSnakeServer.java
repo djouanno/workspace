@@ -52,6 +52,14 @@ public interface ISweetSnakeServer
     /**
      * 
      * @param client
+     * @param requestDTO
+     * @throws GameRequestNotFoundException
+     */
+    void refuseGame(ISweetSnakeClientCallback client, SweetSnakeGameRequestDTO requestDTO) throws GameRequestNotFoundException;
+
+    /**
+     * 
+     * @param client
      */
     void leaveGame(ISweetSnakeClientCallback client);
 

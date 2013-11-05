@@ -190,11 +190,33 @@ public class SweetSnakeServer implements ISweetSnakeServer
         final ISweetSnakeGameSession gameSession = new SweetSnakeGameSession(player1, player2);
 
         gameSessions.add(gameSession);
+        gameRequests.get(requestDTO.getId()).getRequestedPlayer().removeReceivedRequestId(requestDTO.getId());
+        gameRequests.get(requestDTO.getId()).getRequestingPlayer().removeSentRequestId(requestDTO.getId());
         gameRequests.remove(requestDTO.getId());
 
         gameSession.startGame();
 
         return SweetSnakeFactory.convertGameSession(gameSession);
+    }
+
+    @Override
+    public void refuseGame(final ISweetSnakeClientCallback client, final SweetSnakeGameRequestDTO requestDTO) throws GameRequestNotFoundException {
+        final ISweetSnakeGameRequest request = gameRequests.get(requestDTO.getId());
+
+        if (!request.getRequestedPlayer().getName().equals(retrieveClientName(client))) {
+            throw new GameRequestNotFoundException("no matching request");
+        }
+
+        final ISweetSnakePlayer player1 = gameRequests.get(requestDTO.getId()).getRequestingPlayer(), player2 = gameRequests.get(requestDTO.getId()).getRequestedPlayer();
+        player2.removeReceivedRequestId(requestDTO.getId());
+        player1.removeSentRequestId(requestDTO.getId());
+        gameRequests.remove(requestDTO.getId());
+
+        try {
+            player1.getClientCallback().requestRefused(requestDTO);
+        } catch (final RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /*

@@ -19,6 +19,13 @@ public interface ISweetSnakeClientCallback extends Remote
 
     /**
      * 
+     * @param request
+     * @throws RemoteException
+     */
+    void requestRefused(SweetSnakeGameRequestDTO request) throws RemoteException;
+
+    /**
+     * 
      * @param session
      * @throws RemoteException
      */

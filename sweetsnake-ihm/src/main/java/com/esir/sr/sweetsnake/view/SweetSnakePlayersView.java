@@ -169,6 +169,7 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
             @SuppressWarnings("unchecked")
             @Override
             public void valueChanged(final ListSelectionEvent e) {
+                // FIXME pourquoi ça marche que par le getSource et pas l'attribut direct ? :/ fait chier ce cast est trop laid
                 selectedPlayer = ((JList<SweetSnakePlayerDTO>) e.getSource()).getSelectedValue();
             }
         });

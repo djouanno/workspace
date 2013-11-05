@@ -4,7 +4,7 @@ package com.esir.sr.sweetsnake.enumeration;
 public enum SweetSnakePlayerStatus
 {
 
-    AVAILABLE("available"), PENDING("pending"), INVITED("invited"), PLAYING("playing");
+    DISCONNECTED("disconnected"), AVAILABLE("available"), PENDING("pending"), INVITED("invited"), PLAYING("playing");
 
     private String value = "unknown";
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,8 @@ import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakePlayerStatus;
+import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
 import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
@@ -49,7 +52,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
     private ISweetSnakeIhm            ihm;
 
     private String                    username;
-    private boolean                   connected;
+    private SweetSnakePlayerStatus    status;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -72,6 +75,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
         if (server == null) {
             ihm.serverNotReachable();
         } else {
+            status = SweetSnakePlayerStatus.DISCONNECTED;
             ihm.serverReachable();
         }
     }
@@ -82,7 +86,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
     @PreDestroy
     protected void destroy() {
         log.info("Destroying SweetSnakeClient");
-        if (connected) {
+        if (status != SweetSnakePlayerStatus.DISCONNECTED) {
             disconnect();
         }
     }
@@ -126,7 +130,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
         log.debug("Connecting with username {}", _username);
         username = new String(_username);
         server.connect(callback);
-        connected = true;
+        status = SweetSnakePlayerStatus.AVAILABLE;
         ihm.successfullyConnected();
     }
 
@@ -139,6 +143,7 @@ public class SweetSnakeClient implements ISweetSnakeClient
     public void disconnect() {
         try {
             server.disconnect(callback);
+            status = SweetSnakePlayerStatus.DISCONNECTED;
         } catch (final PlayerNotFoundException e) {
             log.error(e.getMessage(), e);
         }
@@ -165,8 +170,35 @@ public class SweetSnakeClient implements ISweetSnakeClient
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
      */
     @Override
-    public void requestGame(final SweetSnakeGameRequestDTO request) {
-        // TODO
+    public void requestGame(final SweetSnakeGameRequestDTO requestDTO) {
+        // TODO maybe more to do here (stock request for example)
+        status = SweetSnakePlayerStatus.INVITED;
+        // TODO requesting player thread is blocked with the below call, waiting for the answer ! :/
+        final int answer = ihm.displayConfirmMessage(requestDTO.getRequestingPlayerName() + " wants to play with you");
+        if (answer == JOptionPane.YES_OPTION) {
+            try {
+                server.acceptGame(callback, requestDTO);
+            } catch (PlayerNotFoundException | GameRequestNotFoundException e) {
+                ihm.displayErrorMessage(e.getMessage());
+            }
+        } else {
+            try {
+                server.refuseGame(callback, requestDTO);
+            } catch (final GameRequestNotFoundException e) {
+                ihm.displayErrorMessage(e.getMessage());
+            }
+            status = SweetSnakePlayerStatus.AVAILABLE;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#requestRefused(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
+     */
+    @Override
+    public void requestRefused(final SweetSnakeGameRequestDTO requestDTO) {
+        ihm.displayInfoMessage(requestDTO.getRequestedPlayerName() + " has denied your request");
     }
 
     /*
@@ -176,7 +208,8 @@ public class SweetSnakeClient implements ISweetSnakeClient
      */
     @Override
     public void startGame(final SweetSnakeGameSessionDTO session) {
-        // TODO
+        ihm.startGame(/* TODO send paramters (game map...)) */);
+        status = SweetSnakePlayerStatus.PLAYING;
     }
 
     /*
@@ -187,16 +220,6 @@ public class SweetSnakeClient implements ISweetSnakeClient
     @Override
     public void confirmMove(final SweetSnakeDirection direction) {
         ihm.moveSnake(direction);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#isConnected()
-     */
-    @Override
-    public boolean isConnected() {
-        return connected;
     }
 
     /**********************************************************************************************
@@ -211,6 +234,16 @@ public class SweetSnakeClient implements ISweetSnakeClient
     @Override
     public String getUsername() {
         return username;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#getStatus()
+     */
+    @Override
+    public SweetSnakePlayerStatus getStatus() {
+        return status;
     }
 
     /*

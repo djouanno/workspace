@@ -53,6 +53,10 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
     @Qualifier("playersView")
     private ISweetSnakeView     playersView;
 
+    @Autowired
+    @Qualifier("gameView")
+    private ISweetSnakeView     gameView;
+
     private Dimension           dimension;
 
     /**********************************************************************************************
@@ -163,6 +167,14 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
     }
 
     /*
+     * 
+     */
+    @Override
+    public void startGame() {
+        switchView(gameView);
+    }
+
+    /*
      * (non-Javadoc)
      * 
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#moveSnake(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
@@ -191,6 +203,11 @@ public class SweetSnakeIhm extends JFrame implements ISweetSnakeIhm
     @Override
     public void displayErrorMessage(final String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    @Override
+    public int displayConfirmMessage(final String message) {
+        return JOptionPane.showConfirmDialog(this, message, "Information", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
     }
 
     /*

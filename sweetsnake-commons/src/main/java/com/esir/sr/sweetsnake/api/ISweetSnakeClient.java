@@ -6,6 +6,7 @@ import com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
+import com.esir.sr.sweetsnake.enumeration.SweetSnakePlayerStatus;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
 public interface ISweetSnakeClient
@@ -42,6 +43,12 @@ public interface ISweetSnakeClient
 
     /**
      * 
+     * @param request
+     */
+    void requestRefused(SweetSnakeGameRequestDTO request);
+
+    /**
+     * 
      * @param session
      */
     void startGame(SweetSnakeGameSessionDTO session);
@@ -62,7 +69,7 @@ public interface ISweetSnakeClient
      * 
      * @return
      */
-    boolean isConnected();
+    SweetSnakePlayerStatus getStatus();
 
     /**
      * 
