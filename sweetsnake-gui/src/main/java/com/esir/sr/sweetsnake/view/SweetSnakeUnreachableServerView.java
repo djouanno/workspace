@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.component.SweetSnakeImagePanel;
 import com.esir.sr.sweetsnake.constants.SweetSnakeIhmConstants;
+import com.esir.sr.sweetsnake.uicomponent.SweetSnakeImagePanel;
 
 @Component("unreachableServerView")
 public class SweetSnakeUnreachableServerView extends SweetSnakeAbstractView

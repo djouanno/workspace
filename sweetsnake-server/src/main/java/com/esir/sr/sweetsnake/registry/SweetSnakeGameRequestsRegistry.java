@@ -101,6 +101,7 @@ public class SweetSnakeGameRequestsRegistry implements ISweetSnakeGameRequestsRe
         final ISweetSnakeGameRequest request = requests.get(id);
         request.getRequestingPlayer().removeSentRequestId(id);
         request.getRequestedPlayer().removeReceivedRequestId(id);
+        request.cancel();
         log.debug("Request {} has been removed", requests.get(id));
         requests.remove(id);
     }

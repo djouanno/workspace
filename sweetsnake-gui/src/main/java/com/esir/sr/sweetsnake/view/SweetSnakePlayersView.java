@@ -9,13 +9,10 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -23,9 +20,10 @@ import javax.swing.event.ListSelectionListener;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.component.SweetSnakeImagePanel;
 import com.esir.sr.sweetsnake.constants.SweetSnakeIhmConstants;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
+import com.esir.sr.sweetsnake.uicomponent.SweetSnakeImagePanel;
+import com.esir.sr.sweetsnake.uicomponent.SweetSnakeList;
 
 @Component("playersView")
 public class SweetSnakePlayersView extends SweetSnakeAbstractView
@@ -35,19 +33,18 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long                     serialVersionUID = -5820091417435340407L;
-    private static final org.slf4j.Logger         log              = LoggerFactory.getLogger(SweetSnakePlayersView.class);
+    private static final long                   serialVersionUID = -5820091417435340407L;
+    private static final org.slf4j.Logger       log              = LoggerFactory.getLogger(SweetSnakePlayersView.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private SweetSnakeImagePanel                  playersListIPL;
-    private JPanel                                topPL, centerPL, bottomPL;
-    private JList<SweetSnakePlayerDTO>            playersJLT;
-    private DefaultListModel<SweetSnakePlayerDTO> playersJLTModel;
-    private JButton                               refreshListBTN, requestBTN;
-    private SweetSnakePlayerDTO                   selectedPlayer;
+    private SweetSnakeImagePanel                playersListIPL;
+    private JPanel                              topPL, centerPL, bottomPL;
+    private SweetSnakeList<SweetSnakePlayerDTO> playersLST;
+    private JButton                             refreshListBTN, requestBTN;
+    private SweetSnakePlayerDTO                 selectedPlayer;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -99,8 +96,8 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
 
         final List<SweetSnakePlayerDTO> players = client.getPlayersList();
 
-        initPlayersJLT(players);
-        centerPL.add(new JScrollPane(playersJLT));
+        initPlayersLST(players);
+        centerPL.add(playersLST);
 
         final GridBagConstraints gbc = new GridBagConstraints();
 
@@ -157,15 +154,12 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
      * 
      * @param players
      */
-    private void initPlayersJLT(final List<SweetSnakePlayerDTO> players) {
-        playersJLTModel = new DefaultListModel<SweetSnakePlayerDTO>();
+    private void initPlayersLST(final List<SweetSnakePlayerDTO> players) {
+        playersLST = new SweetSnakeList<SweetSnakePlayerDTO>();
         for (final SweetSnakePlayerDTO player : players) {
-            playersJLTModel.addElement(player);
+            playersLST.addElement(player);
         }
-        playersJLT = new JList<SweetSnakePlayerDTO>(playersJLTModel);
-        playersJLT.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        playersJLT.setFocusable(true);
-        playersJLT.addListSelectionListener(new ListSelectionListener() {
+        playersLST.addListSelectionListener(new ListSelectionListener() {
             @SuppressWarnings("unchecked")
             @Override
             public void valueChanged(final ListSelectionEvent e) {
@@ -210,12 +204,11 @@ public class SweetSnakePlayersView extends SweetSnakeAbstractView
     {
         @Override
         public void actionPerformed(final ActionEvent e) {
-            playersJLTModel.removeAllElements();
+            playersLST.removeAllElements();
             final List<SweetSnakePlayerDTO> players = client.getPlayersList();
             for (final SweetSnakePlayerDTO player : players) {
-                playersJLTModel.addElement(player);
+                playersLST.addElement(player);
             }
-            playersJLT.setFocusable(true);
         }
     }
 

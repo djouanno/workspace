@@ -256,7 +256,6 @@ public class SweetSnakeServer implements ISweetSnakeServer
         final String clientName = retrieveClientName(client);
         final ISweetSnakePlayer player = players.get(clientName);
         final ISweetSnakeGameRequest request = gameRequests.get(requestDTO.getId());
-        request.cancel();
         gameRequests.remove(requestDTO.getId());
         log.info("Game session request canceled by player {}", player);
     }

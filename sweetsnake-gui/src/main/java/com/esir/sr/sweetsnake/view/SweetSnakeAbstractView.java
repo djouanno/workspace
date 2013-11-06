@@ -49,7 +49,7 @@ public abstract class SweetSnakeAbstractView extends JPanel implements ISweetSna
      */
     protected void init() {
         setOpaque(false);
-        setFocusable(true);
+        // setFocusable(true);
     }
 
     /**********************************************************************************************

@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.component;
+package com.esir.sr.sweetsnake.uicomponent;
 
 import java.awt.Dimension;
 import java.awt.Graphics;

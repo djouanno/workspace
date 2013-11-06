@@ -22,10 +22,10 @@ import org.springframework.stereotype.Component;
 import com.esir.sr.sweetsnake.api.ISweetSnakeClient;
 import com.esir.sr.sweetsnake.api.ISweetSnakeGui;
 import com.esir.sr.sweetsnake.api.ISweetSnakeView;
-import com.esir.sr.sweetsnake.component.SweetSnakeImagePanel;
 import com.esir.sr.sweetsnake.constants.SweetSnakeIhmConstants;
 import com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
+import com.esir.sr.sweetsnake.uicomponent.SweetSnakeImagePanel;
 
 @Component
 public class SweetSnakeGui extends JFrame implements ISweetSnakeGui
