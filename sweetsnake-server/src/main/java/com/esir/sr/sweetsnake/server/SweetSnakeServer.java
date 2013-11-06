@@ -134,6 +134,13 @@ public class SweetSnakeServer implements ISweetSnakeServer
                 log.error(e.getMessage(), e);
             }
         }
+        for (final String receivedRequestId : player.getReceivedRequestsIds()) {
+            try {
+                gameRequests.remove(receivedRequestId);
+            } catch (final GameRequestNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
         // TODO remove game session
         players.remove(clientName);
         log.info("Client with username {} has disconnected", clientName);
@@ -219,7 +226,7 @@ public class SweetSnakeServer implements ISweetSnakeServer
             throw new GameRequestNotFoundException("no matching request");
         }
 
-        final ISweetSnakePlayer player1 = gameRequests.get(requestDTO.getId()).getRequestingPlayer(), player2 = gameRequests.get(requestDTO.getId()).getRequestedPlayer();
+        final ISweetSnakePlayer player1 = gameRequests.get(requestDTO.getId()).getRequestingPlayer();
         gameRequests.remove(requestDTO.getId());
 
         try {
