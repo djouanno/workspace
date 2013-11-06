@@ -41,7 +41,7 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
         id = RandomStringUtils.randomAlphanumeric(SweetSnakePropertiesConstants.GENERATED_ID_LENGTH);
         requestingPlayer = _requestingPlayer;
         requestedPlayer = _requestedPlayer;
-        requestingPlayer.setStatus(SweetSnakePlayerStatus.PENDING);
+        requestingPlayer.setStatus(SweetSnakePlayerStatus.INVITING);
         requestedPlayer.setStatus(SweetSnakePlayerStatus.INVITED);
     }
 
@@ -57,8 +57,7 @@ public class SweetSnakeGameRequest implements ISweetSnakeGameRequest, Serializab
     @Override
     public void cancel() {
         requestingPlayer.setStatus(SweetSnakePlayerStatus.AVAILABLE);
-        requestedPlayer.setStatus(SweetSnakePlayerStatus.AVAILABLE); // TODO pas sûr que ça soit
-        // bon ça (vérifier plus de trucs
+        requestedPlayer.setStatus(SweetSnakePlayerStatus.AVAILABLE); // TODO pas sûr que ça soit bon
     }
 
     /*

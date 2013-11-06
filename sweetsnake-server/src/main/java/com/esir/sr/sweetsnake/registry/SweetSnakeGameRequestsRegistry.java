@@ -83,7 +83,7 @@ public class SweetSnakeGameRequestsRegistry implements ISweetSnakeGameRequestsRe
     @Override
     public ISweetSnakeGameRequest get(final String id) throws GameRequestNotFoundException {
         if (!contains(id)) {
-            throw new GameRequestNotFoundException("request not found");
+            throw new GameRequestNotFoundException("request no more available");
         }
         return requests.get(id);
     }
@@ -96,8 +96,11 @@ public class SweetSnakeGameRequestsRegistry implements ISweetSnakeGameRequestsRe
     @Override
     public void remove(final String id) throws GameRequestNotFoundException {
         if (!contains(id)) {
-            throw new GameRequestNotFoundException("request not found");
+            throw new GameRequestNotFoundException("request no more available");
         }
+        final ISweetSnakeGameRequest request = requests.get(id);
+        request.getRequestingPlayer().removeSentRequestId(id);
+        request.getRequestedPlayer().removeReceivedRequestId(id);
         log.debug("Request {} has been removed", requests.get(id));
         requests.remove(id);
     }

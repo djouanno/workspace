@@ -41,6 +41,11 @@ public class SweetSnakeClientCallbackMock implements ISweetSnakeClientCallback, 
     }
 
     @Override
+    public void requestRefused(final SweetSnakeGameRequestDTO request) throws RemoteException {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
     public void startGame(final SweetSnakeGameSessionDTO session) {
         // TODO Auto-generated method stub
 

@@ -144,7 +144,7 @@
     <module>sweetsnake-server</module>
     <module>sweetsnake-client</module>
     <module>sweetsnake-commons</module>
-    <module>sweetsnake-ihm</module>
+    <module>sweetsnake-gui</module>
   </modules>
 
 </project>

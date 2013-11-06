@@ -20,36 +20,30 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${exec.plugin.version}</version>
-        <configuration>
-          <mainClass>com.esir.sr.sweetsnake.client.ClientLauncher</mainClass>
-        </configuration>
-      </plugin>
-	  <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
-          <finalName>${project.artifactId}-${project.version}</finalName>
-          <outputDirectory>${basedir}\\export</outputDirectory>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <archive>
-            <manifest>
-              <mainClass>com.esir.sr.sweetsnake.client.ClientLauncher</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.4</version>
         <executions>
           <execution>
-            <id>package-jar-with-dependencies</id>
             <phase>package</phase>
             <goals>
-              <goal>single</goal>
+              <goal>shade</goal>
             </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.esir.sr.sweetsnake.client.ClientLauncher</mainClass>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.handlers</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.schemas</resource>
+                </transformer>
+              </transformers>
+              <finalName>${project.artifactId}-${project.version}</finalName>
+              <outputDirectory>${basedir}\\export</outputDirectory>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -63,7 +57,7 @@
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
-      <artifactId>sweetsnake-ihm</artifactId>
+      <artifactId>sweetsnake-gui</artifactId>
       <groupId>com.esir.sr</groupId>
       <version>${project.parent.version}</version>
     </dependency>
