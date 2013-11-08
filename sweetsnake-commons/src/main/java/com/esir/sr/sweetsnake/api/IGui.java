@@ -3,6 +3,12 @@ package com.esir.sr.sweetsnake.api;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 public interface IGui
 {
 

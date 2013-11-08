@@ -9,8 +9,15 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 public class ImagePanel extends JPanel
 {
 
@@ -18,14 +25,18 @@ public class ImagePanel extends JPanel
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long             serialVersionUID = -5965163246192991484L;
-    private static final org.slf4j.Logger log              = LoggerFactory.getLogger(ImagePanel.class);
+    /** The serial version UID */
+    private static final long   serialVersionUID = -5965163246192991484L;
+
+    /** The logger */
+    private static final Logger log              = LoggerFactory.getLogger(ImagePanel.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private Image                         image;
+    /** The image */
+    private Image               image;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR

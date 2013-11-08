@@ -9,6 +9,12 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 public interface IClient
 {
 

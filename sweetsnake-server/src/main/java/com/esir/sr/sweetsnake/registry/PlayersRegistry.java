@@ -1,34 +1,41 @@
 package com.esir.sr.sweetsnake.registry;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.api.IPlayer;
-import com.esir.sr.sweetsnake.api.IPlayersRegistry;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
+import com.esir.sr.sweetsnake.session.Player;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 @Component
-public class PlayersRegistry implements IPlayersRegistry
+public class PlayersRegistry
 {
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final org.slf4j.Logger  log = LoggerFactory.getLogger(PlayersRegistry.class);
+    /** The logger */
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(PlayersRegistry.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private Map<String, IPlayer> players;
+    /** The players map */
+    private Map<String, Player>           players;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -47,52 +54,48 @@ public class PlayersRegistry implements IPlayersRegistry
     @PostConstruct
     protected void init() {
         log.info("Initializing players registry");
-        players = new LinkedHashMap<String, IPlayer>();
+        players = new LinkedHashMap<String, Player>();
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayersRegistry#contains(java.lang.String)
+     * @param name
+     * @return
      */
-    @Override
     public boolean contains(final String name) {
         return players.containsKey(name);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayersRegistry#add(com.esir.sr.sweetsnake.api. ISweetSnakePlayer)
+     * @param player
      */
-    @Override
-    public void add(final IPlayer player) {
+    public void add(final Player player) {
         players.put(player.getName(), player);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayersRegistry#get(java.lang.String)
+     * @param name
+     * @return
+     * @throws PlayerNotFoundException
      */
-    @Override
-    public IPlayer get(final String name) throws PlayerNotFoundException {
+    public Player get(final String name) throws PlayerNotFoundException {
         if (!contains(name)) {
             throw new PlayerNotFoundException("player not found");
         }
         return players.get(name);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayersRegistry#remove(java.lang.String)
+     * @param name
+     * @throws PlayerNotFoundException
      */
-    @Override
     public void remove(final String name) throws PlayerNotFoundException {
         if (!contains(name)) {
             throw new PlayerNotFoundException("player not found");
@@ -100,19 +103,12 @@ public class PlayersRegistry implements IPlayersRegistry
         players.remove(name);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayersRegistry#getPlayersName()
+     * @return
      */
-    @Override
-    public List<String> getPlayersName() {
-        final List<String> names = new LinkedList<String>();
-        for (final String name : players.keySet()) {
-            names.add(name);
-        }
-
-        return names;
+    public Set<String> getPlayersName() {
+        return Collections.unmodifiableSet(players.keySet());
     }
 
 }

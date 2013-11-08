@@ -10,9 +10,15 @@ import com.esir.sr.sweetsnake.api.IElement;
 import com.esir.sr.sweetsnake.api.IGui;
 import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.constants.PropertiesConstants;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 public abstract class AbstractElement extends JComponent implements IElement
 {
 
@@ -20,16 +26,27 @@ public abstract class AbstractElement extends JComponent implements IElement
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long       serialVersionUID = 3748120944354885599L;
+    /** The serial version UID */
+    private static final long serialVersionUID = 3748120944354885599L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    protected IGui        ihm;
-    protected String                id;
-    protected int                   x, y;
-    protected ElementType type;
+    /** The GUI */
+    protected IGui            ihm;
+
+    /** The element id */
+    protected String          id;
+
+    /** The element x position on the game map */
+    protected int             x;
+
+    /** The element y position on the game map */
+    protected int             y;
+
+    /** The element type */
+    protected ElementType     type;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR

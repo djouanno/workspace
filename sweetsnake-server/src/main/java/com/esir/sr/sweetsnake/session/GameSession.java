@@ -7,38 +7,53 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.api.IElement;
-import com.esir.sr.sweetsnake.api.IGameSession;
-import com.esir.sr.sweetsnake.api.IPlayer;
 import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.constants.PropertiesConstants;
+import com.esir.sr.sweetsnake.element.Snake;
+import com.esir.sr.sweetsnake.element.Sweet;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
-import com.esir.sr.sweetsnake.factory.SessionsFactory;
-import com.esir.sr.sweetsnake.game.Snake;
-import com.esir.sr.sweetsnake.game.Sweet;
+import com.esir.sr.sweetsnake.factory.DtoConverterFactory;
 import com.esir.sr.sweetsnake.utils.Pair;
 
-public class GameSession implements IGameSession
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
+public class GameSession
 {
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final org.slf4j.Logger                     log = LoggerFactory.getLogger(GameSession.class);
+    /** The logger */
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(GameSession.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final String                                      id;
-    private final IPlayer                           player1, player2;
+    /** The session id */
+    private final String                  id;
+
+    /** The first player */
+    private final Player                  player1;
+
+    /** The second player */
+    private final Player                  player2;
+
     // TODO do not use Pair, find another way
-    private final Pair<IPlayer, IElement> player1Snake;
-    private final Pair<IPlayer, IElement> player2Snake;
-    private IElement[][]                            gameMap;
-    private boolean                                           gameStarted;
-    private int                                               remainingSweets;
+    private final Pair<Player, IElement>  player1Snake;
+    private final Pair<Player, IElement>  player2Snake;
+    // TODO move to a gameMap object
+    private IElement[][]                  gameMap;
+    private int                           remainingSweets;
+
+    /** Is the game started */
+    private boolean                       isGameStarted;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -49,14 +64,14 @@ public class GameSession implements IGameSession
      * @param _player1
      * @param _player2
      */
-    public GameSession(final IPlayer _player1, final IPlayer _player2) {
+    public GameSession(final Player _player1, final Player _player2) {
         log.info("Initializing a new game session between {} and {}", _player1.getName(), _player2.getName());
         id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
         player1 = _player1;
         player2 = _player2;
-        player1Snake = new Pair<IPlayer, IElement>(player1, new Snake());
-        player2Snake = new Pair<IPlayer, IElement>(player2, new Snake());
-        gameStarted = false;
+        player1Snake = new Pair<Player, IElement>(player1, new Snake());
+        player2Snake = new Pair<Player, IElement>(player2, new Snake());
+        isGameStarted = false;
         remainingSweets = GameConstants.NUMBER_OF_SWEETS;
     }
 
@@ -69,7 +84,7 @@ public class GameSession implements IGameSession
      * @param player
      * @return
      */
-    private IElement retrievePlayerSnake(final IPlayer player) {
+    private IElement retrievePlayerSnake(final Player player) {
         if (player == player1Snake.getFirst()) {
             return player1Snake.getSecond();
         }
@@ -83,12 +98,9 @@ public class GameSession implements IGameSession
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSession#startGame()
      */
-    @Override
     public void startGame() {
         log.info("Initializing a new gameboard between {} and {}", player1.getName(), player2.getName());
 
@@ -109,11 +121,11 @@ public class GameSession implements IGameSession
         }
 
         try {
-            player1.getClientCallback().startGame(SessionsFactory.convertGameSession(this));
-            player2.getClientCallback().startGame(SessionsFactory.convertGameSession(this));
+            player1.getClientCallback().startGame(DtoConverterFactory.convertGameSession(this));
+            player2.getClientCallback().startGame(DtoConverterFactory.convertGameSession(this));
 
             // TODO maybe reconfirm from client side to synchronize game start
-            gameStarted = true;
+            isGameStarted = true;
 
             player1.setStatus(PlayerStatus.PLAYING);
             player2.setStatus(PlayerStatus.PLAYING);
@@ -122,24 +134,19 @@ public class GameSession implements IGameSession
         }
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSession#stopGame()
      */
-    @Override
     public void stopGame() {
-
+        // TODO
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSession#movePlayer(com.esir.sr.sweetsnake.api. ISweetSnakePlayer,
-     * com.esir.sr.sweetsnake.enumeration.Direction)
+     * @param player
+     * @param direction
      */
-    @Override
-    public void movePlayer(final IPlayer player, final MoveDirection direction) {
+    public void movePlayer(final Player player, final MoveDirection direction) {
         final IElement playerSnake = retrievePlayerSnake(player);
         if (playerSnake == null) {
             log.error("Can't find player's snake"); // TODO throw exception
@@ -162,44 +169,36 @@ public class GameSession implements IGameSession
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSession#getId()
+     * @return
      */
-    @Override
     public String getId() {
         return id;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSession#getPlayer1()
+     * @return
      */
-    @Override
-    public IPlayer getPlayer1() {
+    public Player getPlayer1() {
         return player1;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSession#getPlayer2()
+     * @return
      */
-    @Override
-    public IPlayer getPlayer2() {
+    public Player getPlayer2() {
         return player2;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSession#isGameStarted()
+     * @return
      */
-    @Override
     public boolean isGameStarted() {
-        return gameStarted;
+        return isGameStarted;
     }
 
 }

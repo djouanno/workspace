@@ -2,6 +2,12 @@ package com.esir.sr.sweetsnake.client;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 public class ClientLauncher
 {
 

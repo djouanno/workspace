@@ -23,8 +23,14 @@ import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
 import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
-import com.esir.sr.sweetsnake.service.RmiService;
+import com.esir.sr.sweetsnake.provider.RmiProvider;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 @Component
 public class Client implements IClient
 {
@@ -33,31 +39,35 @@ public class Client implements IClient
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
+    /** The logger */
     private static final Logger log = LoggerFactory.getLogger(Client.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
+    /** The client callback */
     @Autowired
     private IClientCallback     callback;
 
+    /** The rmi provider */
     @Autowired
-    private RmiService          rmiService;
-
-    private IServer             server;
+    private RmiProvider         rmiProvider;
 
     /** The GUI */
     @Autowired
     private IGui                gui;
 
-    /** The player name */
+    /** The server */
+    private IServer             server;
+
+    /** The username */
     private String              username;
 
     /** The player status */
     private PlayerStatus        status;
 
-    /** The game request DTO, can be sent only once at a time */
+    /** The sent request DTO (only once at a time) */
     private GameRequestDTO      sentRequestDTO;
 
     /**********************************************************************************************
@@ -77,7 +87,7 @@ public class Client implements IClient
     @PostConstruct
     protected void init() {
         log.info("Initialiazing a new SweetSnakeClient");
-        server = rmiService.getRmiService();
+        server = rmiProvider.getRmiService();
         if (server == null) {
             gui.serverNotReachable();
         } else {
@@ -113,8 +123,8 @@ public class Client implements IClient
     @Override
     public void reachServer() {
         if (server == null) {
-            rmiService.retryReach();
-            server = rmiService.getRmiService();
+            rmiProvider.retryReach();
+            server = rmiProvider.getRmiService();
             if (server == null) {
                 gui.serverNotReachable();
             } else {

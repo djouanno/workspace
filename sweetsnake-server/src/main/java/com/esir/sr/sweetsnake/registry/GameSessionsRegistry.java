@@ -1,34 +1,41 @@
 package com.esir.sr.sweetsnake.registry;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.api.IGameSession;
-import com.esir.sr.sweetsnake.api.IGameSessionsRegistry;
 import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
+import com.esir.sr.sweetsnake.session.GameSession;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 @Component
-public class GameSessionsRegistry implements IGameSessionsRegistry
+public class GameSessionsRegistry
 {
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final org.slf4j.Logger       log = LoggerFactory.getLogger(GameSessionsRegistry.class);
+    /** The logger */
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(GameSessionsRegistry.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private Map<String, IGameSession> sessions;
+    /** The sessions map */
+    private Map<String, GameSession>      sessions;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -47,52 +54,48 @@ public class GameSessionsRegistry implements IGameSessionsRegistry
     @PostConstruct
     protected void init() {
         log.info("Initializing game sessions registry");
-        sessions = new LinkedHashMap<String, IGameSession>();
+        sessions = new LinkedHashMap<String, GameSession>();
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionsRegistry#contains(java.lang.String)
+     * @param id
+     * @return
      */
-    @Override
     public boolean contains(final String id) {
         return sessions.containsKey(id);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionsRegistry#add(com.esir.sr.sweetsnake.api .ISweetSnakeGameSession)
+     * @param session
      */
-    @Override
-    public void add(final IGameSession session) {
+    public void add(final GameSession session) {
         sessions.put(session.getId(), session);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionsRegistry#get(java.lang.String)
+     * @param id
+     * @return
+     * @throws GameSessionNotFoundException
      */
-    @Override
-    public IGameSession get(final String id) throws GameSessionNotFoundException {
+    public GameSession get(final String id) throws GameSessionNotFoundException {
         if (!contains(id)) {
             throw new GameSessionNotFoundException("session not found");
         }
         return sessions.get(id);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionsRegistry#remove(java.lang.String)
+     * @param id
+     * @throws GameSessionNotFoundException
      */
-    @Override
     public void remove(final String id) throws GameSessionNotFoundException {
         if (!contains(id)) {
             throw new GameSessionNotFoundException("session not found");
@@ -100,19 +103,12 @@ public class GameSessionsRegistry implements IGameSessionsRegistry
         sessions.remove(id);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameSessionsRegistry#getSessionsId()
+     * @return
      */
-    @Override
-    public List<String> getSessionsId() {
-        final List<String> ids = new LinkedList<String>();
-        for (final String id : sessions.keySet()) {
-            ids.add(id);
-        }
-
-        return ids;
+    public Set<String> getSessionsId() {
+        return Collections.unmodifiableSet(sessions.keySet());
     }
 
 }

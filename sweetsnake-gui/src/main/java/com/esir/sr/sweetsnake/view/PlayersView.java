@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,12 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
 import com.esir.sr.sweetsnake.uicomponent.SweetSnakeList;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 @Component("playersView")
 public class PlayersView extends AbstractView
 {
@@ -33,17 +40,38 @@ public class PlayersView extends AbstractView
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long                   serialVersionUID = -5820091417435340407L;
-    private static final org.slf4j.Logger       log              = LoggerFactory.getLogger(PlayersView.class);
+    /** The serial version UID */
+    private static final long         serialVersionUID = -5820091417435340407L;
+
+    /** The logger */
+    private static final Logger       log              = LoggerFactory.getLogger(PlayersView.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
+    /** The view title panel */
     private ImagePanel                playersListIPL;
-    private JPanel                              topPL, centerPL, bottomPL;
+
+    /** The top panel */
+    private JPanel                    topPL;
+
+    /** The center panel */
+    private JPanel                    centerPL;
+
+    /** The bottom panel */
+    private JPanel                    bottomPL;
+
+    /** The players list */
     private SweetSnakeList<PlayerDTO> playersLST;
-    private JButton                             refreshListBTN, requestBTN;
+
+    /** The refresh button */
+    private JButton                   refreshListBTN;
+
+    /** The request button */
+    private JButton                   requestBTN;
+
+    /** The selected player in the players list */
     private PlayerDTO                 selectedPlayer;
 
     /**********************************************************************************************
@@ -200,8 +228,20 @@ public class PlayersView extends AbstractView
      * [BLOCK] INTERNAL LISTENERS
      **********************************************************************************************/
 
+    /**
+     * 
+     * @author Herminaël Rougier
+     * @author Damien Jouanno
+     * 
+     */
     private class RefreshListener implements ActionListener
     {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
         @Override
         public void actionPerformed(final ActionEvent e) {
             playersLST.removeAllElements();
@@ -210,10 +250,23 @@ public class PlayersView extends AbstractView
                 playersLST.addElement(player);
             }
         }
+
     }
 
+    /**
+     * 
+     * @author Herminaël Rougier
+     * @author Damien Jouanno
+     * 
+     */
     private class RequestGameListener implements ActionListener
     {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
         @Override
         public void actionPerformed(final ActionEvent e) {
             if (selectedPlayer == null) {
@@ -222,6 +275,7 @@ public class PlayersView extends AbstractView
                 gui.requestGame(selectedPlayer);
             }
         }
+
     }
 
 }

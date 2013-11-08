@@ -6,6 +6,12 @@ import java.awt.Graphics;
 import com.esir.sr.sweetsnake.api.IGui;
 import com.esir.sr.sweetsnake.enumeration.ElementType;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 public class Sweet extends AbstractElement
 {
 
@@ -13,6 +19,7 @@ public class Sweet extends AbstractElement
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
+    /** The serial version UID */
     private static final long serialVersionUID = 2902520296967734181L;
 
     /**********************************************************************************************

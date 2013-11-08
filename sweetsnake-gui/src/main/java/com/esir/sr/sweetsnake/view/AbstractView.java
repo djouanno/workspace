@@ -7,31 +7,42 @@ import javax.swing.JPanel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.esir.sr.sweetsnake.api.IClient;
-import com.esir.sr.sweetsnake.api.IView;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.gui.Gui;
 
-public abstract class AbstractView extends JPanel implements IView
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
+public abstract class AbstractView extends JPanel
 {
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long   serialVersionUID = 3803484058346507862L;
+    /** The serial version UID */
+    private static final long serialVersionUID = 3803484058346507862L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
+    /** The client */
     @Autowired
-    protected IClient client;
+    protected IClient         client;
 
+    /** The GUI */
     @Autowired
-    protected Gui     gui;
+    protected Gui             gui;
 
-    protected Dimension         dimension;
-    protected boolean           isBuilded;
+    /** The view dimension */
+    protected Dimension       dimension;
+
+    /** Is the view builded */
+    protected boolean         isBuilded;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -49,19 +60,15 @@ public abstract class AbstractView extends JPanel implements IView
      */
     protected void init() {
         setOpaque(false);
-        // setFocusable(true);
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeView#build()
      */
-    @Override
     public void build() {
         if (!isBuilded) {
             final Dimension frameDimension = gui.getContentPane().getSize();

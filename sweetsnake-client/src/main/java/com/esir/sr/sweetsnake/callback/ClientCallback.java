@@ -12,6 +12,12 @@ import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 @Component
 public class ClientCallback extends UnicastRemoteObject implements IClientCallback
 {
@@ -20,14 +26,16 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
+    /** The serial version UID */
     private static final long serialVersionUID = 2588126929388570038L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
+    /** The client */
     @Autowired
-    private IClient client;
+    private IClient           client;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR

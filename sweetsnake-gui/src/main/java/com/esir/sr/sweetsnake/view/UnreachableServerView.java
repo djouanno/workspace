@@ -19,6 +19,12 @@ import org.springframework.stereotype.Component;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 @Component("unreachableServerView")
 public class UnreachableServerView extends AbstractView
 {
@@ -27,16 +33,24 @@ public class UnreachableServerView extends AbstractView
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long    serialVersionUID = -4955989460436322020L;
-    private static final Logger  log              = LoggerFactory.getLogger(UnreachableServerView.class);
+    /** The serial version UID */
+    private static final long   serialVersionUID = -4955989460436322020L;
+
+    /** The logger */
+    private static final Logger log              = LoggerFactory.getLogger(UnreachableServerView.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private ImagePanel logoPL;
-    private JLabel               errorLB;
-    private JButton              retryBTN;
+    /** The logo panel */
+    private ImagePanel          logoPL;
+
+    /** The error label */
+    private JLabel              errorLB;
+
+    /** The retry button */
+    private JButton             retryBTN;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -130,12 +144,25 @@ public class UnreachableServerView extends AbstractView
      * [BLOCK] INTERNAL LISTENERS
      **********************************************************************************************/
 
+    /**
+     * 
+     * @author Herminaël Rougier
+     * @author Damien Jouanno
+     * 
+     */
     private class RetryListener implements ActionListener
     {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
         @Override
         public void actionPerformed(final ActionEvent e) {
             gui.reachServer();
         }
+
     }
 
 }

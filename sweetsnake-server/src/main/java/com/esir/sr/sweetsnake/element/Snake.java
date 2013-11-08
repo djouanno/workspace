@@ -1,23 +1,25 @@
-package com.esir.sr.sweetsnake.game;
+package com.esir.sr.sweetsnake.element;
 
 import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.constants.GameConstants;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 public class Snake extends AbstractElement
 {
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
+    /** The logger */
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(Snake.class);
-
-    /**********************************************************************************************
-     * [BLOCK] FIELDS
-     **********************************************************************************************/
-
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR

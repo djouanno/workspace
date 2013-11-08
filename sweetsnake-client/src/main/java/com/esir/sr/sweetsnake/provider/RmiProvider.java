@@ -1,31 +1,38 @@
-package com.esir.sr.sweetsnake.service;
+package com.esir.sr.sweetsnake.provider;
 
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.remoting.rmi.RmiProxyFactoryBean;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IServer;
+import com.esir.sr.sweetsnake.constants.PropertiesConstants;
 
-@Service
-public class RmiService
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
+@Component
+public class RmiProvider
 {
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    // TODO move to constants class
-    public static final String  SERVER_URL = "rmi://localhost:1199/SweetSnakeServer";
-    private static final Logger log        = LoggerFactory.getLogger(RmiService.class);
+    /** The logger */
+    private static final Logger log = LoggerFactory.getLogger(RmiProvider.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private IServer   server;
+    /** The server */
+    private IServer             server;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -34,7 +41,7 @@ public class RmiService
     /**
      * 
      */
-    protected RmiService() {
+    protected RmiProvider() {
         super();
     }
 
@@ -44,10 +51,10 @@ public class RmiService
     @PostConstruct
     protected void init() {
         try {
-            log.debug("Trying to reach server at URL : {}", SERVER_URL);
+            log.debug("Trying to reach server at URL : {}", PropertiesConstants.SERVER_URL);
             final RmiProxyFactoryBean factory = new RmiProxyFactoryBean();
             factory.setServiceInterface(IServer.class);
-            factory.setServiceUrl(SERVER_URL);
+            factory.setServiceUrl(PropertiesConstants.SERVER_URL);
             factory.afterPropertiesSet();
             server = (IServer) factory.getObject();
         } catch (final Exception e) {

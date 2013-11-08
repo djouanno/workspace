@@ -1,5 +1,11 @@
 package com.esir.sr.sweetsnake.constants;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 public class GameConstants
 {
     /**********************************************************************************************

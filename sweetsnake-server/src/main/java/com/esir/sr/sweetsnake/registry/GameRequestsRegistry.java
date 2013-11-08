@@ -1,34 +1,41 @@
 package com.esir.sr.sweetsnake.registry;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.api.IGameRequest;
-import com.esir.sr.sweetsnake.api.IGameRequestsRegistry;
 import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
+import com.esir.sr.sweetsnake.session.GameRequest;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 @Component
-public class GameRequestsRegistry implements IGameRequestsRegistry
+public class GameRequestsRegistry
 {
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final org.slf4j.Logger       log = LoggerFactory.getLogger(GameRequestsRegistry.class);
+    /** The logger */
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(GameRequestsRegistry.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private Map<String, IGameRequest> requests;
+    /** The requests map */
+    private Map<String, GameRequest>      requests;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -47,78 +54,63 @@ public class GameRequestsRegistry implements IGameRequestsRegistry
     @PostConstruct
     protected void init() {
         log.info("Initializing game requests registry");
-        requests = new LinkedHashMap<String, IGameRequest>();
+        requests = new LinkedHashMap<String, GameRequest>();
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameRequestsRegistry#contains(java.lang.String)
+     * @param id
+     * @return
      */
-    @Override
     public boolean contains(final String id) {
         return requests.containsKey(id);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameRequestsRegistry#add(com.esir.sr.sweetsnake.api .ISweetSnakeGameRequest)
+     * @param request
      */
-    @Override
-    public void add(final IGameRequest request) {
+    public void add(final GameRequest request) {
         requests.put(request.getId(), request);
         log.debug("Request {} has been added", requests.get(request.getId()));
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameRequestsRegistry#get(java.lang.String)
+     * @param id
+     * @return
+     * @throws GameRequestNotFoundException
      */
-    @Override
-    public IGameRequest get(final String id) throws GameRequestNotFoundException {
+    public GameRequest get(final String id) throws GameRequestNotFoundException {
         if (!contains(id)) {
             throw new GameRequestNotFoundException("request no more available");
         }
         return requests.get(id);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameRequestsRegistry#remove(java.lang.String)
+     * @param id
+     * @throws GameRequestNotFoundException
      */
-    @Override
     public void remove(final String id) throws GameRequestNotFoundException {
         if (!contains(id)) {
             throw new GameRequestNotFoundException("request no more available");
         }
-        final IGameRequest request = requests.get(id);
-        request.getRequestingPlayer().removeSentRequestId(id);
-        request.getRequestedPlayer().removeReceivedRequestId(id);
-        request.cancel();
         log.debug("Request {} has been removed", requests.get(id));
         requests.remove(id);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeGameRequestsRegistry#getRequestsId()
+     * @return
      */
-    @Override
-    public List<String> getRequestsId() {
-        final List<String> ids = new LinkedList<String>();
-        for (final String id : requests.keySet()) {
-            ids.add(id);
-        }
-
-        return ids;
+    public Set<String> getRequestsId() {
+        return Collections.unmodifiableSet(requests.keySet());
     }
 
 }

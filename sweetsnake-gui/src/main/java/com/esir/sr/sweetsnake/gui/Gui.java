@@ -11,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +20,18 @@ import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClient;
 import com.esir.sr.sweetsnake.api.IGui;
-import com.esir.sr.sweetsnake.api.IView;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
+import com.esir.sr.sweetsnake.view.AbstractView;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 @Component
 public class Gui extends JFrame implements IGui
 {
@@ -35,32 +40,41 @@ public class Gui extends JFrame implements IGui
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
+    /** The serial version UID */
     private static final long   serialVersionUID = -4189434181017519666L;
+
+    /** The logger */
     private static final Logger log              = LoggerFactory.getLogger(Gui.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
+    /** The client */
     @Autowired
-    private IClient   client;
+    private IClient             client;
 
+    /** The unreachable server view */
     @Autowired
     @Qualifier("unreachableServerView")
-    private IView     serverNotReachableView;
+    private AbstractView        UnreachableServerView;
 
+    /** The connection view */
     @Autowired
     @Qualifier("connectionView")
-    private IView     connectionView;
+    private AbstractView        connectionView;
 
+    /** The players view */
     @Autowired
     @Qualifier("playersView")
-    private IView     playersView;
+    private AbstractView        playersView;
 
+    /** The game view */
     @Autowired
     @Qualifier("gameView")
-    private IView     gameView;
+    private AbstractView        gameView;
 
+    /** The GUI dimension */
     private Dimension           dimension;
 
     /**********************************************************************************************
@@ -119,11 +133,26 @@ public class Gui extends JFrame implements IGui
      * 
      * @param view
      */
-    private void switchView(final IView view) {
+    private void switchView(final AbstractView view) {
         view.build();
         getContentPane().removeAll();
-        getContentPane().add((JPanel) view);
+        getContentPane().add(view);
         refreshUI();
+    }
+
+    /**
+     * 
+     * @param parent
+     * @return
+     */
+    private JOptionPane getOptionPane(final JComponent parent) {
+        JOptionPane pane = null;
+        if (!(parent instanceof JOptionPane)) {
+            pane = getOptionPane((JComponent) parent.getParent());
+        } else {
+            pane = (JOptionPane) parent;
+        }
+        return pane;
     }
 
     /**********************************************************************************************
@@ -147,7 +176,7 @@ public class Gui extends JFrame implements IGui
      */
     @Override
     public void serverNotReachable() {
-        switchView(serverNotReachableView);
+        switchView(UnreachableServerView);
     }
 
     /*
@@ -171,7 +200,9 @@ public class Gui extends JFrame implements IGui
     }
 
     /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.IGui#startGame()
      */
     @Override
     public void startGame() {
@@ -225,16 +256,11 @@ public class Gui extends JFrame implements IGui
         t.start();
     }
 
-    protected JOptionPane getOptionPane(final JComponent parent) {
-        JOptionPane pane = null;
-        if (!(parent instanceof JOptionPane)) {
-            pane = getOptionPane((JComponent) parent.getParent());
-        } else {
-            pane = (JOptionPane) parent;
-        }
-        return pane;
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#displayCustomMessage(java.lang.String, java.lang.String[])
+     */
     @Override
     public int displayCustomMessage(final String message, final String[] buttonsText) {
         final Object[] buttons = new Object[buttonsText.length];
@@ -252,8 +278,6 @@ public class Gui extends JFrame implements IGui
             i++;
         }
         return JOptionPane.showOptionDialog(this, message, "Information", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[0]);
-        // return JOptionPane.showConfirmDialog(this, message, "Information", JOptionPane.YES_NO_OPTION,
-        // JOptionPane.INFORMATION_MESSAGE);
     }
 
     /*
@@ -274,9 +298,5 @@ public class Gui extends JFrame implements IGui
     public void reachServer() {
         client.reachServer();
     }
-
-    /**********************************************************************************************
-     * [BLOCK] INTERNAL LISTENERS
-     **********************************************************************************************/
 
 }

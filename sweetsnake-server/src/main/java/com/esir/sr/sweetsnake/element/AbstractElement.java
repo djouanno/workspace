@@ -1,12 +1,18 @@
-package com.esir.sr.sweetsnake.game;
+package com.esir.sr.sweetsnake.element;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
 import com.esir.sr.sweetsnake.api.IElement;
 import com.esir.sr.sweetsnake.constants.PropertiesConstants;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 public abstract class AbstractElement implements IElement
 {
 
@@ -14,8 +20,16 @@ public abstract class AbstractElement implements IElement
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    protected String                      id;
-    protected int                         x, y;
+    /** The element id */
+    protected String            id;
+
+    /** The element x position on the game map */
+    protected int               x;
+
+    /** The element y position on the game map */
+    protected int               y;
+
+    /** The element type */
     protected final ElementType type;
 
     /**********************************************************************************************

@@ -26,6 +26,12 @@ import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 @Component("connectionView")
 public class ConnectionView extends AbstractView
 {
@@ -34,19 +40,33 @@ public class ConnectionView extends AbstractView
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final long    serialVersionUID = -2207414981436525337L;
-    private static final Logger  log              = LoggerFactory.getLogger(ConnectionView.class);
-    private static final String  USERNAME_TF_TEXT = "Choose an username";
-    private static final String  CONNECT_BTN_TEXT = "Connect";
+    /** The serial version UID */
+    private static final long   serialVersionUID = -2207414981436525337L;
+
+    /** The logger */
+    private static final Logger log              = LoggerFactory.getLogger(ConnectionView.class);
+
+    /** The username textfield text */
+    private static final String USERNAME_TF_TEXT = "choose an username";
+
+    /** The connect button text */
+    private static final String CONNECT_BTN_TEXT = "connect";
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private ImagePanel logoPL;
-    private JLabel               connectLB;
-    private JTextField           usernameTF;
-    private JButton              connectBTN;
+    /** The logo panel */
+    private ImagePanel          logoPL;
+
+    /** The connect label */
+    private JLabel              connectLB;
+
+    /** The username textfield */
+    private JTextField          usernameTF;
+
+    /** The connect button */
+    private JButton             connectBTN;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -157,8 +177,20 @@ public class ConnectionView extends AbstractView
      * [BLOCK] INTERNAL LISTENERS
      **********************************************************************************************/
 
+    /**
+     * 
+     * @author Herminaël Rougier
+     * @author Damien Jouanno
+     * 
+     */
     private class FocusClearListener implements FocusListener
     {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
+         */
         @Override
         public void focusGained(final FocusEvent arg0) {
             if (usernameTF.getText().equals(USERNAME_TF_TEXT)) {
@@ -166,16 +198,34 @@ public class ConnectionView extends AbstractView
             }
         }
 
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
+         */
         @Override
         public void focusLost(final FocusEvent arg0) {
             if (usernameTF.getText().isEmpty()) {
                 usernameTF.setText(USERNAME_TF_TEXT);
             }
         }
+
     }
 
+    /**
+     * 
+     * @author Herminaël Rougier
+     * @author Damien Jouanno
+     * 
+     */
     private class ConnectListener implements ActionListener
     {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
         @Override
         public void actionPerformed(final ActionEvent e) {
             final String username = usernameTF.getText();
@@ -187,6 +237,7 @@ public class ConnectionView extends AbstractView
                 JOptionPane.showMessageDialog(gui, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+
     }
 
 }

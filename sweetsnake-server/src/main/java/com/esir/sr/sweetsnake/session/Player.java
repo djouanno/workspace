@@ -1,33 +1,46 @@
 package com.esir.sr.sweetsnake.session;
 
 import java.rmi.RemoteException;
-import java.util.Collections;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
-import com.esir.sr.sweetsnake.api.IPlayer;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 
-public class Player implements IPlayer
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
+public class Player
 {
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
-    private static final org.slf4j.Logger   log = LoggerFactory.getLogger(Player.class);
+    /** The logger */
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Player.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final IClientCallback client;
-    private String                          name;
-    private PlayerStatus          status;
-    private Set<String>                     sentRequestsIds, receivedRequestsIds;
+    /** The client callback */
+    private final IClientCallback         client;
+
+    /** The player name */
+    private String                        name;
+
+    /** The player status */
+    private PlayerStatus                  status;
+
+    /** The sent request (only once at a time) */
+    private String                        sentRequestId;
+
+    /** The received request (only once at a time) */
+    private String                        receivedRequestId;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -41,8 +54,6 @@ public class Player implements IPlayer
         client = _client;
         try {
             name = client.getUsername();
-            sentRequestsIds = new TreeSet<String>();
-            receivedRequestsIds = new TreeSet<String>();
         } catch (final RemoteException e) {
             log.error("unable to retrieve client name : {}", e.getMessage(), e);
         }
@@ -51,46 +62,6 @@ public class Player implements IPlayer
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#addSentRequestId(java.lang.String)
-     */
-    @Override
-    public void addSentRequestId(final String requestId) {
-        sentRequestsIds.add(requestId);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#addReceivedRequestId(java.lang.String)
-     */
-    @Override
-    public void addReceivedRequestId(final String requestId) {
-        receivedRequestsIds.add(requestId);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#removeSentRequestId(java.lang.String)
-     */
-    @Override
-    public void removeSentRequestId(final String requestId) {
-        sentRequestsIds.remove(requestId);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#removeReceivedRequestId(java.lang.String)
-     */
-    @Override
-    public void removeReceivedRequestId(final String requestId) {
-        receivedRequestsIds.remove(requestId);
-    }
 
     /*
      * (non-Javadoc)
@@ -106,68 +77,72 @@ public class Player implements IPlayer
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#getClientCallback()
+     * @return
      */
-    @Override
     public IClientCallback getClientCallback() {
         return client;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#getName()
+     * @return
      */
-    @Override
     public String getName() {
         return name;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#getStatus()
+     * @return
      */
-    @Override
     public PlayerStatus getStatus() {
         return status;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#getSentRequestsIds()
+     * @return
      */
-    @Override
-    public Set<String> getSentRequestsIds() {
-        return Collections.unmodifiableSet(sentRequestsIds);
+    public String getSentRequestId() {
+        return sentRequestId;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#getReceivedRequestsIds()
+     * @return
      */
-    @Override
-    public Set<String> getReceivedRequestsIds() {
-        return Collections.unmodifiableSet(receivedRequestsIds);
+    public String getReceivedRequestId() {
+        return receivedRequestId;
     }
 
     /**********************************************************************************************
      * [BLOCK] SETTERS
      **********************************************************************************************/
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakePlayer#setStatus(com.esir.sr.sweetsnake.enumeration .Status)
+     * @param _status
      */
-    @Override
     public void setStatus(final PlayerStatus _status) {
         status = _status;
+    }
+
+    /**
+     * 
+     * @param requestId
+     */
+    public void setSentRequestId(final String requestId) {
+        sentRequestId = requestId;
+    }
+
+    /**
+     * 
+     * @param requestId
+     */
+    public void setReceivedRequestId(final String requestId) {
+        receivedRequestId = requestId;
     }
 
 }
