@@ -1,7 +1,8 @@
 package com.esir.sr.sweetsnake.session;
 
 import java.rmi.RemoteException;
-import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,8 @@ import com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection;
 import com.esir.sr.sweetsnake.enumeration.SweetSnakePlayerStatus;
 import com.esir.sr.sweetsnake.factory.SweetSnakeFactory;
 import com.esir.sr.sweetsnake.game.SweetSnakeSnake;
-import com.esir.sr.sweetsnake.game.SweetSnakeSweet;
-import com.esir.sr.sweetsnake.utils.Pair;
+import com.esir.sr.sweetsnake.game.engine.Engine;
+import com.esir.sr.sweetsnake.game.map.BoardGenerator;
 
 public class SweetSnakeGameSession implements ISweetSnakeGameSession
 {
@@ -33,13 +34,14 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
 
     private final String                                      id;
     private final ISweetSnakePlayer                           player1, player2;
-    // TODO do not use Pair, find another way
-    private final Pair<ISweetSnakePlayer, ISweetSnakeElement> player1Snake;
-    private final Pair<ISweetSnakePlayer, ISweetSnakeElement> player2Snake;
-    private ISweetSnakeElement[][]                            gameMap;
+   
+    private final Map<ISweetSnakePlayer, ISweetSnakeElement> mapPlayers;
     private boolean                                           gameStarted;
     private int                                               remainingSweets;
-
+    
+    private BoardGenerator boardGenerator = new BoardGenerator();
+    private Engine engine = new Engine();
+    
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
@@ -54,8 +56,17 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
         id = RandomStringUtils.randomAlphanumeric(SweetSnakePropertiesConstants.GENERATED_ID_LENGTH);
         player1 = _player1;
         player2 = _player2;
-        player1Snake = new Pair<ISweetSnakePlayer, ISweetSnakeElement>(player1, new SweetSnakeSnake());
-        player2Snake = new Pair<ISweetSnakePlayer, ISweetSnakeElement>(player2, new SweetSnakeSnake());
+        
+        
+        mapPlayers = new HashMap<ISweetSnakePlayer, ISweetSnakeElement>();
+        SweetSnakeSnake snake = new SweetSnakeSnake();
+        mapPlayers.put(player1, snake);
+        
+        snake = new SweetSnakeSnake();
+        mapPlayers.put(player2, snake);
+        
+        engine.setMapPlayers(mapPlayers);
+        
         gameStarted = false;
         remainingSweets = SweetSnakeGameConstants.NUMBER_OF_SWEETS;
     }
@@ -70,13 +81,7 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
      * @return
      */
     private ISweetSnakeElement retrievePlayerSnake(final ISweetSnakePlayer player) {
-        if (player == player1Snake.getFirst()) {
-            return player1Snake.getSecond();
-        }
-        if (player == player2Snake.getFirst()) {
-            return player2Snake.getSecond();
-        }
-        return null;
+        return mapPlayers.get(player);
     }
 
     /**********************************************************************************************
@@ -92,22 +97,14 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
     public void startGame() {
         log.info("Initializing a new gameboard between {} and {}", player1.getName(), player2.getName());
 
-        gameMap = new ISweetSnakeElement[SweetSnakeGameConstants.GRID_SIZE][SweetSnakeGameConstants.GRID_SIZE];
-        gameMap[0][0] = player1Snake.getSecond();
-        gameMap[SweetSnakeGameConstants.GRID_SIZE - 1][SweetSnakeGameConstants.GRID_SIZE - 1] = player2Snake.getSecond();
+        engine.setBoard(boardGenerator.generateBoard(SweetSnakeGameConstants.GRID_SIZE, SweetSnakeGameConstants.GRID_SIZE, SweetSnakeGameConstants.NUMBER_OF_SWEETS));
+        
+        mapPlayers.get(player1).setXY(0, 0);
+        engine.getBoard().set(mapPlayers.get(player1));
 
-        final Random random = new Random();
-        for (int i = 0; i < SweetSnakeGameConstants.NUMBER_OF_SWEETS; i++) {
-            int j, k;
-            do {
-                j = random.nextInt(SweetSnakeGameConstants.GRID_SIZE);
-                k = random.nextInt(SweetSnakeGameConstants.GRID_SIZE);
-            } while (gameMap[j][k] != null);
-
-            gameMap[j][k] = new SweetSnakeSweet();
-            gameMap[j][k].setXY(j, k);
-        }
-
+        mapPlayers.get(player2).setXY(5, 5);
+        engine.getBoard().set(mapPlayers.get(player2));
+        
         try {
             player1.getClientCallback().startGame(SweetSnakeFactory.convertGameSession(this));
             player2.getClientCallback().startGame(SweetSnakeFactory.convertGameSession(this));
@@ -140,7 +137,10 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
      */
     @Override
     public void movePlayer(final ISweetSnakePlayer player, final SweetSnakeDirection direction) {
-        final ISweetSnakeElement playerSnake = retrievePlayerSnake(player);
+       
+    	engine.update(direction, player);
+    	/*
+    	final ISweetSnakeElement playerSnake = retrievePlayerSnake(player);
         if (playerSnake == null) {
             log.error("Can't find player's snake"); // TODO throw exception
         }
@@ -155,7 +155,7 @@ public class SweetSnakeGameSession implements ISweetSnakeGameSession
             if (remainingSweets == 0) {
                 stopGame();
             }
-        }
+        }*/
     }
 
     /**********************************************************************************************

@@ -121,5 +121,8 @@ public abstract class SweetSnakeAbstractElement implements ISweetSnakeElement
         x = _x;
         y = _y;
     }
-
+    
+    public boolean equals(ISweetSnakeElement element) {
+    	return id.equals(element.getId());
+    }
 }

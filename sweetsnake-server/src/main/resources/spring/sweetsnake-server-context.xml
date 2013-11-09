@@ -3,7 +3,7 @@
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
-
+  <context:annotation-config/>
   <bean id="sweetSnakeService" class="com.esir.sr.sweetsnake.server.SweetSnakeServer">
   </bean>
 
@@ -15,5 +15,5 @@
   </bean>
 
   <context:component-scan base-package="com.esir.sr.sweetsnake" />
-
+  
 </beans>
