@@ -4,7 +4,7 @@ import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
-import com.esir.sr.sweetsnake.game.SweetSnakeSweet;
+import com.esir.sr.sweetsnake.element.Sweet;
 
 @Service
 public class BoardGenerator {
@@ -20,7 +20,7 @@ public class BoardGenerator {
 				k = random.nextInt(width);
 			} while (board.hasElement(j, k));
 
-			SweetSnakeSweet sweet = new SweetSnakeSweet();
+			Sweet sweet = new Sweet();
 			sweet.setXY(j, k);
 			board.set(sweet);
 		}

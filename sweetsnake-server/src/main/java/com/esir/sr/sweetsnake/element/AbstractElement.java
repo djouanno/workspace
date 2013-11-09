@@ -136,7 +136,7 @@ public abstract class AbstractElement implements IElement
         y = _y;
     }
     
-    public boolean equals(ISweetSnakeElement element) {
+    public boolean equals(IElement element) {
     	return id.equals(element.getId());
     }
 }

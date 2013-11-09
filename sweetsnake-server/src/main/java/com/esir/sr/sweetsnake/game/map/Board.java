@@ -1,32 +1,32 @@
 package com.esir.sr.sweetsnake.game.map;
 
-import com.esir.sr.sweetsnake.api.ISweetSnakeElement;
+import com.esir.sr.sweetsnake.api.IElement;
 
 public class Board {
 
-	private ISweetSnakeElement[][]                            gameMap;
+	private IElement[][]                            gameMap;
 	private int height;
 	private int width;
 	
 	public Board(final int height, final int width) {
-		gameMap = new ISweetSnakeElement[height][width];
+		gameMap = new IElement[height][width];
 		setHeight(height);
 		setWidth(width);
 	}
 	
-	public void set(final ISweetSnakeElement element) {
+	public void set(final IElement element) {
 		gameMap[element.getX()][element.getY()] = element;
 	}
 	
-	public void remove(final ISweetSnakeElement element) {
+	public void remove(final IElement element) {
 		gameMap[element.getX()][element.getY()] = null;
 	}
 	
-	public ISweetSnakeElement get(final int x, final int y) {
+	public IElement get(final int x, final int y) {
 		return gameMap[x][y];
 	}
 	
-	public ISweetSnakeElement getById(final String id) {
+	public IElement getById(final String id) {
 		for (int i = 0; i < gameMap.length; i++) {
 			for (int j = 0; j < gameMap[i].length; j++) {
 				if(get(i, j).getId() == id)
