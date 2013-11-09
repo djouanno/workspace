@@ -4,12 +4,8 @@ import java.awt.Graphics;
 
 import javax.swing.JComponent;
 
-import org.apache.commons.lang3.RandomStringUtils;
-
 import com.esir.sr.sweetsnake.api.IElement;
-import com.esir.sr.sweetsnake.api.IGui;
 import com.esir.sr.sweetsnake.constants.GameConstants;
-import com.esir.sr.sweetsnake.constants.PropertiesConstants;
 import com.esir.sr.sweetsnake.enumeration.ElementType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
@@ -33,9 +29,6 @@ public abstract class AbstractElement extends JComponent implements IElement
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The GUI */
-    protected IGui            ihm;
-
     /** The element id */
     protected String          id;
 
@@ -54,12 +47,17 @@ public abstract class AbstractElement extends JComponent implements IElement
 
     /**
      * 
-     * @param _ihm
+     * @param _id
+     * @param _x
+     * @param _y
+     * @param _type
      */
-    protected AbstractElement(final IGui _ihm) {
+    protected AbstractElement(final String _id, final int _x, final int _y, final ElementType _type) {
         super();
-        id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
-        ihm = _ihm;
+        id = _id;
+        x = _x;
+        y = _y;
+        type = _type;
     }
 
     /**********************************************************************************************

@@ -32,7 +32,7 @@ import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
  * @author Damien Jouanno
  * 
  */
-@Component("connectionView")
+@Component
 public class ConnectionView extends AbstractView
 {
 

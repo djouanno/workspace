@@ -3,7 +3,6 @@ package com.esir.sr.sweetsnake.uicomponent;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import com.esir.sr.sweetsnake.api.IGui;
 import com.esir.sr.sweetsnake.enumeration.ElementType;
 
 /**
@@ -28,11 +27,9 @@ public class Sweet extends AbstractElement
 
     /**
      * 
-     * @param ihm
      */
-    public Sweet(final IGui ihm) {
-        super(ihm);
-        type = ElementType.SWEET;
+    public Sweet(final String _id, final int _x, final int _y) {
+        super(_id, _x, _y, ElementType.SWEET);
     }
 
     /**********************************************************************************************

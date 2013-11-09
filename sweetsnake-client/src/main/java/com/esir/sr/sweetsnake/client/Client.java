@@ -173,7 +173,7 @@ public class Client implements IClient
     @Override
     public void requestGame(final PlayerDTO player) {
         if (status == PlayerStatus.INVITING) {
-            final int answer = gui.displayCustomMessage("Your already asked for a game with " + sentRequestDTO.getRequestedPlayerName() + "\nPlease wait for your opponent to respond or cancel the request", new String[] { "wait", "cancel request" });
+            final int answer = gui.displayCustomMessage("Your already asked for a game with " + sentRequestDTO.getRequestedPlayerDto() + "\nPlease wait for your opponent to respond or cancel the request", new String[] { "wait", "cancel request" });
             if (answer == 1) {
                 try {
                     server.cancelGameRequest(callback, sentRequestDTO);
@@ -201,7 +201,7 @@ public class Client implements IClient
     @Override
     public void requestGame(final GameRequestDTO requestDTO) {
         status = PlayerStatus.INVITED;
-        final int answer = gui.displayCustomMessage(requestDTO.getRequestingPlayerName() + " wants to play with you", new String[] { "accept", "deny" });
+        final int answer = gui.displayCustomMessage(requestDTO.getRequestingPlayerDto().getName() + " wants to play with you", new String[] { "accept", "deny" });
         if (answer == 0) {
             try {
                 server.acceptGame(callback, requestDTO);
@@ -226,7 +226,7 @@ public class Client implements IClient
     @Override
     public void requestRefused(final GameRequestDTO requestDTO) {
         status = PlayerStatus.AVAILABLE;
-        gui.displayInfoMessage(requestDTO.getRequestedPlayerName() + " has denied your request");
+        gui.displayInfoMessage(requestDTO.getRequestedPlayerDto().getName() + " has denied your request");
     }
 
     /*
@@ -236,7 +236,7 @@ public class Client implements IClient
      */
     @Override
     public void startGame(final GameSessionDTO session) {
-        gui.startGame(/* TODO send paramters (game map...)) */);
+        gui.startGame(session.getGameBoardDto());
         status = PlayerStatus.PLAYING;
     }
 

@@ -32,7 +32,7 @@ import com.esir.sr.sweetsnake.uicomponent.SweetSnakeList;
  * @author Damien Jouanno
  * 
  */
-@Component("playersView")
+@Component
 public class PlayersView extends AbstractView
 {
 

@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.element;
+package com.esir.sr.sweetsnake.game.element;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -56,6 +56,16 @@ public abstract class AbstractElement implements IElement
      */
     @Override
     public abstract void move(MoveDirection direction);
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return type + "[id=" + id + ", x=" + x + ", y=" + y + "]";
+    }
 
     /**********************************************************************************************
      * [BLOCK] GETTERS
@@ -135,8 +145,12 @@ public abstract class AbstractElement implements IElement
         x = _x;
         y = _y;
     }
-    
-    public boolean equals(IElement element) {
-    	return id.equals(element.getId());
+
+    /*
+     * 
+     */
+    public boolean equals(final IElement element) {
+        return id.equals(element.getId());
     }
+
 }

@@ -15,16 +15,20 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClient;
 import com.esir.sr.sweetsnake.api.IGui;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
+import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
 import com.esir.sr.sweetsnake.view.AbstractView;
+import com.esir.sr.sweetsnake.view.ConnectionView;
+import com.esir.sr.sweetsnake.view.GameView;
+import com.esir.sr.sweetsnake.view.PlayersView;
+import com.esir.sr.sweetsnake.view.UnreachableServerView;
 
 /**
  * 
@@ -41,10 +45,10 @@ public class Gui extends JFrame implements IGui
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long   serialVersionUID = -4189434181017519666L;
+    private static final long     serialVersionUID = -4189434181017519666L;
 
     /** The logger */
-    private static final Logger log              = LoggerFactory.getLogger(Gui.class);
+    private static final Logger   log              = LoggerFactory.getLogger(Gui.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
@@ -52,30 +56,26 @@ public class Gui extends JFrame implements IGui
 
     /** The client */
     @Autowired
-    private IClient             client;
+    private IClient               client;
 
     /** The unreachable server view */
     @Autowired
-    @Qualifier("unreachableServerView")
-    private AbstractView        UnreachableServerView;
+    private UnreachableServerView UnreachableServerView;
 
     /** The connection view */
     @Autowired
-    @Qualifier("connectionView")
-    private AbstractView        connectionView;
+    private ConnectionView        connectionView;
 
     /** The players view */
     @Autowired
-    @Qualifier("playersView")
-    private AbstractView        playersView;
+    private PlayersView           playersView;
 
     /** The game view */
     @Autowired
-    @Qualifier("gameView")
-    private AbstractView        gameView;
+    private GameView              gameView;
 
     /** The GUI dimension */
-    private Dimension           dimension;
+    private Dimension             dimension;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -138,6 +138,7 @@ public class Gui extends JFrame implements IGui
         getContentPane().removeAll();
         getContentPane().add(view);
         refreshUI();
+        log.debug("View switched to {}", view.getClass().getName());
     }
 
     /**
@@ -202,10 +203,11 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#startGame()
+     * @see com.esir.sr.sweetsnake.api.IGui#startGame(com.esir.sr.sweetsnake.dto.GameBoardDTO)
      */
     @Override
-    public void startGame() {
+    public void startGame(final GameBoardDTO gameBoard) {
+        gameView.setGameBoardDto(gameBoard);
         switchView(gameView);
     }
 

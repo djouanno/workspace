@@ -234,12 +234,14 @@ public class Server implements IServer
             throw new GameRequestNotFoundException("no matching request");
         }
 
-        final Player player1 = request.getRequestingPlayer(), player2 = request.getRequestedPlayer();
-        final GameSession gameSession = new GameSession(player1, player2);
-
-        gameSessions.add(gameSession);
         removeRequest(gameRequests.get(requestDTO.getId()));
 
+        final Player player1 = request.getRequestingPlayer(), player2 = request.getRequestedPlayer();
+        player1.setStatus(PlayerStatus.PLAYING);
+        player2.setStatus(PlayerStatus.PLAYING);
+
+        final GameSession gameSession = new GameSession(player1, player2);
+        gameSessions.add(gameSession);
         gameSession.startGame();
 
         return DtoConverterFactory.convertGameSession(gameSession);

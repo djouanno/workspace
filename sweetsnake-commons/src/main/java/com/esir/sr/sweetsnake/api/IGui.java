@@ -1,5 +1,6 @@
 package com.esir.sr.sweetsnake.api;
 
+import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
@@ -35,8 +36,9 @@ public interface IGui
 
     /**
      * 
+     * @param gameBoard
      */
-    void startGame(/* TODO send game map */);
+    void startGame(GameBoardDTO gameBoard);
 
     /**
      * 
