@@ -1,19 +1,16 @@
-package com.esir.sr.sweetsnake.uicomponent;
+package com.esir.sr.sweetsnake.dto;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
+import java.io.Serializable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 
 /**
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
- * @param <E>
  */
-public class SweetSnakeList<E> extends JList<E>
+public class PlayerDTO implements Serializable
 {
 
     /**********************************************************************************************
@@ -21,17 +18,17 @@ public class SweetSnakeList<E> extends JList<E>
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long         serialVersionUID = -7399464786914708398L;
-
-    /** The logger */
-    private static final Logger       log              = LoggerFactory.getLogger(SweetSnakeList.class);
+    private static final long  serialVersionUID = -7478382230116293470L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The list model */
-    private final DefaultListModel<E> model;
+    /** The player name */
+    private final String       name;
+
+    /** The player status */
+    private final PlayerStatus status;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -39,41 +36,46 @@ public class SweetSnakeList<E> extends JList<E>
 
     /**
      * 
+     * @param _name
+     * @param _status
      */
-    public SweetSnakeList() {
-        super();
-        model = new DefaultListModel<E>();
-        setModel(model);
+    public PlayerDTO(final String _name, final PlayerStatus _status) {
+        name = _name;
+        status = _status;
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return name + " [" + status + "]";
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] GETTERS
+     **********************************************************************************************/
+
     /**
      * 
-     * @param element
+     * @return
      */
-    public void addElement(final E element) {
-        log.debug("Adding element {} to list", element);
-        model.addElement(element);
+    public String getName() {
+        return name;
     }
 
     /**
      * 
-     * @param element
+     * @return
      */
-    public void removeElement(final E element) {
-        log.debug("Removing element {} to list", element);
-        model.removeElement(element);
-    }
-
-    /**
-     * 
-     */
-    public void removeAllElements() {
-        log.debug("Removing all elements from list");
-        model.removeAllElements();
+    public PlayerStatus getStatus() {
+        return status;
     }
 
 }

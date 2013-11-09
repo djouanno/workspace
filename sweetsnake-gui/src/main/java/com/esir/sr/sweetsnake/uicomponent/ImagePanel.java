@@ -1,7 +1,13 @@
 package com.esir.sr.sweetsnake.uicomponent;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +17,8 @@ import org.slf4j.LoggerFactory;
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
- * @param <E>
  */
-public class SweetSnakeList<E> extends JList<E>
+public class ImagePanel extends JPanel
 {
 
     /**********************************************************************************************
@@ -21,17 +26,17 @@ public class SweetSnakeList<E> extends JList<E>
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long         serialVersionUID = -7399464786914708398L;
+    private static final long   serialVersionUID = -5965163246192991484L;
 
     /** The logger */
-    private static final Logger       log              = LoggerFactory.getLogger(SweetSnakeList.class);
+    private static final Logger log              = LoggerFactory.getLogger(ImagePanel.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The list model */
-    private final DefaultListModel<E> model;
+    /** The image */
+    private Image               image;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -39,41 +44,34 @@ public class SweetSnakeList<E> extends JList<E>
 
     /**
      * 
+     * @param imagePath
      */
-    public SweetSnakeList() {
-        super();
-        model = new DefaultListModel<E>();
-        setModel(model);
+    public ImagePanel(final String imagePath) {
+        try {
+            final BufferedImage bimage = ImageIO.read(ImagePanel.class.getResource(imagePath));
+            final Dimension dimension = new Dimension(bimage.getWidth(), bimage.getHeight());
+            setOpaque(false);
+            setSize(dimension);
+            setPreferredSize(dimension);
+            image = bimage;
+        } catch (final IOException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
-     * @param element
+     * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
      */
-    public void addElement(final E element) {
-        log.debug("Adding element {} to list", element);
-        model.addElement(element);
-    }
-
-    /**
-     * 
-     * @param element
-     */
-    public void removeElement(final E element) {
-        log.debug("Removing element {} to list", element);
-        model.removeElement(element);
-    }
-
-    /**
-     * 
-     */
-    public void removeAllElements() {
-        log.debug("Removing all elements from list");
-        model.removeAllElements();
+    @Override
+    protected void paintComponent(final Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(image, 0, 0, null);
     }
 
 }

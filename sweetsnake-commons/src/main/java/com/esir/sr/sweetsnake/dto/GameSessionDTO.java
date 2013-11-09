@@ -1,19 +1,14 @@
-package com.esir.sr.sweetsnake.uicomponent;
+package com.esir.sr.sweetsnake.dto;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.Serializable;
 
 /**
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
- * @param <E>
  */
-public class SweetSnakeList<E> extends JList<E>
+public class GameSessionDTO implements Serializable
 {
 
     /**********************************************************************************************
@@ -21,17 +16,20 @@ public class SweetSnakeList<E> extends JList<E>
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long         serialVersionUID = -7399464786914708398L;
-
-    /** The logger */
-    private static final Logger       log              = LoggerFactory.getLogger(SweetSnakeList.class);
+    private static final long serialVersionUID = 459664230963147646L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The list model */
-    private final DefaultListModel<E> model;
+    /** The session id */
+    private final String      id;
+
+    /** The first player name */
+    private final String      player1Name;
+
+    /** The second player name */
+    private final String      player2Name;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -39,41 +37,42 @@ public class SweetSnakeList<E> extends JList<E>
 
     /**
      * 
+     * @param _id
+     * @param _player1
+     * @param _player2
      */
-    public SweetSnakeList() {
-        super();
-        model = new DefaultListModel<E>();
-        setModel(model);
+    public GameSessionDTO(final String _id, final String _player1, final String _player2) {
+        id = _id;
+        player1Name = _player1;
+        player2Name = _player2;
     }
 
     /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
+     * [BLOCK] GETTERS
      **********************************************************************************************/
 
     /**
      * 
-     * @param element
+     * @return
      */
-    public void addElement(final E element) {
-        log.debug("Adding element {} to list", element);
-        model.addElement(element);
+    public String getId() {
+        return id;
     }
 
     /**
      * 
-     * @param element
+     * @return
      */
-    public void removeElement(final E element) {
-        log.debug("Removing element {} to list", element);
-        model.removeElement(element);
+    public String getPlayer1Name() {
+        return player1Name;
     }
 
     /**
      * 
+     * @return
      */
-    public void removeAllElements() {
-        log.debug("Removing all elements from list");
-        model.removeAllElements();
+    public String getPlayer2Name() {
+        return player2Name;
     }
 
 }
