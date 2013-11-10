@@ -22,7 +22,6 @@ import com.esir.sr.sweetsnake.api.IGui;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
 import com.esir.sr.sweetsnake.view.AbstractView;
 import com.esir.sr.sweetsnake.view.ConnectionView;
@@ -116,7 +115,7 @@ public class Gui extends JFrame implements IGui
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setTitle("SweetSnake");
-        dimension = new Dimension(GuiConstants.IHM_WIDTH, GuiConstants.IHM_HEIGHT);
+        dimension = new Dimension(GuiConstants.GUI_WIDTH, GuiConstants.GUI_HEIGHT);
         setSize(dimension);
         setPreferredSize(dimension);
 
@@ -125,6 +124,8 @@ public class Gui extends JFrame implements IGui
         final int Y = screen.height / 2 - dimension.height / 2;
         setBounds(X, Y, dimension.width, dimension.height);
         setContentPane(new ImagePanel(GuiConstants.BG_PATH));
+
+        pack();
 
         setVisible(true);
     }
@@ -157,7 +158,7 @@ public class Gui extends JFrame implements IGui
     }
 
     /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
+     * [BLOCK] PUBLIC IMPLEMENTED METHODS
      **********************************************************************************************/
 
     /*
@@ -186,18 +187,8 @@ public class Gui extends JFrame implements IGui
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#successfullyConnected()
      */
     @Override
-    public void successfullyConnected() {
+    public void connectedToServer() {
         switchView(playersView);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO)
-     */
-    @Override
-    public void requestGame(final PlayerDTO requestedPlayer) {
-        client.requestGame(requestedPlayer);
     }
 
     /*
@@ -206,7 +197,7 @@ public class Gui extends JFrame implements IGui
      * @see com.esir.sr.sweetsnake.api.IGui#startGame(com.esir.sr.sweetsnake.dto.GameBoardDTO)
      */
     @Override
-    public void startGame(final GameBoardDTO gameBoard) {
+    public void gameStarted(final GameBoardDTO gameBoard) {
         gameView.setGameBoardDto(gameBoard);
         switchView(gameView);
     }
@@ -214,12 +205,12 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#moveSnake(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     * @see com.esir.sr.sweetsnake.api.IGui#leaveGame()
      */
     @Override
-    public void moveSnake(final MoveDirection direction) {
-        // TODO
-        refreshUI();
+    public void gameLeaved() {
+        switchView(playersView);
+        displayInfoMessage("Game has been left");
     }
 
     /*
@@ -282,16 +273,24 @@ public class Gui extends JFrame implements IGui
         return JOptionPane.showOptionDialog(this, message, "Information", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[0]);
     }
 
-    /*
-     * (non-Javadoc)
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC METHODS
+     **********************************************************************************************/
+
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#refreshUI()
      */
-    @Override
     public void refreshUI() {
         revalidate();
         repaint();
-        pack();
+    }
+
+    /**
+     * 
+     * @param requestedPlayer
+     */
+    public void requestGame(final PlayerDTO requestedPlayer) {
+        client.requestGame(requestedPlayer);
     }
 
     /**

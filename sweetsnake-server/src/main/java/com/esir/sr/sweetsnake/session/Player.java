@@ -39,11 +39,11 @@ public class Player
     /** The sent request (only one at a time) */
     private String                        sentRequestId;
 
-    /** The received request (only one at a time) */
+    /** The received request id (only one at a time) */
     private String                        receivedRequestId;
 
-    /** The current game session (only one at a time) */
-    private GameSession                   gameSession;
+    /** The current game session id (only one at a time) */
+    private String                        gameSessionId;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -124,8 +124,8 @@ public class Player
      * 
      * @return
      */
-    public GameSession getGameSession() {
-        return gameSession;
+    public String getGameSessionId() {
+        return gameSessionId;
     }
 
     /**********************************************************************************************
@@ -160,8 +160,8 @@ public class Player
      * 
      * @param _gameSession
      */
-    public void setGameSession(final GameSession _gameSession) {
-        gameSession = _gameSession;
+    public void setGameSessionId(final String _gameSessionId) {
+        gameSessionId = _gameSessionId;
     }
 
 }

@@ -1,10 +1,11 @@
 package com.esir.sr.sweetsnake.api;
 
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
-import com.esir.sr.sweetsnake.dto.PlayerDTO;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
 /**
+ * 
+ * This interface represents which methods a Graphic User Interface for the game must be able to provide.<br />
+ * All the methods below are intented to be called by the client according to the events it processed.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -26,25 +27,18 @@ public interface IGui
     /**
      * 
      */
-    void successfullyConnected();
-
-    /**
-     * 
-     * @param requestedPlayer
-     */
-    void requestGame(PlayerDTO requestedPlayer);
+    void connectedToServer();
 
     /**
      * 
      * @param gameBoard
      */
-    void startGame(GameBoardDTO gameBoard);
+    void gameStarted(GameBoardDTO gameBoard);
 
     /**
      * 
-     * @param direction
      */
-    void moveSnake(MoveDirection direction);
+    void gameLeaved();
 
     /**
      * 
@@ -65,10 +59,5 @@ public interface IGui
      * @return
      */
     int displayCustomMessage(String message, String[] buttons);
-
-    /**
-     * 
-     */
-    void refreshUI();
 
 }

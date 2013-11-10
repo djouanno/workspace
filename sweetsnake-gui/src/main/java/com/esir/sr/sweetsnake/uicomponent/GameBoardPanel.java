@@ -1,5 +1,7 @@
 package com.esir.sr.sweetsnake.uicomponent;
 
+import java.awt.Dimension;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -7,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.api.IElement;
+import com.esir.sr.sweetsnake.constants.GameConstants;
 
 public class GameBoardPanel extends JPanel
 {
@@ -23,9 +26,6 @@ public class GameBoardPanel extends JPanel
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
-
-    /** The game map */
-    IElement[][]                gameMap;
 
     /** The map width */
     private final int           width;
@@ -47,8 +47,8 @@ public class GameBoardPanel extends JPanel
         super();
         width = _width;
         height = _height;
-        gameMap = new IElement[width][height];
-        setOpaque(true);
+        setLayout(null);
+        setOpaque(false);
     }
 
     /**********************************************************************************************
@@ -62,12 +62,11 @@ public class GameBoardPanel extends JPanel
     public void setElement(final IElement element) {
         log.debug("Setting element {} on the map", element);
         if (element != null) {
-            gameMap[element.getX()][element.getX()] = element;
             final JComponent comp = (JComponent) element;
-            comp.setAlignmentX(element.getX());
-            comp.setAlignmentY(element.getY());
+            comp.setLocation(element.getXPos() * GameConstants.CELL_SIZE, element.getYPos() * GameConstants.CELL_SIZE);
             add(comp);
-            comp.setVisible(true);
+            revalidate();
+            repaint();
         }
     }
 
@@ -78,27 +77,34 @@ public class GameBoardPanel extends JPanel
     public void removeElement(final IElement element) {
         log.debug("Removing element {} from the map", element);
         if (element != null) {
-            gameMap[element.getX()][element.getX()] = null;
             remove((JComponent) element);
+            revalidate();
+            repaint();
         }
     }
-
-    /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
-     **********************************************************************************************/
-
-
 
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.Component#getSize()
+     */
+    @Override
+    public Dimension getSize() {
+        return new Dimension(GameConstants.CELL_SIZE * width, GameConstants.CELL_SIZE * height);
+    }
 
-
-    /**********************************************************************************************
-     * [BLOCK] SETTERS
-     **********************************************************************************************/
-
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.JComponent#getPreferredSize()
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(GameConstants.CELL_SIZE * width, GameConstants.CELL_SIZE * height);
+    }
 
 }

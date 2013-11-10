@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.esir.sr.sweetsnake.api.IElement;
 import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
-import com.esir.sr.sweetsnake.game.element.Snake;
+import com.esir.sr.sweetsnake.game.component.Snake;
 import com.esir.sr.sweetsnake.game.map.GameBoard;
 import com.esir.sr.sweetsnake.game.map.GameBoardGenerator;
 import com.esir.sr.sweetsnake.session.GameSession;
@@ -56,12 +56,12 @@ public class GameEngine
         playersMap = new LinkedHashMap<Player, IElement>();
 
         final Snake player1Snake = new Snake();
-        player1Snake.setXY(0, 0);
+        player1Snake.setXYPos(0, 0);
         playersMap.put(session.getPlayer1(), player1Snake);
         gameBoard.setElement(player1Snake);
 
         final Snake player2Snake = new Snake();
-        player2Snake.setXY(GameConstants.GRID_SIZE - 1, GameConstants.GRID_SIZE - 1);
+        player2Snake.setXYPos(GameConstants.GRID_SIZE - 1, GameConstants.GRID_SIZE - 1);
         playersMap.put(session.getPlayer2(), player2Snake);
         gameBoard.setElement(player2Snake);
     }
@@ -77,8 +77,8 @@ public class GameEngine
      */
     public void moveSnake(final MoveDirection direction, final Player player) {
         final IElement snake = playersMap.get(player);
-        final int x = (snake.getX() + direction.getValue()[0] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
-        final int y = (snake.getY() + direction.getValue()[1] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
+        final int x = (snake.getXPos() + direction.getValue()[0] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
+        final int y = (snake.getYPos() + direction.getValue()[1] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
         final IElement currentElement = gameBoard.getElement(x, y);
 
         gameBoard.removeElement(snake);

@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.game.element;
+package com.esir.sr.sweetsnake.game.component;
 
 import org.slf4j.LoggerFactory;
 

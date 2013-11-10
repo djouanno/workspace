@@ -2,7 +2,7 @@ package com.esir.sr.sweetsnake.game.map;
 
 import java.util.Random;
 
-import com.esir.sr.sweetsnake.game.element.Sweet;
+import com.esir.sr.sweetsnake.game.component.Sweet;
 
 /**
  * 
@@ -46,7 +46,7 @@ public class GameBoardGenerator
             } while (board.hasElement(j, k));
 
             final Sweet sweet = new Sweet();
-            sweet.setXY(j, k);
+            sweet.setXYPos(j, k);
             board.setElement(sweet);
         }
 

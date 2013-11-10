@@ -74,14 +74,12 @@ public class GameSession
      * 
      */
     public void startGame() {
-        log.info("Starting the game session between {} and {}", player1, player2);
         try {
-            player1.getClientCallback().startGame(DtoConverterFactory.convertGameSession(this));
-            player2.getClientCallback().startGame(DtoConverterFactory.convertGameSession(this));
-
+            player1.getClientCallback().gameStarted(DtoConverterFactory.convertGameSession(this));
+            player2.getClientCallback().gameStarted(DtoConverterFactory.convertGameSession(this));
             // TODO maybe reconfirm from client side to synchronize game start
-
             isGameStarted = true;
+            log.info("Game session between {} and {} is started", player1, player2);
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }
@@ -91,7 +89,12 @@ public class GameSession
      * 
      */
     public void stopGame() {
-        // TODO
+        try {
+            player1.getClientCallback().gameLeaved(DtoConverterFactory.convertGameSession(this));
+            player2.getClientCallback().gameLeaved(DtoConverterFactory.convertGameSession(this));
+        } catch (final RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /**

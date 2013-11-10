@@ -72,10 +72,11 @@ public abstract class AbstractView extends JPanel
     public void build() {
         if (!isBuilded) {
             final Dimension frameDimension = gui.getContentPane().getSize();
-            dimension = new Dimension(frameDimension.width - GuiConstants.IHM_OFFSET, frameDimension.height - GuiConstants.IHM_OFFSET);
+            dimension = new Dimension(frameDimension.width - GuiConstants.GUI_OFFSET, frameDimension.height - GuiConstants.GUI_OFFSET);
             setSize(dimension);
             setPreferredSize(dimension);
             buildImpl();
+            isBuilded = true;
         }
 
     }

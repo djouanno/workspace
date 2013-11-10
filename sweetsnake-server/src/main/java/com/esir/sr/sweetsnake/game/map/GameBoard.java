@@ -67,7 +67,7 @@ public class GameBoard
         if (element.getType() == ElementType.SWEET) {
             nbSweets++;
         }
-        gameMap[element.getX()][element.getY()] = element;
+        gameMap[element.getXPos()][element.getYPos()] = element;
     }
 
     /**
@@ -79,7 +79,7 @@ public class GameBoard
         if (element.getType() == ElementType.SWEET) {
             nbSweets--;
         }
-        gameMap[element.getX()][element.getY()] = null;
+        gameMap[element.getXPos()][element.getYPos()] = null;
     }
 
     /**

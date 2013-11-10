@@ -21,29 +21,35 @@ public interface IClientCallback extends Remote
      * @param request
      * @throws RemoteException
      */
-    void requestGame(GameRequestDTO request) throws RemoteException;
+    void gameRequested(GameRequestDTO request) throws RemoteException;
 
     /**
      * 
      * @param request
      * @throws RemoteException
      */
-    void requestRefused(GameRequestDTO request) throws RemoteException;
+    void gameRefused(GameRequestDTO request) throws RemoteException;
 
     /**
      * 
      * @param session
      * @throws RemoteException
      */
-    void startGame(GameSessionDTO session) throws RemoteException;
+    void gameStarted(GameSessionDTO session) throws RemoteException;
 
+    /**
+     * 
+     * @param session
+     * @throws RemoteException
+     */
+    void gameLeaved(GameSessionDTO session) throws RemoteException;
 
     /**
      * 
      * @param direction
      * @throws RemoteException
      */
-    void confirmMove(MoveDirection direction) throws RemoteException;
+    void moveConfirmed(MoveDirection direction) throws RemoteException;
 
     /**
      * 

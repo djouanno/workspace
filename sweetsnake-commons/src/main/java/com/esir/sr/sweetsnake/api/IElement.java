@@ -28,32 +28,32 @@ public interface IElement
      * 
      * @return
      */
-    int getX();
+    int getXPos();
 
     /**
      * 
      * @return
      */
-    int getY();
+    int getYPos();
 
     /**
      * 
      * @param x
      */
-    void setX(int x);
+    void setXPos(int x);
 
     /**
      * 
      * @param y
      */
-    void setY(int y);
+    void setYPos(int y);
 
     /**
      * 
      * @param x
      * @param y
      */
-    void setXY(int x, int y);
+    void setXYPos(int x, int y);
 
     /**
      * 

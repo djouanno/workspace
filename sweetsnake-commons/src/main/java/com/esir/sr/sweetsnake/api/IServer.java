@@ -66,8 +66,10 @@ public interface IServer
     /**
      * 
      * @param client
+     * @param sessionDTO
+     * @throws GameSessionNotFoundException
      */
-    void leaveGame(IClientCallback client);
+    void leaveGame(IClientCallback client, GameSessionDTO sessionDTO) throws GameSessionNotFoundException;
 
     /**
      * 

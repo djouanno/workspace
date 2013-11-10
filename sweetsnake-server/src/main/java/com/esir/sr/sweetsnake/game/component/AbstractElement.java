@@ -1,11 +1,9 @@
-package com.esir.sr.sweetsnake.uicomponent;
+package com.esir.sr.sweetsnake.game.component;
 
-import java.awt.Graphics;
-
-import javax.swing.JComponent;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import com.esir.sr.sweetsnake.api.IElement;
-import com.esir.sr.sweetsnake.constants.GameConstants;
+import com.esir.sr.sweetsnake.constants.PropertiesConstants;
 import com.esir.sr.sweetsnake.enumeration.ElementType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
@@ -15,31 +13,24 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
  * @author Damien Jouanno
  * 
  */
-public abstract class AbstractElement extends JComponent implements IElement
+public abstract class AbstractElement implements IElement
 {
-
-    /**********************************************************************************************
-     * [BLOCK] STATIC FIELDS
-     **********************************************************************************************/
-
-    /** The serial version UID */
-    private static final long serialVersionUID = 3748120944354885599L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The element id */
-    protected String          id;
+    protected String            id;
 
     /** The element x position on the game map */
-    protected int             x;
+    protected int               x;
 
     /** The element y position on the game map */
-    protected int             y;
+    protected int               y;
 
     /** The element type */
-    protected ElementType     type;
+    protected final ElementType type;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -47,16 +38,10 @@ public abstract class AbstractElement extends JComponent implements IElement
 
     /**
      * 
-     * @param _id
-     * @param _x
-     * @param _y
      * @param _type
      */
-    protected AbstractElement(final String _id, final int _x, final int _y, final ElementType _type) {
-        super();
-        id = _id;
-        x = _x;
-        y = _y;
+    protected AbstractElement(final ElementType _type) {
+        id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
         type = _type;
     }
 
@@ -64,35 +49,22 @@ public abstract class AbstractElement extends JComponent implements IElement
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
-     * @param g
-     * @param x
-     * @param y
-     * @param w
-     * @param h
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#move(com.esir.sr.sweetsnake.enumeration.Direction )
      */
-    public abstract void drawShape(Graphics g, int x, int y, int w, int h);
+    @Override
+    public abstract void move(MoveDirection direction);
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#move(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     * @see java.lang.Object#toString()
      */
     @Override
-    public void move(final MoveDirection direction) {
-        x = (x + direction.getValue()[0] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
-        y = (y + direction.getValue()[1] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.JComponent#paint(java.awt.Graphics)
-     */
-    @Override
-    public void paint(final Graphics g) {
-        drawShape(g, GameConstants.CELL_SIZE / 2 + x * GameConstants.CELL_SIZE, GameConstants.CELL_SIZE / 2 + y * GameConstants.CELL_SIZE, GameConstants.CELL_SIZE, GameConstants.CELL_SIZE);
+    public String toString() {
+        return type + "[id=" + id + ", x=" + x + ", y=" + y + "]";
     }
 
     /**********************************************************************************************
@@ -112,20 +84,20 @@ public abstract class AbstractElement extends JComponent implements IElement
     /*
      * (non-Javadoc)
      * 
-     * @see javax.swing.JComponent#getX()
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#getX()
      */
     @Override
-    public int getX() {
+    public int getXPos() {
         return x;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see javax.swing.JComponent#getY()
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#getY()
      */
     @Override
-    public int getY() {
+    public int getYPos() {
         return y;
     }
 
@@ -146,23 +118,11 @@ public abstract class AbstractElement extends JComponent implements IElement
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setXY(int, int)
-     */
-    @Override
-    public void setXY(final int _x, final int _y) {
-        x = _x;
-        y = _y;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setX(int)
      */
     @Override
-    public void setX(final int _x) {
+    public void setXPos(final int _x) {
         x = _x;
-
     }
 
     /*
@@ -171,8 +131,26 @@ public abstract class AbstractElement extends JComponent implements IElement
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setY(int)
      */
     @Override
-    public void setY(final int _y) {
+    public void setYPos(final int _y) {
         y = _y;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setXY(int, int)
+     */
+    @Override
+    public void setXYPos(final int _x, final int _y) {
+        x = _x;
+        y = _y;
+    }
+
+    /*
+     * 
+     */
+    public boolean equals(final IElement element) {
+        return id.equals(element.getId());
     }
 
 }

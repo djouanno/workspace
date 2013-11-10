@@ -1,0 +1,18 @@
+    public static void main(final String[] args) {
+        final Gui gui = new Gui();
+        gui.init();
+        final GameView gv = new GameView();
+        gv.gui = gui;
+
+        final ElementDTO[][] elems = new ElementDTO[20][20];
+        elems[0][0] = new ElementDTO("id1", 0, 0, ElementType.SNAKE);
+        elems[19][19] = new ElementDTO("id2", 19, 19, ElementType.SNAKE);
+        final GameBoardDTO dto = new GameBoardDTO(20, 20, elems, 10);
+
+        gv.setGameBoardDto(dto);
+        gv.init();
+        gv.build();
+        gui.getContentPane().removeAll();
+        gui.getContentPane().add(gv);
+        gui.refreshUI();
+    }

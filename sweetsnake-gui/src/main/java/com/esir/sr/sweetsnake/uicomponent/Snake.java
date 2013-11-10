@@ -1,8 +1,5 @@
 package com.esir.sr.sweetsnake.uicomponent;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
 import com.esir.sr.sweetsnake.enumeration.ElementType;
 
 /**
@@ -11,7 +8,7 @@ import com.esir.sr.sweetsnake.enumeration.ElementType;
  * @author Damien Jouanno
  * 
  */
-public class Snake extends AbstractElement
+public class Snake extends AbstractComponent
 {
 
     /**********************************************************************************************
@@ -38,16 +35,5 @@ public class Snake extends AbstractElement
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.component.SweetSnakeAbstractElement#drawShape(java.awt.Graphics, int, int, int, int)
-     */
-    @Override
-    public void drawShape(final Graphics g, final int x, final int y, final int w, final int h) {
-        g.setColor(Color.BLUE);
-        g.fillRect(x, y, w, h);
-    }
 
 }

@@ -20,6 +20,7 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
+import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
 import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
@@ -67,8 +68,11 @@ public class Client implements IClient
     /** The player status */
     private PlayerStatus        status;
 
-    /** The sent request DTO (only once at a time) */
-    private GameRequestDTO      sentRequestDTO;
+    /** The sent request DTO (only one at a time) */
+    private GameRequestDTO      requestDto;
+
+    /** The session DTO (only one at a time) */
+    private GameSessionDTO      sessionDto;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -147,7 +151,7 @@ public class Client implements IClient
         username = new String(_username);
         server.connect(callback);
         status = PlayerStatus.AVAILABLE;
-        gui.successfullyConnected();
+        gui.connectedToServer();
     }
 
     /*
@@ -157,6 +161,7 @@ public class Client implements IClient
      */
     @Override
     public void disconnect() {
+        log.debug("Disconnecting from username {}", username);
         try {
             server.disconnect(callback);
             status = PlayerStatus.DISCONNECTED;
@@ -173,10 +178,10 @@ public class Client implements IClient
     @Override
     public void requestGame(final PlayerDTO player) {
         if (status == PlayerStatus.INVITING) {
-            final int answer = gui.displayCustomMessage("Your already asked for a game with " + sentRequestDTO.getRequestedPlayerDto() + "\nPlease wait for your opponent to respond or cancel the request", new String[] { "wait", "cancel request" });
+            final int answer = gui.displayCustomMessage("Your already asked for a game with " + requestDto.getRequestedPlayerDto() + "\nPlease wait for your opponent to respond or cancel the request", new String[] { "wait", "cancel request" });
             if (answer == 1) {
                 try {
-                    server.cancelGameRequest(callback, sentRequestDTO);
+                    server.cancelGameRequest(callback, requestDto);
                     status = PlayerStatus.AVAILABLE;
                 } catch (PlayerNotFoundException | GameRequestNotFoundException e) {
                     gui.displayErrorMessage(e.getMessage());
@@ -184,7 +189,7 @@ public class Client implements IClient
             }
         } else {
             try {
-                sentRequestDTO = server.requestGame(callback, player);
+                requestDto = server.requestGame(callback, player);
                 status = PlayerStatus.INVITING;
                 gui.displayInfoMessage("Your request has been sent to " + player.getName());
             } catch (PlayerNotFoundException | PlayerNotAvailableException e) {
@@ -196,10 +201,10 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#gameRequested(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
      */
     @Override
-    public void requestGame(final GameRequestDTO requestDTO) {
+    public void gameRequested(final GameRequestDTO requestDTO) {
         status = PlayerStatus.INVITED;
         final int answer = gui.displayCustomMessage(requestDTO.getRequestingPlayerDto().getName() + " wants to play with you", new String[] { "accept", "deny" });
         if (answer == 0) {
@@ -221,10 +226,10 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#requestRefused(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#gameRefused(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
      */
     @Override
-    public void requestRefused(final GameRequestDTO requestDTO) {
+    public void gameRefused(final GameRequestDTO requestDTO) {
         status = PlayerStatus.AVAILABLE;
         gui.displayInfoMessage(requestDTO.getRequestedPlayerDto().getName() + " has denied your request");
     }
@@ -232,22 +237,60 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#startGame(com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClient#startGame()
      */
     @Override
-    public void startGame(final GameSessionDTO session) {
-        gui.startGame(session.getGameBoardDto());
+    public void startGame() {
+        // TODO
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#gameStarted(com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO)
+     */
+    @Override
+    public void gameStarted(final GameSessionDTO _sessionDto) {
+        sessionDto = _sessionDto;
+        gui.gameStarted(sessionDto.getGameBoardDto());
         status = PlayerStatus.PLAYING;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#confirmMove(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     * @see com.esir.sr.sweetsnake.api.IClient#leaveGame()
      */
     @Override
-    public void confirmMove(final MoveDirection direction) {
-        gui.moveSnake(direction);
+    public void leaveGame() {
+        try {
+            server.leaveGame(callback, sessionDto);
+        } catch (final GameSessionNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#gameLeaved(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void gameLeaved(final GameSessionDTO session) {
+        log.debug("Game leaved");
+        sessionDto = null;
+        gui.gameLeaved();
+        status = PlayerStatus.AVAILABLE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#moveConfirmed(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     */
+    @Override
+    public void moveConfirmed(final MoveDirection direction) {
+        // TODO
     }
 
     /**********************************************************************************************
