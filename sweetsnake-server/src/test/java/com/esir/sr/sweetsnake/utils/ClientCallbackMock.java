@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
+import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 public class ClientCallbackMock implements IClientCallback, Serializable
 {
@@ -51,13 +51,15 @@ public class ClientCallbackMock implements IClientCallback, Serializable
     }
 
     @Override
-    public void gameLeaved(final GameSessionDTO session) throws RemoteException {
+    public void gameLeaved(final GameSessionDTO session, final PlayerDTO leaver) throws RemoteException {
         // TODO Auto-generated method stub
+
     }
 
     @Override
-    public void moveConfirmed(final MoveDirection direction) throws RemoteException {
+    public void refreshGame(final GameSessionDTO session) throws RemoteException {
         // TODO Auto-generated method stub
+
     }
 
     /**********************************************************************************************

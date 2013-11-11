@@ -109,7 +109,7 @@ public class ServerTest
     public void gameSessionTest() throws PlayerNotFoundException, PlayerNotAvailableException, GameRequestNotFoundException, GameSessionNotFoundException, RemoteException {
         log.debug("---------------------------- gameSessionTest() ----------------------------");
 
-        final PlayerDTO player2DTO = new PlayerDTO(client2.getUsername(), PlayerStatus.AVAILABLE);
+        final PlayerDTO player2DTO = new PlayerDTO(client2.getUsername(), PlayerStatus.AVAILABLE, 0);
         final GameRequestDTO requestDTO = server.requestGame(client1, player2DTO);
         final GameSessionDTO sessionDTO = server.acceptGame(client2, requestDTO);
 
