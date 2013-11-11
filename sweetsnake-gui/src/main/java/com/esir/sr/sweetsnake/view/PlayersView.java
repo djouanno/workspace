@@ -11,11 +11,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,9 +67,6 @@ public class PlayersView extends AbstractView
     /** The request button */
     private JButton                   requestBTN;
 
-    /** The selected player in the players list */
-    private PlayerDTO                 selectedPlayer;
-
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
@@ -121,11 +114,10 @@ public class PlayersView extends AbstractView
         initCenterPL();
         add(centerPL, BorderLayout.CENTER);
 
-        final List<PlayerDTO> players;
+        List<PlayerDTO> players = new LinkedList<PlayerDTO>();
         if (client != null) {
-            players = client.getPlayersList();
-        } else {
-            players = new LinkedList<PlayerDTO>();// client.getPlayersList();
+            // Collections.copy(players, client.getPlayersList());
+            players = new LinkedList<PlayerDTO>(client.getPlayersList());
         }
 
         initPlayersLST(players);
@@ -194,16 +186,6 @@ public class PlayersView extends AbstractView
         for (final PlayerDTO player : players) {
             playersLST.addElement(player);
         }
-        playersLST.addListSelectionListener(new ListSelectionListener() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void valueChanged(final ListSelectionEvent e) {
-                // FIXME pourquoi ça marche que par le getSource et pas l'attribut direct ? :/ fait chier ce cast est trop laid
-                selectedPlayer = ((JList<PlayerDTO>) e.getSource()).getSelectedValue();
-            }
-        });
-        // playersJLT.setOpaque(false);
-        // ((javax.swing.DefaultListCellRenderer) playersJLT.getCellRenderer()).setOpaque(false);
     }
 
     /**
@@ -252,12 +234,15 @@ public class PlayersView extends AbstractView
         @Override
         public void actionPerformed(final ActionEvent e) {
             playersLST.removeAllElements();
-            final List<PlayerDTO> players = client.getPlayersList();
+            List<PlayerDTO> players = new LinkedList<PlayerDTO>();
+            if (client != null) {
+                // Collections.copy(players, client.getPlayersList());
+                players = new LinkedList<PlayerDTO>(client.getPlayersList());
+            }
             for (final PlayerDTO player : players) {
                 playersLST.addElement(player);
             }
         }
-
     }
 
     /**
@@ -276,9 +261,11 @@ public class PlayersView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
+            final PlayerDTO selectedPlayer = playersLST.getSelectedValue();
             if (selectedPlayer == null) {
-                JOptionPane.showMessageDialog(gui, "Please select an opponent first", "Error", JOptionPane.ERROR_MESSAGE);
+                gui.displayErrorMessage("Please select an opponent first");
             } else {
+                log.debug("selected : {}", selectedPlayer);
                 gui.requestGame(selectedPlayer);
             }
         }
