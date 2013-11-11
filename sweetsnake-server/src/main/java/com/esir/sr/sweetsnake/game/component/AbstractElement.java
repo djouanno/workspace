@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.element;
+package com.esir.sr.sweetsnake.game.component;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -57,6 +57,16 @@ public abstract class AbstractElement implements IElement
     @Override
     public abstract void move(MoveDirection direction);
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return type + "[id=" + id + ", x=" + x + ", y=" + y + "]";
+    }
+
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
@@ -77,7 +87,7 @@ public abstract class AbstractElement implements IElement
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#getX()
      */
     @Override
-    public int getX() {
+    public int getXPos() {
         return x;
     }
 
@@ -87,7 +97,7 @@ public abstract class AbstractElement implements IElement
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#getY()
      */
     @Override
-    public int getY() {
+    public int getYPos() {
         return y;
     }
 
@@ -111,7 +121,7 @@ public abstract class AbstractElement implements IElement
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setX(int)
      */
     @Override
-    public void setX(final int _x) {
+    public void setXPos(final int _x) {
         x = _x;
     }
 
@@ -121,7 +131,7 @@ public abstract class AbstractElement implements IElement
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setY(int)
      */
     @Override
-    public void setY(final int _y) {
+    public void setYPos(final int _y) {
         y = _y;
     }
 
@@ -131,12 +141,16 @@ public abstract class AbstractElement implements IElement
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setXY(int, int)
      */
     @Override
-    public void setXY(final int _x, final int _y) {
+    public void setXYPos(final int _x, final int _y) {
         x = _x;
         y = _y;
     }
-    
-    public boolean equals(IElement element) {
-    	return id.equals(element.getId());
+
+    /*
+     * 
+     */
+    public boolean equals(final IElement element) {
+        return id.equals(element.getId());
     }
+
 }

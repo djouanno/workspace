@@ -101,8 +101,9 @@ public class GameRequestsRegistry
         if (!contains(id)) {
             throw new GameRequestNotFoundException("request no more available");
         }
-        log.debug("Request {} has been removed", requests.get(id));
+        final GameRequest request = requests.get(id);
         requests.remove(id);
+        log.debug("Request {} has been removed", request);
     }
 
     /**

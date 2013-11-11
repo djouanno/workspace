@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -13,7 +14,6 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -32,7 +32,7 @@ import com.esir.sr.sweetsnake.uicomponent.SweetSnakeList;
  * @author Damien Jouanno
  * 
  */
-@Component("playersView")
+@Component
 public class PlayersView extends AbstractView
 {
 
@@ -110,22 +110,30 @@ public class PlayersView extends AbstractView
     public void buildImpl() {
         setLayout(new BorderLayout());
 
+        // top panel
         initTopPL();
         add(topPL, BorderLayout.NORTH);
-
-        initCenterPL();
-        add(centerPL, BorderLayout.CENTER);
-
-        initBottomPL();
-        add(bottomPL, BorderLayout.SOUTH);
 
         initPlayersListIPL();
         topPL.add(playersListIPL);
 
-        final List<PlayerDTO> players = client.getPlayersList();
+        // center panel
+        initCenterPL();
+        add(centerPL, BorderLayout.CENTER);
+
+        final List<PlayerDTO> players;
+        if (client != null) {
+            players = client.getPlayersList();
+        } else {
+            players = new LinkedList<PlayerDTO>();// client.getPlayersList();
+        }
 
         initPlayersLST(players);
         centerPL.add(playersLST);
+
+        // bottom panel
+        initBottomPL();
+        add(bottomPL, BorderLayout.SOUTH);
 
         final GridBagConstraints gbc = new GridBagConstraints();
 
@@ -136,7 +144,7 @@ public class PlayersView extends AbstractView
         gbc.weightx = 1;
         gbc.weighty = 1;
         gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.insets = new Insets(5, 0, 0, 0);
         bottomPL.add(refreshListBTN, gbc);
 
         initRequestBTN();
@@ -175,7 +183,6 @@ public class PlayersView extends AbstractView
         centerPL = new JPanel();
         centerPL.setOpaque(false);
         centerPL.setLayout(new BorderLayout());
-        centerPL.setBorder(new EmptyBorder(0, 0, 10, 0));
     }
 
     /**

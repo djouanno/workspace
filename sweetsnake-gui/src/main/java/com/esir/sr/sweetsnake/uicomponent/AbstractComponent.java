@@ -1,15 +1,14 @@
 package com.esir.sr.sweetsnake.uicomponent;
 
-import java.awt.Graphics;
+import java.awt.Dimension;
 
-import javax.swing.JComponent;
-
-import org.apache.commons.lang3.RandomStringUtils;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import com.esir.sr.sweetsnake.api.IElement;
-import com.esir.sr.sweetsnake.api.IGui;
 import com.esir.sr.sweetsnake.constants.GameConstants;
-import com.esir.sr.sweetsnake.constants.PropertiesConstants;
+import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.enumeration.ElementType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
@@ -19,7 +18,7 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
  * @author Damien Jouanno
  * 
  */
-public abstract class AbstractElement extends JComponent implements IElement
+public abstract class AbstractComponent extends JPanel implements IElement
 {
 
     /**********************************************************************************************
@@ -33,9 +32,6 @@ public abstract class AbstractElement extends JComponent implements IElement
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The GUI */
-    protected IGui            ihm;
-
     /** The element id */
     protected String          id;
 
@@ -48,33 +44,50 @@ public abstract class AbstractElement extends JComponent implements IElement
     /** The element type */
     protected ElementType     type;
 
+    /** The image */
+    protected ImageIcon       image;
+
+    /** The jlabel icon */
+    protected JLabel          icon;
+
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
     /**
      * 
-     * @param _ihm
+     * @param _id
+     * @param _x
+     * @param _y
+     * @param _type
      */
-    protected AbstractElement(final IGui _ihm) {
-        super();
-        id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
-        ihm = _ihm;
+    protected AbstractComponent(final String _id, final int _x, final int _y, final ElementType _type) {
+        id = _id;
+        x = _x;
+        y = _y;
+        type = _type;
+
+        setLayout(null);
+        setOpaque(false);
+
+        final String imagePath = type == ElementType.SNAKE ? GuiConstants.SNAKE_ICON_PATH : GuiConstants.SWEET_ICON_PATH;
+        image = new ImageIcon(AbstractComponent.class.getResource(imagePath));
+
+        final Dimension dimension = new Dimension(image.getIconWidth(), image.getIconHeight());
+        setSize(dimension);
+        setPreferredSize(dimension);
+
+        icon = new JLabel(image);
+        icon.setSize(dimension);
+        icon.setPreferredSize(dimension);
+        icon.setLocation(0, 0);
+
+        add(icon);
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
-
-    /**
-     * 
-     * @param g
-     * @param x
-     * @param y
-     * @param w
-     * @param h
-     */
-    public abstract void drawShape(Graphics g, int x, int y, int w, int h);
 
     /*
      * (non-Javadoc)
@@ -90,11 +103,11 @@ public abstract class AbstractElement extends JComponent implements IElement
     /*
      * (non-Javadoc)
      * 
-     * @see javax.swing.JComponent#paint(java.awt.Graphics)
+     * @see java.awt.Component#toString()
      */
     @Override
-    public void paint(final Graphics g) {
-        drawShape(g, GameConstants.CELL_SIZE / 2 + x * GameConstants.CELL_SIZE, GameConstants.CELL_SIZE / 2 + y * GameConstants.CELL_SIZE, GameConstants.CELL_SIZE, GameConstants.CELL_SIZE);
+    public String toString() {
+        return type + "[id=" + id + ", x=" + x + ", y=" + y + "]";
     }
 
     /**********************************************************************************************
@@ -114,20 +127,20 @@ public abstract class AbstractElement extends JComponent implements IElement
     /*
      * (non-Javadoc)
      * 
-     * @see javax.swing.JComponent#getX()
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#getXPos()
      */
     @Override
-    public int getX() {
+    public int getXPos() {
         return x;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see javax.swing.JComponent#getY()
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#getYPos()
      */
     @Override
-    public int getY() {
+    public int getYPos() {
         return y;
     }
 
@@ -148,10 +161,10 @@ public abstract class AbstractElement extends JComponent implements IElement
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setXY(int, int)
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setXYPos(int, int)
      */
     @Override
-    public void setXY(final int _x, final int _y) {
+    public void setXYPos(final int _x, final int _y) {
         x = _x;
         y = _y;
     }
@@ -159,21 +172,20 @@ public abstract class AbstractElement extends JComponent implements IElement
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setX(int)
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setXPos(int)
      */
     @Override
-    public void setX(final int _x) {
+    public void setXPos(final int _x) {
         x = _x;
-
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setY(int)
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#setYPos(int)
      */
     @Override
-    public void setY(final int _y) {
+    public void setYPos(final int _y) {
         y = _y;
     }
 

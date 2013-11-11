@@ -25,7 +25,7 @@ import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
  * @author Damien Jouanno
  * 
  */
-@Component("unreachableServerView")
+@Component
 public class UnreachableServerView extends AbstractView
 {
 

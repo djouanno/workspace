@@ -34,7 +34,7 @@ public interface IClient
     void disconnect();
 
     /**
-     * from the ihm
+     * from the gui
      * 
      * @param player
      */
@@ -45,25 +45,41 @@ public interface IClient
      * 
      * @param request
      */
-    void requestGame(GameRequestDTO request);
+    void gameRequested(GameRequestDTO request);
 
     /**
      * 
      * @param request
      */
-    void requestRefused(GameRequestDTO request);
+    void gameRefused(GameRequestDTO request);
+
+    /**
+     * 
+     */
+    void startGame();
 
     /**
      * 
      * @param session
      */
-    void startGame(GameSessionDTO session);
+    void gameStarted(GameSessionDTO session);
+
+    /**
+     * 
+     */
+    void leaveGame();
+
+    /**
+     * 
+     * @param session
+     */
+    void gameLeaved(GameSessionDTO session);
 
     /**
      * 
      * @param direction
      */
-    void confirmMove(MoveDirection direction);
+    void moveConfirmed(MoveDirection direction);
 
     /**
      * 

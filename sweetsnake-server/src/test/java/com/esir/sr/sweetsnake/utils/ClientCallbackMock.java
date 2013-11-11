@@ -36,25 +36,28 @@ public class ClientCallbackMock implements IClientCallback, Serializable
      **********************************************************************************************/
 
     @Override
-    public void requestGame(final GameRequestDTO request) {
+    public void gameRequested(final GameRequestDTO request) {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public void requestRefused(final GameRequestDTO request) throws RemoteException {
+    public void gameRefused(final GameRequestDTO request) throws RemoteException {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public void startGame(final GameSessionDTO session) {
+    public void gameStarted(final GameSessionDTO session) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public void confirmMove(final MoveDirection direction) throws RemoteException {
+    public void gameLeaved(final GameSessionDTO session) throws RemoteException {
         // TODO Auto-generated method stub
+    }
 
+    @Override
+    public void moveConfirmed(final MoveDirection direction) throws RemoteException {
+        // TODO Auto-generated method stub
     }
 
     /**********************************************************************************************

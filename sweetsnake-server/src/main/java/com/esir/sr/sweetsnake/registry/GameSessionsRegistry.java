@@ -76,6 +76,7 @@ public class GameSessionsRegistry
      */
     public void add(final GameSession session) {
         sessions.put(session.getId(), session);
+        log.debug("Session {} has been added", sessions.get(session.getId()));
     }
 
     /**
@@ -100,7 +101,9 @@ public class GameSessionsRegistry
         if (!contains(id)) {
             throw new GameSessionNotFoundException("session not found");
         }
+        final GameSession session = sessions.get(id);
         sessions.remove(id);
+        log.debug("Session {} has been removed", session);
     }
 
     /**

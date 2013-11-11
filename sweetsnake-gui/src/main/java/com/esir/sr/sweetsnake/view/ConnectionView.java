@@ -32,7 +32,7 @@ import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
  * @author Damien Jouanno
  * 
  */
-@Component("connectionView")
+@Component
 public class ConnectionView extends AbstractView
 {
 
@@ -232,7 +232,7 @@ public class ConnectionView extends AbstractView
             log.debug("Trying to connect to server with username {}", username);
             try {
                 client.connect(username);
-                gui.successfullyConnected();
+                gui.connectedToServer();
             } catch (final UnableToConnectException e1) {
                 JOptionPane.showMessageDialog(gui, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

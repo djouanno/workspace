@@ -36,7 +36,7 @@ public class ImagePanel extends JPanel
      **********************************************************************************************/
 
     /** The image */
-    private Image               image;
+    protected Image             image;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR

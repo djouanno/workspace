@@ -36,11 +36,14 @@ public class Player
     /** The player status */
     private PlayerStatus                  status;
 
-    /** The sent request (only once at a time) */
+    /** The sent request (only one at a time) */
     private String                        sentRequestId;
 
-    /** The received request (only once at a time) */
+    /** The received request id (only one at a time) */
     private String                        receivedRequestId;
+
+    /** The current game session id (only one at a time) */
+    private String                        gameSessionId;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -117,6 +120,14 @@ public class Player
         return receivedRequestId;
     }
 
+    /**
+     * 
+     * @return
+     */
+    public String getGameSessionId() {
+        return gameSessionId;
+    }
+
     /**********************************************************************************************
      * [BLOCK] SETTERS
      **********************************************************************************************/
@@ -131,18 +142,26 @@ public class Player
 
     /**
      * 
-     * @param requestId
+     * @param _sentRequestId
      */
-    public void setSentRequestId(final String requestId) {
-        sentRequestId = requestId;
+    public void setSentRequestId(final String _sentRequestId) {
+        sentRequestId = _sentRequestId;
     }
 
     /**
      * 
-     * @param requestId
+     * @param _receivedRequestId
      */
-    public void setReceivedRequestId(final String requestId) {
-        receivedRequestId = requestId;
+    public void setReceivedRequestId(final String _receivedRequestId) {
+        receivedRequestId = _receivedRequestId;
+    }
+
+    /**
+     * 
+     * @param _gameSession
+     */
+    public void setGameSessionId(final String _gameSessionId) {
+        gameSessionId = _gameSessionId;
     }
 
 }

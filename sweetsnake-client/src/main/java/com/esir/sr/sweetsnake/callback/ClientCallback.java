@@ -56,43 +56,53 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
+     * @see
+     * com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#gameRequested(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
      */
     @Override
-    public void requestGame(final GameRequestDTO request) throws RemoteException {
-        client.requestGame(request);
+    public void gameRequested(final GameRequestDTO request) throws RemoteException {
+        client.gameRequested(request);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#gameRefused(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
+     */
+    @Override
+    public void gameRefused(final GameRequestDTO request) throws RemoteException {
+        client.gameRefused(request);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#gameStarted(com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO)
+     */
+    @Override
+    public void gameStarted(final GameSessionDTO session) throws RemoteException {
+        client.gameStarted(session);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#gameLeaved(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void gameLeaved(final GameSessionDTO session) throws RemoteException {
+        client.gameLeaved(session);
     }
 
     /*
      * (non-Javadoc)
      * 
      * @see
-     * com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#requestRefused(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
+     * com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#moveConfirmed(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
      */
     @Override
-    public void requestRefused(final GameRequestDTO request) throws RemoteException {
-        client.requestRefused(request);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#startGame(com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO)
-     */
-    @Override
-    public void startGame(final GameSessionDTO session) throws RemoteException {
-        client.startGame(session);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#confirmMove(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
-     */
-    @Override
-    public void confirmMove(final MoveDirection direction) throws RemoteException {
-        client.confirmMove(direction);
+    public void moveConfirmed(final MoveDirection direction) throws RemoteException {
+        client.moveConfirmed(direction);
     }
 
     /*

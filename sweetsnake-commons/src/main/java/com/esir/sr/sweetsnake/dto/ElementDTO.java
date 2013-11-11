@@ -2,34 +2,38 @@ package com.esir.sr.sweetsnake.dto;
 
 import java.io.Serializable;
 
+import com.esir.sr.sweetsnake.enumeration.ElementType;
+
 /**
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
  */
-public class GameRequestDTO implements Serializable
+public class ElementDTO implements Serializable
 {
-
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long serialVersionUID = 7736451985866305018L;
+    private static final long   serialVersionUID = 4845304179195761034L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The request id */
-    private final String      id;
+    /** The element id */
+    protected String            id;
 
-    /** The requesting player DTO */
-    private final PlayerDTO   requestingPlayerDto;
+    /** The element x position on the game map */
+    protected int               x;
 
-    /** The requested player DTO */
-    private final PlayerDTO   requestedPlayerDto;
+    /** The element y position on the game map */
+    protected int               y;
+
+    /** The element type */
+    protected final ElementType type;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -38,13 +42,15 @@ public class GameRequestDTO implements Serializable
     /**
      * 
      * @param _id
-     * @param _requestingPlayerDto
-     * @param _requestedPlayerDto
+     * @param _x
+     * @param _y
+     * @param _type
      */
-    public GameRequestDTO(final String _id, final PlayerDTO _requestingPlayerDto, final PlayerDTO _requestedPlayerDto) {
+    public ElementDTO(final String _id, final int _x, final int _y, final ElementType _type) {
         id = _id;
-        requestingPlayerDto = _requestingPlayerDto;
-        requestedPlayerDto = _requestedPlayerDto;
+        x = _x;
+        y = _y;
+        type = _type;
     }
 
     /**********************************************************************************************
@@ -63,16 +69,24 @@ public class GameRequestDTO implements Serializable
      * 
      * @return
      */
-    public PlayerDTO getRequestingPlayerDto() {
-        return requestingPlayerDto;
+    public int getX() {
+        return x;
     }
 
     /**
      * 
      * @return
      */
-    public PlayerDTO getRequestedPlayerDto() {
-        return requestedPlayerDto;
+    public int getY() {
+        return y;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public ElementType getType() {
+        return type;
     }
 
 }

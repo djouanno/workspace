@@ -15,16 +15,19 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClient;
 import com.esir.sr.sweetsnake.api.IGui;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
+import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
 import com.esir.sr.sweetsnake.view.AbstractView;
+import com.esir.sr.sweetsnake.view.ConnectionView;
+import com.esir.sr.sweetsnake.view.GameView;
+import com.esir.sr.sweetsnake.view.PlayersView;
+import com.esir.sr.sweetsnake.view.UnreachableServerView;
 
 /**
  * 
@@ -41,10 +44,10 @@ public class Gui extends JFrame implements IGui
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long   serialVersionUID = -4189434181017519666L;
+    private static final long     serialVersionUID = -4189434181017519666L;
 
     /** The logger */
-    private static final Logger log              = LoggerFactory.getLogger(Gui.class);
+    private static final Logger   log              = LoggerFactory.getLogger(Gui.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
@@ -52,30 +55,26 @@ public class Gui extends JFrame implements IGui
 
     /** The client */
     @Autowired
-    private IClient             client;
+    private IClient               client;
 
     /** The unreachable server view */
     @Autowired
-    @Qualifier("unreachableServerView")
-    private AbstractView        UnreachableServerView;
+    private UnreachableServerView UnreachableServerView;
 
     /** The connection view */
     @Autowired
-    @Qualifier("connectionView")
-    private AbstractView        connectionView;
+    private ConnectionView        connectionView;
 
     /** The players view */
     @Autowired
-    @Qualifier("playersView")
-    private AbstractView        playersView;
+    private PlayersView           playersView;
 
     /** The game view */
     @Autowired
-    @Qualifier("gameView")
-    private AbstractView        gameView;
+    private GameView              gameView;
 
     /** The GUI dimension */
-    private Dimension           dimension;
+    private Dimension             dimension;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -116,7 +115,7 @@ public class Gui extends JFrame implements IGui
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setTitle("SweetSnake");
-        dimension = new Dimension(GuiConstants.IHM_WIDTH, GuiConstants.IHM_HEIGHT);
+        dimension = new Dimension(GuiConstants.GUI_WIDTH, GuiConstants.GUI_HEIGHT);
         setSize(dimension);
         setPreferredSize(dimension);
 
@@ -125,6 +124,8 @@ public class Gui extends JFrame implements IGui
         final int Y = screen.height / 2 - dimension.height / 2;
         setBounds(X, Y, dimension.width, dimension.height);
         setContentPane(new ImagePanel(GuiConstants.BG_PATH));
+
+        pack();
 
         setVisible(true);
     }
@@ -138,6 +139,7 @@ public class Gui extends JFrame implements IGui
         getContentPane().removeAll();
         getContentPane().add(view);
         refreshUI();
+        log.debug("View switched to {}", view.getClass().getName());
     }
 
     /**
@@ -156,7 +158,7 @@ public class Gui extends JFrame implements IGui
     }
 
     /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
+     * [BLOCK] PUBLIC IMPLEMENTED METHODS
      **********************************************************************************************/
 
     /*
@@ -185,39 +187,30 @@ public class Gui extends JFrame implements IGui
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#successfullyConnected()
      */
     @Override
-    public void successfullyConnected() {
+    public void connectedToServer() {
         switchView(playersView);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO)
+     * @see com.esir.sr.sweetsnake.api.IGui#startGame(com.esir.sr.sweetsnake.dto.GameBoardDTO)
      */
     @Override
-    public void requestGame(final PlayerDTO requestedPlayer) {
-        client.requestGame(requestedPlayer);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IGui#startGame()
-     */
-    @Override
-    public void startGame() {
+    public void gameStarted(final GameBoardDTO gameBoard) {
+        gameView.setGameBoardDto(gameBoard);
         switchView(gameView);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#moveSnake(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     * @see com.esir.sr.sweetsnake.api.IGui#leaveGame()
      */
     @Override
-    public void moveSnake(final MoveDirection direction) {
-        // TODO
-        refreshUI();
+    public void gameLeaved() {
+        switchView(playersView);
+        displayInfoMessage("Game has been left");
     }
 
     /*
@@ -280,16 +273,24 @@ public class Gui extends JFrame implements IGui
         return JOptionPane.showOptionDialog(this, message, "Information", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[0]);
     }
 
-    /*
-     * (non-Javadoc)
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC METHODS
+     **********************************************************************************************/
+
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#refreshUI()
      */
-    @Override
     public void refreshUI() {
         revalidate();
         repaint();
-        pack();
+    }
+
+    /**
+     * 
+     * @param requestedPlayer
+     */
+    public void requestGame(final PlayerDTO requestedPlayer) {
+        client.requestGame(requestedPlayer);
     }
 
     /**

@@ -16,20 +16,23 @@ public class GameSessionDTO implements Serializable
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long serialVersionUID = 459664230963147646L;
+    private static final long  serialVersionUID = 459664230963147646L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The session id */
-    private final String      id;
+    private final String       id;
 
-    /** The first player name */
-    private final String      player1Name;
+    /** The first player DTO */
+    private final PlayerDTO    player1Dto;
 
-    /** The second player name */
-    private final String      player2Name;
+    /** The second player DTO */
+    private final PlayerDTO    player2Dto;
+
+    /** The game board DTO */
+    private final GameBoardDTO gameBoardDto;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -38,13 +41,15 @@ public class GameSessionDTO implements Serializable
     /**
      * 
      * @param _id
-     * @param _player1
-     * @param _player2
+     * @param _player1Dto
+     * @param _player2Dto
+     * @param _gameBoardDto
      */
-    public GameSessionDTO(final String _id, final String _player1, final String _player2) {
+    public GameSessionDTO(final String _id, final PlayerDTO _player1Dto, final PlayerDTO _player2Dto, final GameBoardDTO _gameBoardDto) {
         id = _id;
-        player1Name = _player1;
-        player2Name = _player2;
+        player1Dto = _player1Dto;
+        player2Dto = _player2Dto;
+        gameBoardDto = _gameBoardDto;
     }
 
     /**********************************************************************************************
@@ -63,16 +68,24 @@ public class GameSessionDTO implements Serializable
      * 
      * @return
      */
-    public String getPlayer1Name() {
-        return player1Name;
+    public PlayerDTO getPlayer1Dto() {
+        return player1Dto;
     }
 
     /**
      * 
      * @return
      */
-    public String getPlayer2Name() {
-        return player2Name;
+    public PlayerDTO getPlayer2Dto() {
+        return player2Dto;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public GameBoardDTO getGameBoardDto() {
+        return gameBoardDto;
     }
 
 }
