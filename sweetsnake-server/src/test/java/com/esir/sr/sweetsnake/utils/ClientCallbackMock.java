@@ -2,6 +2,7 @@ package com.esir.sr.sweetsnake.utils;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.List;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
@@ -34,6 +35,12 @@ public class ClientCallbackMock implements IClientCallback, Serializable
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
+
+    @Override
+    public void refreshPlayersList(final List<PlayerDTO> players) throws RemoteException {
+        // TODO Auto-generated method stub
+
+    }
 
     @Override
     public void gameRequested(final GameRequestDTO request) {

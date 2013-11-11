@@ -2,6 +2,7 @@ package com.esir.sr.sweetsnake.callback;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,6 +53,16 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#refreshPlayersList(java.util.List)
+     */
+    @Override
+    public void refreshPlayersList(final List<PlayerDTO> playersList) throws RemoteException {
+        client.refreshPlayersList(playersList);
+    }
 
     /*
      * (non-Javadoc)

@@ -1,7 +1,10 @@
 package com.esir.sr.sweetsnake.api;
 
+import java.util.List;
+
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
+import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
  * 
@@ -29,6 +32,12 @@ public interface IGui
      * 
      */
     void connectedToServer();
+
+    /**
+     * 
+     * @param playersList
+     */
+    void refreshPlayersList(List<PlayerDTO> playersList);
 
     /**
      * 

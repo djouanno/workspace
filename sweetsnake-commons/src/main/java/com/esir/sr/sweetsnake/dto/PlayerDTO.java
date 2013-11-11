@@ -60,7 +60,7 @@ public class PlayerDTO implements Serializable
      */
     @Override
     public String toString() {
-        return name + " [" + status + "]";
+        return name;
     }
 
     /**********************************************************************************************

@@ -1,6 +1,20 @@
     public static void main(final String[] args) {
         final Gui gui = new Gui();
         gui.init();
+        final PlayersView pv = new PlayersView();
+        pv.gui = gui;
+
+        pv.init();
+        pv.build();
+        gui.getContentPane().removeAll();
+        gui.getContentPane().add(pv);
+        gui.refreshUI();
+    }
+    
+    
+    public static void main(final String[] args) {
+        final Gui gui = new Gui();
+        gui.init();
         final GameView gv = new GameView();
         gv.gui = gui;
 

@@ -165,6 +165,21 @@ public class Server implements IServer
         }
     }
 
+    /**
+     * 
+     */
+    private void sendRefreshPlayersList() {
+        for (final String playerName : players.getPlayersName()) {
+            try {
+                final Player player = players.get(playerName);
+                final IClientCallback callback = player.getClientCallback();
+                callback.refreshPlayersList(this.getPlayersList(callback));
+            } catch (RemoteException | PlayerNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+    }
+
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
@@ -186,6 +201,7 @@ public class Server implements IServer
         final Player player = new Player(client);
         player.setStatus(PlayerStatus.AVAILABLE);
         players.add(player);
+        sendRefreshPlayersList();
         log.info("New client with username {} has connected", clientName);
     }
 
@@ -213,6 +229,12 @@ public class Server implements IServer
             }
         }
         players.remove(clientName);
+        try {
+            Thread.sleep(300);
+        } catch (final InterruptedException e) {
+            log.error(e.getMessage(), e);
+        }
+        sendRefreshPlayersList();
         log.info("Client with username {} has disconnected", clientName);
     }
 
@@ -242,6 +264,7 @@ public class Server implements IServer
             @Override
             public void run() {
                 try {
+                    sendRefreshPlayersList();
                     player2.getClientCallback().gameRequested(requestDTO);
                 } catch (final RemoteException e) {
                     log.error(e.getMessage(), e);
@@ -297,6 +320,7 @@ public class Server implements IServer
         removeRequest(requestDTO.getId());
 
         try {
+            sendRefreshPlayersList();
             player1.getClientCallback().gameRefused(requestDTO);
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
@@ -315,6 +339,7 @@ public class Server implements IServer
             final Player leaver = players.get(retrieveClientName(client));
             session.leaveGame(leaver);
             removeSession(session.getId());
+            sendRefreshPlayersList();
         } catch (final PlayerNotFoundException e) {
             log.error(e.getMessage(), e);
         }

@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -76,6 +77,9 @@ public class Gui extends JFrame implements IGui
     @Autowired
     private GameView              gameView;
 
+    /** The gui current view */
+    private AbstractView          currentView;
+
     /** The GUI dimension */
     private Dimension             dimension;
 
@@ -142,6 +146,7 @@ public class Gui extends JFrame implements IGui
         getContentPane().removeAll();
         getContentPane().add(view);
         refreshUI();
+        currentView = view;
         log.debug("View switched to {}", view.getClass().getName());
     }
 
@@ -240,6 +245,19 @@ public class Gui extends JFrame implements IGui
     @Override
     public void connectedToServer() {
         switchView(playersView);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#refreshPlayersList(java.util.List)
+     */
+    @Override
+    public void refreshPlayersList(final List<PlayerDTO> playersList) {
+        if (currentView == playersView) {
+            log.debug("Refreshing players list with {} players", playersList.size());
+            playersView.refreshPlayersList(playersList);
+        }
     }
 
     /*

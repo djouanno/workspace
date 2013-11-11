@@ -173,6 +173,16 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.IClient#refreshPlayersList(java.util.List)
+     */
+    @Override
+    public void refreshPlayersList(final List<PlayerDTO> playersList) {
+        gui.refreshPlayersList(playersList);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO)
      */
     @Override

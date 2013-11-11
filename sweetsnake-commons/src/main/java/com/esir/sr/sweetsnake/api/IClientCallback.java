@@ -2,6 +2,7 @@ package com.esir.sr.sweetsnake.api;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
@@ -15,6 +16,13 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
  */
 public interface IClientCallback extends Remote
 {
+
+    /**
+     * 
+     * @param players
+     * @throws RemoteException
+     */
+    void refreshPlayersList(List<PlayerDTO> players) throws RemoteException;
 
     /**
      * 

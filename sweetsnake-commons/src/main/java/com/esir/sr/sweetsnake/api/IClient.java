@@ -34,6 +34,12 @@ public interface IClient
     void disconnect();
 
     /**
+     * 
+     * @param playersList
+     */
+    void refreshPlayersList(List<PlayerDTO> playersList);
+
+    /**
      * from the gui
      * 
      * @param player
