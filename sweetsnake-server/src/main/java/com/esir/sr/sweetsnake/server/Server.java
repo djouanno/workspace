@@ -206,7 +206,6 @@ public class Server implements IServer
         }
         if (player.getGameSessionId() != null) {
             try {
-                log.debug("Removing current session {} for player {}", gameSessions.get(player.getGameSessionId()), player);
                 // TODO does not work when client brutally closes the window !!!!!
                 leaveGame(client, DtoConverterFactory.convertGameSession(gameSessions.get(player.getGameSessionId())));
             } catch (final GameSessionNotFoundException e) {
@@ -313,12 +312,10 @@ public class Server implements IServer
     public void leaveGame(final IClientCallback client, final GameSessionDTO sessionDTO) throws GameSessionNotFoundException {
         final GameSession session = gameSessions.get(sessionDTO.getId());
         try {
-            log.debug("Leaving session {} from player {}", session, client.getUsername());
-            session.getPlayer1().getClientCallback().gameLeaved(sessionDTO);
-            session.getPlayer2().getClientCallback().gameLeaved(sessionDTO);
-            session.stopGame();
+            final Player leaver = players.get(retrieveClientName(client));
+            session.leaveGame(leaver);
             removeSession(session.getId());
-        } catch (final RemoteException e) {
+        } catch (final PlayerNotFoundException e) {
             log.error(e.getMessage(), e);
         }
     }
@@ -353,9 +350,7 @@ public class Server implements IServer
             throw new PlayerNotFoundException("unauthorized session for this player");
         }
 
-        if (session.isGameStarted()) {
-            session.movePlayer(player, direction);
-        }
+        session.movePlayer(player, direction);
     }
 
     /*

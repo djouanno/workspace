@@ -58,14 +58,29 @@ public interface IGui
 
     /**
      * 
+     * @param isFirstPlayer
      * @param gameBoard
      */
-    void gameStarted(GameBoardDTO gameBoard);
+    void gameStarted(boolean isFirstPlayer, GameBoardDTO gameBoard);
 
     /**
      * 
+     * @param leaver
      */
-    void gameLeaved();
+    void gameLeaved(String leaver);
+
+    /**
+     * 
+     * @param gameBoard
+     */
+    void refreshGameboard(GameBoardDTO gameBoard);
+
+    /**
+     * 
+     * @param player1Score
+     * @param player2Score
+     */
+    void refreshScores(int player1Score, int player2Score);
 
     /**
      * 

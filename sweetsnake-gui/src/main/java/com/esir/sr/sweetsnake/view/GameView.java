@@ -2,6 +2,7 @@ package com.esir.sr.sweetsnake.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -9,11 +10,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -73,8 +77,17 @@ public class GameView extends AbstractView
     /** The bottom panel */
     private JPanel              bottomPL;
 
+    /** The first player score label */
+    private JLabel              player1ScoreLB;
+
+    /** The second player score label */
+    private JLabel              player2ScoreLB;
+
     /** The leave button */
     private JButton             leaveBTN;
+
+    /** Is the the current player player1 */
+    private boolean             isFirstPlayer;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -131,12 +144,24 @@ public class GameView extends AbstractView
         initBottomPL();
         add(bottomPL, BorderLayout.SOUTH);
 
-        initLeaveBTN();
         final GridBagConstraints gbc = new GridBagConstraints();
+
+        initPlayer1ScoreLB();
+        initPlayer2ScoreLB();
+
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.insets = new Insets(5, 0, 0, 80);
+        bottomPL.add(isFirstPlayer ? player1ScoreLB : player2ScoreLB, gbc);
+
+        initLeaveBTN();
+        gbc.gridx = 1;
         gbc.insets = new Insets(5, 0, 0, 0);
         bottomPL.add(leaveBTN, gbc);
+
+        gbc.gridx = 2;
+        gbc.insets = new Insets(5, 80, 0, 0);
+        bottomPL.add(isFirstPlayer ? player2ScoreLB : player1ScoreLB, gbc);
 
         addKeyListener(new KeyboardListener());
         setFocusable(true);
@@ -145,10 +170,53 @@ public class GameView extends AbstractView
 
     /**
      * 
+     */
+    public void refreshGameboard(final GameBoardDTO _gameBoardDto) {
+        log.debug("Refreshing game board");
+        for (int x = 0; x < _gameBoardDto.getWidth(); x++) {
+            for (int y = 0; y < _gameBoardDto.getHeight(); y++) {
+                final ComponentDTO currentComponentDto = gameBoardDto.getElement(x, y), newComponentDto = _gameBoardDto.getElement(x, y);
+                if (currentComponentDto == null && newComponentDto != null || currentComponentDto != null && newComponentDto != null) {
+                    if (currentComponentDto != null && newComponentDto != null) {
+                        if (!currentComponentDto.getId().equals(newComponentDto.getId())) {
+                            final IComponent oldComponent = gameBoardPL.getComponent(x, y);
+                            gameBoardPL.removeComponent(oldComponent);
+                        }
+                    }
+                    final IComponent component = gameBoardPL.getComponentById(newComponentDto.getId());
+                    gameBoardPL.removeComponent(component);
+                    component.setXYPos(newComponentDto.getX(), newComponentDto.getY());
+                    gameBoardPL.setComponent(component);
+                }
+            }
+        }
+        gui.refreshUI();
+    }
+
+    /**
+     * 
+     * @param player1Score
+     * @param player2Score
+     */
+    public void refreshScores(final int player1Score, final int player2Score) {
+        player1ScoreLB.setText(intToString(player1Score, 3));
+        player2ScoreLB.setText(intToString(player2Score, 3));
+    }
+
+    /**
+     * 
      * @param _gameBoardDto
      */
-    public void setGameBoardDto(final GameBoardDTO _gameBoardDto) {
+    public void setGameboardDto(final GameBoardDTO _gameBoardDto) {
         gameBoardDto = _gameBoardDto;
+    }
+
+    /**
+     * 
+     * @param _isFirstPlayer
+     */
+    public void setFirstPlayer(final boolean _isFirstPlayer) {
+        isFirstPlayer = _isFirstPlayer;
     }
 
     /**********************************************************************************************
@@ -187,25 +255,7 @@ public class GameView extends AbstractView
         if (gameBoardDto != null) {
             gameBoardPL = new GameBoardPanel(gameBoardDto.getWidth(), gameBoardDto.getHeight());
             gameBoardPL.setBorder(new EmptyBorder(0, 0, 10, 0));
-            for (int x = 0; x < gameBoardDto.getWidth(); x++) {
-                for (int y = 0; y < gameBoardDto.getHeight(); y++) {
-                    final ComponentDTO elementDto = gameBoardDto.getElement(x, y);
-                    if (elementDto != null) {
-                        IComponent element = null;
-                        switch (elementDto.getType()) {
-                            case SNAKE:
-                                element = new Snake(elementDto.getId(), x, y);
-                                break;
-                            case SWEET:
-                                element = new Sweet(elementDto.getId(), x, y);
-                                break;
-                            default:
-                                break;
-                        }
-                        gameBoardPL.setElement(element);
-                    }
-                }
-            }
+            drawGameboard();
         }
     }
 
@@ -221,9 +271,64 @@ public class GameView extends AbstractView
     /**
      * 
      */
+    private void initPlayer1ScoreLB() {
+        player1ScoreLB = new JLabel(intToString(0, 3));
+        player1ScoreLB.setForeground(isFirstPlayer ? new Color(39, 109, 31) : Color.red);
+        player1ScoreLB.setFont(new Font("sans-serif", Font.BOLD, 20));
+    }
+
+    /**
+     * 
+     */
+    private void initPlayer2ScoreLB() {
+        player2ScoreLB = new JLabel(intToString(0, 3));
+        player2ScoreLB.setForeground(isFirstPlayer ? Color.red : new Color(39, 109, 31));
+        player2ScoreLB.setFont(new Font("sans-serif", Font.BOLD, 20));
+    }
+
+    /**
+     * 
+     */
     private void initLeaveBTN() {
         leaveBTN = new JButton("leave game");
         leaveBTN.addActionListener(new LeaveGameListener());
+    }
+
+    /**
+     * 
+     */
+    private void drawGameboard() {
+        for (int x = 0; x < gameBoardDto.getWidth(); x++) {
+            for (int y = 0; y < gameBoardDto.getHeight(); y++) {
+                final ComponentDTO elementDto = gameBoardDto.getElement(x, y);
+                if (elementDto != null) {
+                    IComponent element = null;
+                    switch (elementDto.getType()) {
+                        case SNAKE:
+                            String snakeColor = GuiConstants.GREEN_SNAKE_VALUE;
+                            if (!isFirstPlayer && x == 0 && y == 0 || isFirstPlayer && x == gameBoardDto.getWidth() - 1 && y == gameBoardDto.getHeight() - 1) {
+                                snakeColor = GuiConstants.RED_SNAKE_VALUE;
+                            }
+                            element = new Snake(elementDto.getId(), x, y, snakeColor);
+                            break;
+                        case SWEET:
+                            element = new Sweet(elementDto.getId(), x, y);
+                            break;
+                        default:
+                            break;
+                    }
+                    gameBoardPL.setComponent(element);
+                }
+            }
+        }
+    }
+
+    private static String intToString(final int num, final int digits) {
+        final char[] zeros = new char[digits];
+        Arrays.fill(zeros, '0');
+        final DecimalFormat df = new DecimalFormat(String.valueOf(zeros));
+
+        return df.format(num);
     }
 
     /**********************************************************************************************

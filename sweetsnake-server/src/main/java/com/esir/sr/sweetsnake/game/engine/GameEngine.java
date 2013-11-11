@@ -29,14 +29,14 @@ public class GameEngine
      **********************************************************************************************/
 
     /** The logger */
-    private static final Logger         log = LoggerFactory.getLogger(GameEngine.class);
+    private static final Logger           log = LoggerFactory.getLogger(GameEngine.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The game board */
-    private final GameBoard             gameBoard;
+    private final GameBoard               gameBoard;
 
     /** The players map */
     private final Map<Player, IComponent> playersMap;
@@ -95,7 +95,7 @@ public class GameEngine
                     gameBoard.removeElement(currentElement);
                     snake.move(direction);
                     gameBoard.setElement(snake);
-                    // TODO update player score
+                    player.setScore(player.getScore() + GameConstants.SWEET_SCORE_VALUE);
                     break;
                 default:
                     break;

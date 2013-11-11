@@ -252,7 +252,8 @@ public class Client implements IClient
     @Override
     public void gameStarted(final GameSessionDTO _sessionDto) {
         sessionDto = _sessionDto;
-        gui.gameStarted(sessionDto.getGameBoardDto());
+        final boolean firstPlayer = sessionDto.getPlayer1Dto().getName().equals(username);
+        gui.gameStarted(firstPlayer, sessionDto.getGameBoardDto());
         status = PlayerStatus.PLAYING;
     }
 
@@ -276,10 +277,10 @@ public class Client implements IClient
      * @see com.esir.sr.sweetsnake.api.IClient#gameLeaved(com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void gameLeaved(final GameSessionDTO session) {
-        log.debug("Game leaved");
+    public void gameLeaved(final GameSessionDTO session, final PlayerDTO leaver) {
+        log.debug("Game leaved by {}", leaver);
         sessionDto = null;
-        gui.gameLeaved();
+        gui.gameLeaved(leaver.getName().equals(username) ? null : leaver.getName());
         status = PlayerStatus.AVAILABLE;
     }
 
@@ -300,11 +301,12 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#snakeMoved(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     * @see com.esir.sr.sweetsnake.api.IClient#refreshGameboard(com.esir.sr.sweetsnake.dto.GameBoardDTO)
      */
     @Override
-    public void snakeMoved(final MoveDirection direction) {
-        // TODO
+    public void refreshGame(final GameSessionDTO session) {
+        gui.refreshGameboard(session.getGameBoardDto());
+        gui.refreshScores(session.getPlayer1Dto().getScore(), session.getPlayer2Dto().getScore());
     }
 
     /**********************************************************************************************

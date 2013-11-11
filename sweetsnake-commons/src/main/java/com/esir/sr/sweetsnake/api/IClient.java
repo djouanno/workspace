@@ -72,8 +72,9 @@ public interface IClient
     /**
      * 
      * @param session
+     * @param leaver
      */
-    void gameLeaved(GameSessionDTO session);
+    void gameLeaved(GameSessionDTO session, PlayerDTO leaver);
 
     /**
      * 
@@ -83,9 +84,9 @@ public interface IClient
 
     /**
      * 
-     * @param direction
+     * @param session
      */
-    void snakeMoved(MoveDirection direction);
+    void refreshGame(GameSessionDTO session);
 
     /**
      * 

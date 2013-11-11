@@ -1,5 +1,6 @@
 package com.esir.sr.sweetsnake.component;
 
+import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.enumeration.ComponentType;
 
 /**
@@ -28,12 +29,8 @@ public class Snake extends AbstractComponent
      * @param _x
      * @param _y
      */
-    public Snake(final String _id, final int _x, final int _y) {
-        super(_id, _x, _y, ComponentType.SNAKE);
+    public Snake(final String _id, final int _x, final int _y, final String color) {
+        super(_id, _x, _y, ComponentType.SNAKE, color.equals(GuiConstants.GREEN_SNAKE_VALUE) ? GuiConstants.GREEN_SNAKE_ICON_PATH : GuiConstants.RED_SNAKE_ICON_PATH);
     }
-
-    /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
-     **********************************************************************************************/
 
 }

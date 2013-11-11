@@ -45,6 +45,9 @@ public class Player
     /** The current game session id (only one at a time) */
     private String                        gameSessionId;
 
+    /** The current game session score for this player */
+    private int                           score;
+
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
@@ -128,6 +131,14 @@ public class Player
         return gameSessionId;
     }
 
+    /**
+     * 
+     * @return
+     */
+    public int getScore() {
+        return score;
+    }
+
     /**********************************************************************************************
      * [BLOCK] SETTERS
      **********************************************************************************************/
@@ -162,6 +173,14 @@ public class Player
      */
     public void setGameSessionId(final String _gameSessionId) {
         gameSessionId = _gameSessionId;
+    }
+
+    /**
+     * 
+     * @param _score
+     */
+    public void setScore(final int _score) {
+        score = _score;
     }
 
 }

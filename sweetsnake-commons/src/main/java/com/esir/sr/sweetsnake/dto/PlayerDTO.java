@@ -30,6 +30,9 @@ public class PlayerDTO implements Serializable
     /** The player status */
     private final PlayerStatus status;
 
+    /** The player score */
+    private final int          score;
+
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
@@ -38,10 +41,12 @@ public class PlayerDTO implements Serializable
      * 
      * @param _name
      * @param _status
+     * @param _score
      */
-    public PlayerDTO(final String _name, final PlayerStatus _status) {
+    public PlayerDTO(final String _name, final PlayerStatus _status, final int _score) {
         name = _name;
         status = _status;
+        score = _score;
     }
 
     /**********************************************************************************************
@@ -76,6 +81,14 @@ public class PlayerDTO implements Serializable
      */
     public PlayerStatus getStatus() {
         return status;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public int getScore() {
+        return score;
     }
 
 }

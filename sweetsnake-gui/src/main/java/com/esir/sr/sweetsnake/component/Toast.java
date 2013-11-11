@@ -2,9 +2,9 @@ package com.esir.sr.sweetsnake.component;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,7 +30,7 @@ public class Toast extends JDialog
     private static final long serialVersionUID = -9201199499095469781L;
 
     /** The displayed duration */
-    private static final int  DURATION         = 1000;
+    private static final int  DURATION         = 2000;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
@@ -68,6 +68,11 @@ public class Toast extends JDialog
      * [BLOCK] PUBLIC STATIC METHODS
      **********************************************************************************************/
 
+    /**
+     * 
+     * @param _gui
+     * @param _msg
+     */
     public static void displayToast(final JFrame _gui, final String _msg) {
         final JDialog dialog = new Toast(_gui, _msg);
         final Timer timer = new Timer(DURATION, new ActionListener() {
@@ -90,18 +95,11 @@ public class Toast extends JDialog
      * 
      */
     private void initComponents() {
-        setLayout(new FlowLayout(FlowLayout.CENTER));
-
-        // addComponentListener(new ComponentAdapter() {
-        // @Override
-        // public void componentResized(final ComponentEvent e) {
-        // setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 30, 30));
-        // }
-        // });
+        setLayout(new GridBagLayout());
 
         setFocusableWindowState(false);
         setUndecorated(true);
-        setSize(new Dimension(300, 30));
+        setSize(new Dimension(300, 50));
         setLocationRelativeTo(gui);
         getContentPane().setBackground(Color.BLACK);
 
@@ -118,5 +116,4 @@ public class Toast extends JDialog
         label.setText(message);
         add(label);
     }
-
 }

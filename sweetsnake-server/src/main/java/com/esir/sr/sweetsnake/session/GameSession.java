@@ -79,7 +79,7 @@ public class GameSession
             player2.getClientCallback().gameStarted(DtoConverterFactory.convertGameSession(this));
             // TODO maybe reconfirm from client side to synchronize game start
             isGameStarted = true;
-            log.info("Game session between {} and {} is started", player1, player2);
+            log.info("Game session between {} and {} has been started", player1, player2);
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }
@@ -88,8 +88,17 @@ public class GameSession
     /**
      * 
      */
-    public void stopGame() {
-        // TODO
+    public void leaveGame(final Player leaver) {
+        try {
+            player1.getClientCallback().gameLeaved(DtoConverterFactory.convertGameSession(this), DtoConverterFactory.convertPlayer(leaver));
+            player2.getClientCallback().gameLeaved(DtoConverterFactory.convertGameSession(this), DtoConverterFactory.convertPlayer(leaver));
+            isGameStarted = false;
+            player1.setScore(0);
+            player2.setScore(0);
+            log.info("Game session between {} and {} has been stopped", player1, player2);
+        } catch (final RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /**
@@ -98,7 +107,15 @@ public class GameSession
      * @param direction
      */
     public void movePlayer(final Player player, final MoveDirection direction) {
-        engine.moveSnake(direction, player);
+        if (isGameStarted) {
+            try {
+                engine.moveSnake(direction, player);
+                player1.getClientCallback().refreshGame(DtoConverterFactory.convertGameSession(this));
+                player2.getClientCallback().refreshGame(DtoConverterFactory.convertGameSession(this));
+            } catch (final RemoteException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
     }
 
     /**

@@ -18,20 +18,23 @@ public class GameBoardPanel extends JPanel
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long   serialVersionUID = 8531962414769780455L;
+    private static final long    serialVersionUID = 8531962414769780455L;
 
     /** The logger */
-    private static final Logger log              = LoggerFactory.getLogger(GameBoardPanel.class);
+    private static final Logger  log              = LoggerFactory.getLogger(GameBoardPanel.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The map width */
-    private final int           width;
+    private final int            width;
 
     /** The map height */
-    private final int           height;
+    private final int            height;
+
+    /** The components */
+    private final IComponent[][] components;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -47,6 +50,7 @@ public class GameBoardPanel extends JPanel
         super();
         width = _width;
         height = _height;
+        components = new IComponent[width][height];
         setLayout(null);
         setOpaque(false);
     }
@@ -57,30 +61,55 @@ public class GameBoardPanel extends JPanel
 
     /**
      * 
-     * @param element
+     * @param component
      */
-    public void setElement(final IComponent element) {
-        log.debug("Setting element {} on the map", element);
-        if (element != null) {
-            final JComponent comp = (JComponent) element;
-            comp.setLocation(element.getXPos() * GameConstants.CELL_SIZE, element.getYPos() * GameConstants.CELL_SIZE);
+    public void setComponent(final IComponent component) {
+        log.debug("Setting element {} on the map", component);
+        if (component != null) {
+            components[component.getXPos()][component.getYPos()] = component;
+            final JComponent comp = (JComponent) component;
+            comp.setLocation(component.getXPos() * GameConstants.CELL_SIZE, component.getYPos() * GameConstants.CELL_SIZE);
             add(comp);
-            revalidate();
-            repaint();
         }
     }
 
     /**
      * 
-     * @param element
+     * @param component
      */
-    public void removeElement(final IComponent element) {
-        log.debug("Removing element {} from the map", element);
-        if (element != null) {
-            remove((JComponent) element);
-            revalidate();
-            repaint();
+    public void removeComponent(final IComponent component) {
+        log.debug("Removing element {} from the map", component);
+        if (component != null) {
+            components[component.getXPos()][component.getYPos()] = null;
+            remove((JComponent) component);
         }
+    }
+
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    public IComponent getComponent(final int x, final int y) {
+        return components[x][y];
+    }
+
+    /**
+     * 
+     * @param id
+     * @return
+     */
+    public IComponent getComponentById(final String id) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                final IComponent component = components[x][y];
+                if (component != null && component.getId().equals(id)) {
+                    return component;
+                }
+            }
+        }
+        return null;
     }
 
     /**********************************************************************************************

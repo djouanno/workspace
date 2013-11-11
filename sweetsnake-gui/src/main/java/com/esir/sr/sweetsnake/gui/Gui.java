@@ -179,6 +179,14 @@ public class Gui extends JFrame implements IGui
     /**
      * 
      * @param message
+     */
+    private void displayToast(final String message) {
+        Toast.displayToast(this, message);
+    }
+
+    /**
+     * 
+     * @param message
      * @param buttonsText
      * @return
      */
@@ -259,7 +267,7 @@ public class Gui extends JFrame implements IGui
      */
     @Override
     public void requestSent(final GameRequestDTO request) {
-        Toast.displayToast(this, "Request sent to " + request.getRequestedPlayerDto().getName());
+        displayToast("Your request has been sent to " + request.getRequestedPlayerDto().getName());
     }
 
     /*
@@ -275,23 +283,47 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#startGame(com.esir.sr.sweetsnake.dto.GameBoardDTO)
+     * @see com.esir.sr.sweetsnake.api.IGui#gameStarted(boolean, com.esir.sr.sweetsnake.dto.GameBoardDTO)
      */
     @Override
-    public void gameStarted(final GameBoardDTO gameBoard) {
-        gameView.setGameBoardDto(gameBoard);
+    public void gameStarted(final boolean isFirstPlayer, final GameBoardDTO gameBoard) {
+        gameView.setGameboardDto(gameBoard);
+        gameView.setFirstPlayer(isFirstPlayer);
         switchView(gameView);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#leaveGame()
+     * @see com.esir.sr.sweetsnake.api.IGui#gameLeaved(com.esir.sr.sweetsnake.dto.PlayerDTO)
      */
     @Override
-    public void gameLeaved() {
+    public void gameLeaved(final String leaver) {
         switchView(playersView);
-        displayInfoMessage("Game stopped", "Game has been left");
+        if (leaver != null) {
+            displayInfoMessage("Game stopped", leaver + " has left the game :(");
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#refreshGameboard(com.esir.sr.sweetsnake.dto.GameBoardDTO)
+     */
+    @Override
+    public void refreshGameboard(final GameBoardDTO gameBoard) {
+        gameView.refreshGameboard(gameBoard);
+        gameView.setGameboardDto(gameBoard);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#refreshScores(int, int)
+     */
+    @Override
+    public void refreshScores(final int player1Score, final int player2Score) {
+        gameView.refreshScores(player1Score, player2Score);
     }
 
     /*
