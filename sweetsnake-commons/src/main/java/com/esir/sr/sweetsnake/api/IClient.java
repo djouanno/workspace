@@ -79,7 +79,13 @@ public interface IClient
      * 
      * @param direction
      */
-    void moveConfirmed(MoveDirection direction);
+    void moveSnake(MoveDirection direction);
+
+    /**
+     * 
+     * @param direction
+     */
+    void snakeMoved(MoveDirection direction);
 
     /**
      * 

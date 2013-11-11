@@ -23,7 +23,7 @@ public class GameBoardDTO implements Serializable
      **********************************************************************************************/
 
     /** The game map */
-    private final ElementDTO[][] gameMap;
+    private final ComponentDTO[][] gameMap;
 
     /** The map width */
     private final int            width;
@@ -45,7 +45,7 @@ public class GameBoardDTO implements Serializable
      * @param _gameMap
      * @param _nbSweets
      */
-    public GameBoardDTO(final int _width, final int _height, final ElementDTO[][] _gameMap, final int _nbSweets) {
+    public GameBoardDTO(final int _width, final int _height, final ComponentDTO[][] _gameMap, final int _nbSweets) {
         width = _width;
         height = _height;
         gameMap = _gameMap;
@@ -62,7 +62,7 @@ public class GameBoardDTO implements Serializable
      * @param y
      * @return
      */
-    public ElementDTO getElement(final int x, final int y) {
+    public ComponentDTO getElement(final int x, final int y) {
         return gameMap[x][y];
     }
 
@@ -71,7 +71,7 @@ public class GameBoardDTO implements Serializable
      * @param id
      * @return
      */
-    public ElementDTO getElementById(final String id) {
+    public ComponentDTO getElementById(final String id) {
         for (int i = 0; i < gameMap.length; i++) {
             for (int j = 0; j < gameMap[i].length; j++) {
                 if (getElement(i, j).getId() == id) {

@@ -2,9 +2,9 @@ package com.esir.sr.sweetsnake.game.component;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import com.esir.sr.sweetsnake.api.IElement;
+import com.esir.sr.sweetsnake.api.IComponent;
 import com.esir.sr.sweetsnake.constants.PropertiesConstants;
-import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
 /**
@@ -13,7 +13,7 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
  * @author Damien Jouanno
  * 
  */
-public abstract class AbstractElement implements IElement
+public abstract class AbstractComponent implements IComponent
 {
 
     /**********************************************************************************************
@@ -30,7 +30,7 @@ public abstract class AbstractElement implements IElement
     protected int               y;
 
     /** The element type */
-    protected final ElementType type;
+    protected final ComponentType type;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -40,7 +40,7 @@ public abstract class AbstractElement implements IElement
      * 
      * @param _type
      */
-    protected AbstractElement(final ElementType _type) {
+    protected AbstractComponent(final ComponentType _type) {
         id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
         type = _type;
     }
@@ -107,7 +107,7 @@ public abstract class AbstractElement implements IElement
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#getType()
      */
     @Override
-    public ElementType getType() {
+    public ComponentType getType() {
         return type;
     }
 
@@ -149,7 +149,7 @@ public abstract class AbstractElement implements IElement
     /*
      * 
      */
-    public boolean equals(final IElement element) {
+    public boolean equals(final IComponent element) {
         return id.equals(element.getId());
     }
 

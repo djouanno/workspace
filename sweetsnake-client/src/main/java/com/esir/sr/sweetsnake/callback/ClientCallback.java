@@ -102,7 +102,7 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
      */
     @Override
     public void moveConfirmed(final MoveDirection direction) throws RemoteException {
-        client.moveConfirmed(direction);
+        client.snakeMoved(direction);
     }
 
     /*

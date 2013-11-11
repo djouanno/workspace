@@ -48,6 +48,14 @@ public interface IServer
     /**
      * 
      * @param client
+     * @throws PlayerNotFoundException
+     * @throws GameRequestNotFoundException
+     */
+    void cancelGameRequest(IClientCallback client, GameRequestDTO requestDTO) throws PlayerNotFoundException, GameRequestNotFoundException;
+
+    /**
+     * 
+     * @param client
      * @param request
      * @return
      * @throws PlayerNotFoundException
@@ -70,14 +78,6 @@ public interface IServer
      * @throws GameSessionNotFoundException
      */
     void leaveGame(IClientCallback client, GameSessionDTO sessionDTO) throws GameSessionNotFoundException;
-
-    /**
-     * 
-     * @param client
-     * @throws PlayerNotFoundException
-     * @throws GameRequestNotFoundException
-     */
-    void cancelGameRequest(IClientCallback client, GameRequestDTO requestDTO) throws PlayerNotFoundException, GameRequestNotFoundException;
 
     /**
      * 

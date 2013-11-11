@@ -3,7 +3,7 @@ package com.esir.sr.sweetsnake.game.component;
 import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.constants.GameConstants;
-import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
 /**
@@ -12,7 +12,7 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
  * @author Damien Jouanno
  * 
  */
-public class Snake extends AbstractElement
+public class Snake extends AbstractComponent
 {
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
@@ -29,7 +29,7 @@ public class Snake extends AbstractElement
      * 
      */
     public Snake() {
-        super(ElementType.SNAKE);
+        super(ComponentType.SNAKE);
     }
 
     /**********************************************************************************************

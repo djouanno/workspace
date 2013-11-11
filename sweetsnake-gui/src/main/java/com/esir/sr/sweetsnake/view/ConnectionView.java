@@ -22,9 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
-import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
 
 /**
  * 

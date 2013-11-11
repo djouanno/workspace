@@ -1,6 +1,7 @@
 package com.esir.sr.sweetsnake.api;
 
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
+import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 
 /**
  * 
@@ -31,6 +32,32 @@ public interface IGui
 
     /**
      * 
+     * @param request
+     * @return
+     */
+    int requestAlreadyPending(GameRequestDTO request);
+
+    /**
+     * 
+     * @param request
+     * @return
+     */
+    int gameRequested(GameRequestDTO request);
+
+    /**
+     * 
+     * @param request
+     */
+    void requestSent(GameRequestDTO request);
+
+    /**
+     * 
+     * @param request
+     */
+    void requestRefused(GameRequestDTO request);
+
+    /**
+     * 
      * @param gameBoard
      */
     void gameStarted(GameBoardDTO gameBoard);
@@ -44,20 +71,6 @@ public interface IGui
      * 
      * @param message
      */
-    void displayInfoMessage(String message);
-
-    /**
-     * 
-     * @param message
-     */
     void displayErrorMessage(String message);
-
-    /**
-     * 
-     * @param message
-     * @param buttons
-     * @return
-     */
-    int displayCustomMessage(String message, String[] buttons);
 
 }

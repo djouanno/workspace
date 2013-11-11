@@ -1,39 +1,37 @@
-package com.esir.sr.sweetsnake.dto;
+package com.esir.sr.sweetsnake.component;
 
-import java.io.Serializable;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 
-import com.esir.sr.sweetsnake.enumeration.ElementType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @param <E>
  */
-public class ElementDTO implements Serializable
+public class SweetSnakeList<E> extends JList<E>
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long   serialVersionUID = 4845304179195761034L;
+    private static final long         serialVersionUID = -7399464786914708398L;
+
+    /** The logger */
+    private static final Logger       log              = LoggerFactory.getLogger(SweetSnakeList.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The element id */
-    protected String            id;
-
-    /** The element x position on the game map */
-    protected int               x;
-
-    /** The element y position on the game map */
-    protected int               y;
-
-    /** The element type */
-    protected final ElementType type;
+    /** The list model */
+    private final DefaultListModel<E> model;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -41,52 +39,41 @@ public class ElementDTO implements Serializable
 
     /**
      * 
-     * @param _id
-     * @param _x
-     * @param _y
-     * @param _type
      */
-    public ElementDTO(final String _id, final int _x, final int _y, final ElementType _type) {
-        id = _id;
-        x = _x;
-        y = _y;
-        type = _type;
+    public SweetSnakeList() {
+        super();
+        model = new DefaultListModel<E>();
+        setModel(model);
     }
 
     /**********************************************************************************************
-     * [BLOCK] GETTERS
+     * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
     /**
      * 
-     * @return
+     * @param element
      */
-    public String getId() {
-        return id;
+    public void addElement(final E element) {
+        log.debug("Adding element {} to list", element);
+        model.addElement(element);
     }
 
     /**
      * 
-     * @return
+     * @param element
      */
-    public int getX() {
-        return x;
+    public void removeElement(final E element) {
+        log.debug("Removing element {} to list", element);
+        model.removeElement(element);
     }
 
     /**
      * 
-     * @return
      */
-    public int getY() {
-        return y;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public ElementType getType() {
-        return type;
+    public void removeAllElements() {
+        log.debug("Removing all elements from list");
+        model.removeAllElements();
     }
 
 }

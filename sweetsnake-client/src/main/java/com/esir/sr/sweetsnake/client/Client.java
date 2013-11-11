@@ -178,7 +178,7 @@ public class Client implements IClient
     @Override
     public void requestGame(final PlayerDTO player) {
         if (status == PlayerStatus.INVITING) {
-            final int answer = gui.displayCustomMessage("Your already asked for a game with " + requestDto.getRequestedPlayerDto() + "\nPlease wait for your opponent to respond or cancel the request", new String[] { "wait", "cancel request" });
+            final int answer = gui.requestAlreadyPending(requestDto);
             if (answer == 1) {
                 try {
                     server.cancelGameRequest(callback, requestDto);
@@ -191,7 +191,7 @@ public class Client implements IClient
             try {
                 requestDto = server.requestGame(callback, player);
                 status = PlayerStatus.INVITING;
-                gui.displayInfoMessage("Your request has been sent to " + player.getName());
+                gui.requestSent(requestDto);
             } catch (PlayerNotFoundException | PlayerNotAvailableException e) {
                 gui.displayErrorMessage(e.getMessage());
             }
@@ -206,7 +206,7 @@ public class Client implements IClient
     @Override
     public void gameRequested(final GameRequestDTO requestDTO) {
         status = PlayerStatus.INVITED;
-        final int answer = gui.displayCustomMessage(requestDTO.getRequestingPlayerDto().getName() + " wants to play with you", new String[] { "accept", "deny" });
+        final int answer = gui.gameRequested(requestDTO);
         if (answer == 0) {
             try {
                 server.acceptGame(callback, requestDTO);
@@ -231,7 +231,7 @@ public class Client implements IClient
     @Override
     public void gameRefused(final GameRequestDTO requestDTO) {
         status = PlayerStatus.AVAILABLE;
-        gui.displayInfoMessage(requestDTO.getRequestedPlayerDto().getName() + " has denied your request");
+        gui.requestRefused(requestDTO);
     }
 
     /*
@@ -286,10 +286,24 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#moveConfirmed(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     * @see com.esir.sr.sweetsnake.api.IClient#moveSnake(com.esir.sr.sweetsnake.enumeration.MoveDirection)
      */
     @Override
-    public void moveConfirmed(final MoveDirection direction) {
+    public void moveSnake(final MoveDirection direction) {
+        try {
+            server.requestMove(callback, sessionDto, direction);
+        } catch (PlayerNotFoundException | GameSessionNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#snakeMoved(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     */
+    @Override
+    public void snakeMoved(final MoveDirection direction) {
         // TODO
     }
 

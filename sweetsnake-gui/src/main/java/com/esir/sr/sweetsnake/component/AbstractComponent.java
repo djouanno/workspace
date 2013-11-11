@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.uicomponent;
+package com.esir.sr.sweetsnake.component;
 
 import java.awt.Dimension;
 
@@ -6,10 +6,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.esir.sr.sweetsnake.api.IElement;
+import com.esir.sr.sweetsnake.api.IComponent;
 import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
-import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
 /**
@@ -18,7 +18,7 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
  * @author Damien Jouanno
  * 
  */
-public abstract class AbstractComponent extends JPanel implements IElement
+public abstract class AbstractComponent extends JPanel implements IComponent
 {
 
     /**********************************************************************************************
@@ -42,7 +42,7 @@ public abstract class AbstractComponent extends JPanel implements IElement
     protected int             y;
 
     /** The element type */
-    protected ElementType     type;
+    protected ComponentType     type;
 
     /** The image */
     protected ImageIcon       image;
@@ -61,7 +61,7 @@ public abstract class AbstractComponent extends JPanel implements IElement
      * @param _y
      * @param _type
      */
-    protected AbstractComponent(final String _id, final int _x, final int _y, final ElementType _type) {
+    protected AbstractComponent(final String _id, final int _x, final int _y, final ComponentType _type) {
         id = _id;
         x = _x;
         y = _y;
@@ -70,7 +70,7 @@ public abstract class AbstractComponent extends JPanel implements IElement
         setLayout(null);
         setOpaque(false);
 
-        final String imagePath = type == ElementType.SNAKE ? GuiConstants.SNAKE_ICON_PATH : GuiConstants.SWEET_ICON_PATH;
+        final String imagePath = type == ComponentType.SNAKE ? GuiConstants.SNAKE_ICON_PATH : GuiConstants.SWEET_ICON_PATH;
         image = new ImageIcon(AbstractComponent.class.getResource(imagePath));
 
         final Dimension dimension = new Dimension(image.getIconWidth(), image.getIconHeight());
@@ -150,7 +150,7 @@ public abstract class AbstractComponent extends JPanel implements IElement
      * @see com.esir.sr.sweetsnake.api.ISweetSnakeElement#getType()
      */
     @Override
-    public ElementType getType() {
+    public ComponentType getType() {
         return type;
     }
 

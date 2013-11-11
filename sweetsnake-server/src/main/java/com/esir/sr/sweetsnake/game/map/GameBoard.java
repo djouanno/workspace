@@ -3,8 +3,8 @@ package com.esir.sr.sweetsnake.game.map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.api.IElement;
-import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.api.IComponent;
+import com.esir.sr.sweetsnake.enumeration.ComponentType;
 
 /**
  * 
@@ -27,7 +27,7 @@ public class GameBoard
      **********************************************************************************************/
 
     /** The game map */
-    private final IElement[][]  gameMap;
+    private final IComponent[][]  gameMap;
 
     /** The map width */
     private final int           width;
@@ -51,7 +51,7 @@ public class GameBoard
         log.info("Initializing a new gameboard with dimensions {}x{}", _width, _height);
         width = _width;
         height = _height;
-        gameMap = new IElement[width][height];
+        gameMap = new IComponent[width][height];
     }
 
     /**********************************************************************************************
@@ -62,9 +62,9 @@ public class GameBoard
      * 
      * @param element
      */
-    public void setElement(final IElement element) {
+    public void setElement(final IComponent element) {
         log.debug("Setting element {} on the map", element);
-        if (element.getType() == ElementType.SWEET) {
+        if (element.getType() == ComponentType.SWEET) {
             nbSweets++;
         }
         gameMap[element.getXPos()][element.getYPos()] = element;
@@ -74,9 +74,9 @@ public class GameBoard
      * 
      * @param element
      */
-    public void removeElement(final IElement element) {
+    public void removeElement(final IComponent element) {
         log.debug("Removing element {} from the map", element);
-        if (element.getType() == ElementType.SWEET) {
+        if (element.getType() == ComponentType.SWEET) {
             nbSweets--;
         }
         gameMap[element.getXPos()][element.getYPos()] = null;
@@ -88,7 +88,7 @@ public class GameBoard
      * @param y
      * @return
      */
-    public IElement getElement(final int x, final int y) {
+    public IComponent getElement(final int x, final int y) {
         return gameMap[x][y];
     }
 
@@ -97,7 +97,7 @@ public class GameBoard
      * @param id
      * @return
      */
-    public IElement getElementById(final String id) {
+    public IComponent getElementById(final String id) {
         for (int i = 0; i < gameMap.length; i++) {
             for (int j = 0; j < gameMap[i].length; j++) {
                 if (getElement(i, j).getId() == id) {
@@ -143,7 +143,7 @@ public class GameBoard
      * 
      * @return
      */
-    public IElement[][] getGameMap() {
+    public IComponent[][] getGameMap() {
         return gameMap;
     }
 

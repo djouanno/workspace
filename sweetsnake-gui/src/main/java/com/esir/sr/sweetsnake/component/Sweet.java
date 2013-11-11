@@ -1,6 +1,6 @@
-package com.esir.sr.sweetsnake.uicomponent;
+package com.esir.sr.sweetsnake.component;
 
-import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.ComponentType;
 
 /**
  * 
@@ -26,7 +26,7 @@ public class Sweet extends AbstractComponent
      * 
      */
     public Sweet(final String _id, final int _x, final int _y) {
-        super(_id, _x, _y, ElementType.SWEET);
+        super(_id, _x, _y, ComponentType.SWEET);
     }
 
     /**********************************************************************************************

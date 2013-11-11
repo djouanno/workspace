@@ -1,7 +1,7 @@
 package com.esir.sr.sweetsnake.factory;
 
-import com.esir.sr.sweetsnake.api.IElement;
-import com.esir.sr.sweetsnake.dto.ElementDTO;
+import com.esir.sr.sweetsnake.api.IComponent;
+import com.esir.sr.sweetsnake.dto.ComponentDTO;
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
@@ -57,12 +57,12 @@ public class DtoConverterFactory
      * @return
      */
     public static GameBoardDTO convertGameBoard(final GameBoard gameBoard) {
-        final ElementDTO[][] elements = new ElementDTO[gameBoard.getWidth()][gameBoard.getHeight()];
+        final ComponentDTO[][] elements = new ComponentDTO[gameBoard.getWidth()][gameBoard.getHeight()];
         for (int x = 0; x < gameBoard.getWidth(); x++) {
             for (int y = 0; y < gameBoard.getHeight(); y++) {
-                final IElement element = gameBoard.getElement(x, y);
+                final IComponent element = gameBoard.getElement(x, y);
                 if (element != null) {
-                    elements[x][y] = new ElementDTO(element.getId(), x, y, element.getType());
+                    elements[x][y] = new ComponentDTO(element.getId(), x, y, element.getType());
                 }
             }
         }

@@ -1,6 +1,6 @@
-package com.esir.sr.sweetsnake.uicomponent;
+package com.esir.sr.sweetsnake.component;
 
-import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.ComponentType;
 
 /**
  * 
@@ -29,7 +29,7 @@ public class Snake extends AbstractComponent
      * @param _y
      */
     public Snake(final String _id, final int _x, final int _y) {
-        super(_id, _x, _y, ElementType.SNAKE);
+        super(_id, _x, _y, ComponentType.SNAKE);
     }
 
     /**********************************************************************************************

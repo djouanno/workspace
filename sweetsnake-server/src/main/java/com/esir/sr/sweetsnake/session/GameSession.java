@@ -89,12 +89,7 @@ public class GameSession
      * 
      */
     public void stopGame() {
-        try {
-            player1.getClientCallback().gameLeaved(DtoConverterFactory.convertGameSession(this));
-            player2.getClientCallback().gameLeaved(DtoConverterFactory.convertGameSession(this));
-        } catch (final RemoteException e) {
-            log.error(e.getMessage(), e);
-        }
+        // TODO
     }
 
     /**

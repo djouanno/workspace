@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.uicomponent;
+package com.esir.sr.sweetsnake.component;
 
 import java.awt.Dimension;
 
@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.api.IElement;
+import com.esir.sr.sweetsnake.api.IComponent;
 import com.esir.sr.sweetsnake.constants.GameConstants;
 
 public class GameBoardPanel extends JPanel
@@ -59,7 +59,7 @@ public class GameBoardPanel extends JPanel
      * 
      * @param element
      */
-    public void setElement(final IElement element) {
+    public void setElement(final IComponent element) {
         log.debug("Setting element {} on the map", element);
         if (element != null) {
             final JComponent comp = (JComponent) element;
@@ -74,7 +74,7 @@ public class GameBoardPanel extends JPanel
      * 
      * @param element
      */
-    public void removeElement(final IElement element) {
+    public void removeElement(final IComponent element) {
         log.debug("Removing element {} from the map", element);
         if (element != null) {
             remove((JComponent) element);

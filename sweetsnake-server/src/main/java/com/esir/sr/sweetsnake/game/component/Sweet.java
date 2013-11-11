@@ -2,7 +2,7 @@ package com.esir.sr.sweetsnake.game.component;
 
 import org.slf4j.LoggerFactory;
 
-import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
 /**
@@ -11,7 +11,7 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
  * @author Damien Jouanno
  * 
  */
-public class Sweet extends AbstractElement
+public class Sweet extends AbstractComponent
 {
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
@@ -28,7 +28,7 @@ public class Sweet extends AbstractElement
      * 
      */
     public Sweet() {
-        super(ElementType.SWEET);
+        super(ComponentType.SWEET);
     }
 
     /**********************************************************************************************
