@@ -44,9 +44,9 @@ public class GameSession
     private boolean                                         gameStarted;
     private int                                             remainingSweets;
     
-    // Mettre en AUTOWIRED
+    // TODO Mettre en AUTOWIRED
     private BoardGenerator boardGenerator = new BoardGenerator();
-    // Mettre en AUTOWIRED
+    // TODO Mettre en AUTOWIRED
     private Engine engine = new Engine();
 
     /** Is the game started */
