@@ -263,7 +263,7 @@ public class Client implements IClient
     public void gameStarted(final GameSessionDTO _sessionDto) {
         sessionDto = _sessionDto;
         final boolean firstPlayer = sessionDto.getPlayer1Dto().getName().equals(username);
-        gui.gameStarted(firstPlayer, sessionDto.getGameBoardDto());
+        gui.gameStarted(firstPlayer, sessionDto.getPlayer1Dto().getSnakeId(), sessionDto.getPlayer2Dto().getSnakeId(), sessionDto.getGameBoardDto());
         status = PlayerStatus.PLAYING;
     }
 

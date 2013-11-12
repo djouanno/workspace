@@ -79,6 +79,7 @@ public class GameSession
             player2.getClientCallback().gameStarted(DtoConverterFactory.convertGameSession(this));
             // TODO maybe reconfirm from client side to synchronize game start
             isGameStarted = true;
+            engine.getGameBoard().clearComponentsToRefresh();
             log.info("Game session between {} and {} has been started", player1, player2);
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
@@ -112,6 +113,7 @@ public class GameSession
                 engine.moveSnake(direction, player);
                 player1.getClientCallback().refreshGame(DtoConverterFactory.convertGameSession(this));
                 player2.getClientCallback().refreshGame(DtoConverterFactory.convertGameSession(this));
+                engine.getGameBoard().clearComponentsToRefresh();
             } catch (final RemoteException e) {
                 log.error(e.getMessage(), e);
             }

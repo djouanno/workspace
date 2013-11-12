@@ -1,15 +1,20 @@
 package com.esir.sr.sweetsnake.factory;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.esir.sr.sweetsnake.api.IComponent;
 import com.esir.sr.sweetsnake.dto.ComponentDTO;
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
+import com.esir.sr.sweetsnake.enumeration.RefreshAction;
 import com.esir.sr.sweetsnake.game.map.GameBoard;
 import com.esir.sr.sweetsnake.session.GameRequest;
 import com.esir.sr.sweetsnake.session.GameSession;
 import com.esir.sr.sweetsnake.session.Player;
+import com.esir.sr.sweetsnake.utils.Pair;
 
 /**
  * 
@@ -48,7 +53,7 @@ public class DtoConverterFactory
      * @return
      */
     public static PlayerDTO convertPlayer(final Player player) {
-        return new PlayerDTO(player.getName(), player.getStatus(), player.getScore());
+        return new PlayerDTO(player.getName(), player.getStatus(), player.getSnakeId(), player.getScore());
     }
 
     /**
@@ -57,16 +62,23 @@ public class DtoConverterFactory
      * @return
      */
     public static GameBoardDTO convertGameBoard(final GameBoard gameBoard) {
-        final ComponentDTO[][] elements = new ComponentDTO[gameBoard.getWidth()][gameBoard.getHeight()];
-        for (int x = 0; x < gameBoard.getWidth(); x++) {
-            for (int y = 0; y < gameBoard.getHeight(); y++) {
-                final IComponent element = gameBoard.getElement(x, y);
-                if (element != null) {
-                    elements[x][y] = new ComponentDTO(element.getId(), x, y, element.getType());
-                }
-            }
+        final List<Pair<IComponent, RefreshAction>> components = gameBoard.getComponentsToRefresh();
+        final List<Pair<ComponentDTO, RefreshAction>> componentsDto = new LinkedList<Pair<ComponentDTO, RefreshAction>>();
+        for (final Pair<IComponent, RefreshAction> pair : components) {
+            final ComponentDTO componentDto = convertComponent(pair.getFirst());
+            componentsDto.add(new Pair<ComponentDTO, RefreshAction>(componentDto, pair.getSecond()));
         }
 
-        return new GameBoardDTO(gameBoard.getWidth(), gameBoard.getHeight(), elements, gameBoard.getNbSweets());
+        return new GameBoardDTO(gameBoard.getWidth(), gameBoard.getHeight(), gameBoard.getNbSweets(), componentsDto);
     }
+
+    /**
+     * 
+     * @param component
+     * @return
+     */
+    public static ComponentDTO convertComponent(final IComponent component) {
+        return new ComponentDTO(component.getId(), component.getXPos(), component.getYPos(), component.getType());
+    }
+
 }

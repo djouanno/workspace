@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +35,8 @@ import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.dto.ComponentDTO;
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
+import com.esir.sr.sweetsnake.enumeration.RefreshAction;
+import com.esir.sr.sweetsnake.utils.Pair;
 
 /**
  * 
@@ -89,6 +92,12 @@ public class GameView extends AbstractView
     /** Is the the current player player1 */
     private boolean             isFirstPlayer;
 
+    /** The player1's snake id */
+    private String              player1SnakeId;
+
+    /** The player2's snake id */
+    private String              player2SnakeId;
+
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
@@ -110,6 +119,8 @@ public class GameView extends AbstractView
     protected void init() {
         super.init();
         log.info("Initializing a new SweetSnakeGameView");
+        player1SnakeId = "";
+        player2SnakeId = "";
     }
 
     /**********************************************************************************************
@@ -170,31 +181,6 @@ public class GameView extends AbstractView
 
     /**
      * 
-     */
-    public void refreshGameboard(final GameBoardDTO _gameBoardDto) {
-        log.debug("Refreshing game board");
-        for (int x = 0; x < _gameBoardDto.getWidth(); x++) {
-            for (int y = 0; y < _gameBoardDto.getHeight(); y++) {
-                final ComponentDTO currentComponentDto = gameBoardDto.getElement(x, y), newComponentDto = _gameBoardDto.getElement(x, y);
-                if (currentComponentDto == null && newComponentDto != null || currentComponentDto != null && newComponentDto != null) {
-                    if (currentComponentDto != null && newComponentDto != null) {
-                        if (!currentComponentDto.getId().equals(newComponentDto.getId())) {
-                            final IComponent oldComponent = gameBoardPL.getComponent(x, y);
-                            gameBoardPL.removeComponent(oldComponent);
-                        }
-                    }
-                    final IComponent component = gameBoardPL.getComponentById(newComponentDto.getId());
-                    gameBoardPL.removeComponent(component);
-                    component.setXYPos(newComponentDto.getX(), newComponentDto.getY());
-                    gameBoardPL.setComponent(component);
-                }
-            }
-        }
-        gui.refreshUI();
-    }
-
-    /**
-     * 
      * @param player1Score
      * @param player2Score
      */
@@ -217,6 +203,22 @@ public class GameView extends AbstractView
      */
     public void setFirstPlayer(final boolean _isFirstPlayer) {
         isFirstPlayer = _isFirstPlayer;
+    }
+
+    /**
+     * 
+     * @param _player1SnakeId
+     */
+    public void setPlayer1SnakeId(final String _player1SnakeId) {
+        player1SnakeId = _player1SnakeId;
+    }
+
+    /**
+     * 
+     * @param _player2SnakeId
+     */
+    public void setPlayer2SnakeId(final String _player2SnakeId) {
+        player2SnakeId = _player2SnakeId;
     }
 
     /**********************************************************************************************
@@ -253,7 +255,7 @@ public class GameView extends AbstractView
      */
     private void initGameBoardPL() {
         if (gameBoardDto != null) {
-            gameBoardPL = new GameBoardPanel(gameBoardDto.getWidth(), gameBoardDto.getHeight());
+            gameBoardPL = new GameBoardPanel(gameBoardDto.getWidth(), gameBoardDto.getHeight(), isFirstPlayer);
             gameBoardPL.setBorder(new EmptyBorder(0, 0, 10, 0));
             drawGameboard();
         }
@@ -297,32 +299,53 @@ public class GameView extends AbstractView
     /**
      * 
      */
-    private void drawGameboard() {
-        for (int x = 0; x < gameBoardDto.getWidth(); x++) {
-            for (int y = 0; y < gameBoardDto.getHeight(); y++) {
-                final ComponentDTO elementDto = gameBoardDto.getElement(x, y);
-                if (elementDto != null) {
-                    IComponent element = null;
-                    switch (elementDto.getType()) {
-                        case SNAKE:
-                            String snakeColor = GuiConstants.GREEN_SNAKE_VALUE;
-                            if (!isFirstPlayer && x == 0 && y == 0 || isFirstPlayer && x == gameBoardDto.getWidth() - 1 && y == gameBoardDto.getHeight() - 1) {
-                                snakeColor = GuiConstants.RED_SNAKE_VALUE;
-                            }
-                            element = new Snake(elementDto.getId(), x, y, snakeColor);
-                            break;
-                        case SWEET:
-                            element = new Sweet(elementDto.getId(), x, y);
-                            break;
-                        default:
-                            break;
-                    }
-                    gameBoardPL.setComponent(element);
+    public void drawGameboard() {
+        final List<Pair<ComponentDTO, RefreshAction>> componentsToRefresh = gameBoardDto.getComponentsToRefresh();
+        for (final Pair<ComponentDTO, RefreshAction> pair : componentsToRefresh) {
+            final ComponentDTO componentDto = pair.getFirst();
+            final RefreshAction action = pair.getSecond();
+            final IComponent component = gameBoardPL.getComponentById(componentDto.getId());
+
+            if (component == null) {
+                IComponent newComponent = null;
+                final int x = componentDto.getX(), y = componentDto.getY();
+                switch (componentDto.getType()) {
+                    case SNAKE:
+                        String snakeColor = GuiConstants.GREEN_SNAKE_VALUE;
+                        if (isFirstPlayer && componentDto.getId().equals(player2SnakeId) || !isFirstPlayer && componentDto.getId().equals(player1SnakeId)) {
+                            snakeColor = GuiConstants.RED_SNAKE_VALUE;
+                        }
+                        newComponent = new Snake(componentDto.getId(), x, y, snakeColor);
+                        break;
+                    case SWEET:
+                        newComponent = new Sweet(componentDto.getId(), x, y);
+                        break;
+                    default:
+                        break;
+                }
+                gameBoardPL.setComponent(newComponent);
+            } else {
+                switch (action) {
+                    case REMOVE:
+                        gameBoardPL.removeComponent(component);
+                        break;
+                    case SET: // TODO never used, component always removed so uses the first if condition
+                        gameBoardPL.setComponent(component);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
+        gui.refreshUI();
     }
 
+    /**
+     * 
+     * @param num
+     * @param digits
+     * @return
+     */
     private static String intToString(final int num, final int digits) {
         final char[] zeros = new char[digits];
         Arrays.fill(zeros, '0');
@@ -369,10 +392,17 @@ public class GameView extends AbstractView
 
         public KeyboardListener() {
             moveTable = new LinkedHashMap<Integer, MoveDirection>();
-            moveTable.put(KeyEvent.VK_DOWN, MoveDirection.DOWN);
-            moveTable.put(KeyEvent.VK_UP, MoveDirection.UP);
-            moveTable.put(KeyEvent.VK_LEFT, MoveDirection.LEFT);
-            moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.RIGHT);
+            if (isFirstPlayer) {
+                moveTable.put(KeyEvent.VK_DOWN, MoveDirection.DOWN);
+                moveTable.put(KeyEvent.VK_UP, MoveDirection.UP);
+                moveTable.put(KeyEvent.VK_LEFT, MoveDirection.LEFT);
+                moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.RIGHT);
+            } else {
+                moveTable.put(KeyEvent.VK_DOWN, MoveDirection.UP);
+                moveTable.put(KeyEvent.VK_UP, MoveDirection.DOWN);
+                moveTable.put(KeyEvent.VK_LEFT, MoveDirection.RIGHT);
+                moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.LEFT);
+            }
         }
 
         /*

@@ -301,12 +301,15 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#gameStarted(boolean, com.esir.sr.sweetsnake.dto.GameBoardDTO)
+     * @see com.esir.sr.sweetsnake.api.IGui#gameStarted(boolean, java.lang.String, java.lang.String,
+     * com.esir.sr.sweetsnake.dto.GameBoardDTO)
      */
     @Override
-    public void gameStarted(final boolean isFirstPlayer, final GameBoardDTO gameBoard) {
+    public void gameStarted(final boolean isFirstPlayer, final String player1SnakeId, final String player2SnakeId, final GameBoardDTO gameBoard) {
         gameView.setGameboardDto(gameBoard);
         gameView.setFirstPlayer(isFirstPlayer);
+        gameView.setPlayer1SnakeId(player1SnakeId);
+        gameView.setPlayer2SnakeId(player2SnakeId);
         switchView(gameView);
     }
 
@@ -330,8 +333,8 @@ public class Gui extends JFrame implements IGui
      */
     @Override
     public void refreshGameboard(final GameBoardDTO gameBoard) {
-        gameView.refreshGameboard(gameBoard);
         gameView.setGameboardDto(gameBoard);
+        gameView.drawGameboard();
     }
 
     /*

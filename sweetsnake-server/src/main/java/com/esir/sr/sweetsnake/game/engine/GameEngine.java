@@ -58,11 +58,13 @@ public class GameEngine
         final Snake player1Snake = new Snake();
         player1Snake.setXYPos(0, 0);
         playersMap.put(session.getPlayer1(), player1Snake);
+        session.getPlayer1().setSnakeId(player1Snake.getId());
         gameBoard.setElement(player1Snake);
 
         final Snake player2Snake = new Snake();
         player2Snake.setXYPos(GameConstants.GRID_SIZE - 1, GameConstants.GRID_SIZE - 1);
         playersMap.put(session.getPlayer2(), player2Snake);
+        session.getPlayer2().setSnakeId(player2Snake.getId());
         gameBoard.setElement(player2Snake);
     }
 
@@ -74,6 +76,7 @@ public class GameEngine
      * 
      * @param direction
      * @param player
+     * @return
      */
     public void moveSnake(final MoveDirection direction, final Player player) {
         final IComponent snake = playersMap.get(player);

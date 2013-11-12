@@ -30,6 +30,9 @@ public class PlayerDTO implements Serializable
     /** The player status */
     private final PlayerStatus status;
 
+    /** The player's snake id */
+    private final String       snakeId;
+
     /** The player score */
     private final int          score;
 
@@ -43,9 +46,10 @@ public class PlayerDTO implements Serializable
      * @param _status
      * @param _score
      */
-    public PlayerDTO(final String _name, final PlayerStatus _status, final int _score) {
+    public PlayerDTO(final String _name, final PlayerStatus _status, final String _snakeId, final int _score) {
         name = _name;
         status = _status;
+        snakeId = _snakeId;
         score = _score;
     }
 
@@ -81,6 +85,14 @@ public class PlayerDTO implements Serializable
      */
     public PlayerStatus getStatus() {
         return status;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public String getSnakeId() {
+        return snakeId;
     }
 
     /**

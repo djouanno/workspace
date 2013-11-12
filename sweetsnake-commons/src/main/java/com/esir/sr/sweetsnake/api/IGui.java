@@ -68,9 +68,11 @@ public interface IGui
     /**
      * 
      * @param isFirstPlayer
+     * @param player1SnakeId
+     * @param player2SnakeId
      * @param gameBoard
      */
-    void gameStarted(boolean isFirstPlayer, GameBoardDTO gameBoard);
+    void gameStarted(boolean isFirstPlayer, String player1SnakeId, String player2SnakeId, GameBoardDTO gameBoard);
 
     /**
      * 

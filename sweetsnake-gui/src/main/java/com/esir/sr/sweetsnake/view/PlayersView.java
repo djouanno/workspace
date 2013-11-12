@@ -165,7 +165,7 @@ public class PlayersView extends AbstractView
      * 
      * @param playersList
      */
-    public void refreshPlayersList(final List<PlayerDTO> playersList) { // TODO bugs when called from server side
+    public void refreshPlayersList(final List<PlayerDTO> playersList) { // FIXME bugs when called from server side
         if (isBuilded) {
             playersLST.removeAllElements();
             final List<PlayerDTO> players = new LinkedList<PlayerDTO>(playersList);

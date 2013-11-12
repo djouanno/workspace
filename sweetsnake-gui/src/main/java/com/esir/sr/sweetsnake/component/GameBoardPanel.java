@@ -1,6 +1,8 @@
 package com.esir.sr.sweetsnake.component;
 
 import java.awt.Dimension;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -18,23 +20,26 @@ public class GameBoardPanel extends JPanel
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long    serialVersionUID = 8531962414769780455L;
+    private static final long             serialVersionUID = 8531962414769780455L;
 
     /** The logger */
-    private static final Logger  log              = LoggerFactory.getLogger(GameBoardPanel.class);
+    private static final Logger           log              = LoggerFactory.getLogger(GameBoardPanel.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The map width */
-    private final int            width;
+    private final int                     width;
 
     /** The map height */
-    private final int            height;
+    private final int                     height;
 
     /** The components */
-    private final IComponent[][] components;
+    private final Map<String, IComponent> components;
+
+    /** Is the the current player player1 */
+    private final boolean                 isFirstPlayer;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -45,12 +50,14 @@ public class GameBoardPanel extends JPanel
      * @param _width
      * @param _height
      * @param _nbSweets
+     * @param _isFirstPlayer
      */
-    public GameBoardPanel(final int _width, final int _height) {
+    public GameBoardPanel(final int _width, final int _height, final boolean _isFirstPlayer) {
         super();
         width = _width;
         height = _height;
-        components = new IComponent[width][height];
+        isFirstPlayer = _isFirstPlayer;
+        components = new LinkedHashMap<String, IComponent>();
         setLayout(null);
         setOpaque(false);
     }
@@ -66,10 +73,15 @@ public class GameBoardPanel extends JPanel
     public void setComponent(final IComponent component) {
         log.debug("Setting element {} on the map", component);
         if (component != null) {
-            components[component.getXPos()][component.getYPos()] = component;
-            final JComponent comp = (JComponent) component;
-            comp.setLocation(component.getXPos() * GameConstants.CELL_SIZE, component.getYPos() * GameConstants.CELL_SIZE);
-            add(comp);
+            components.put(component.getId(), component);
+            final JComponent jcomponent = (JComponent) component;
+            int x = component.getXPos(), y = component.getYPos();
+            if (!isFirstPlayer) {
+                x = width - 1 - component.getXPos();
+                y = height - 1 - component.getYPos();
+            }
+            jcomponent.setLocation(x * GameConstants.CELL_SIZE, y * GameConstants.CELL_SIZE);
+            add(jcomponent);
         }
     }
 
@@ -80,19 +92,9 @@ public class GameBoardPanel extends JPanel
     public void removeComponent(final IComponent component) {
         log.debug("Removing element {} from the map", component);
         if (component != null) {
-            components[component.getXPos()][component.getYPos()] = null;
+            components.remove(component.getId());
             remove((JComponent) component);
         }
-    }
-
-    /**
-     * 
-     * @param x
-     * @param y
-     * @return
-     */
-    public IComponent getComponent(final int x, final int y) {
-        return components[x][y];
     }
 
     /**
@@ -101,15 +103,7 @@ public class GameBoardPanel extends JPanel
      * @return
      */
     public IComponent getComponentById(final String id) {
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                final IComponent component = components[x][y];
-                if (component != null && component.getId().equals(id)) {
-                    return component;
-                }
-            }
-        }
-        return null;
+        return components.get(id);
     }
 
     /**********************************************************************************************
