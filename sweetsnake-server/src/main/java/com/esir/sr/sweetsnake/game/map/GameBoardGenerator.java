@@ -39,15 +39,15 @@ public class GameBoardGenerator
 
         final Random random = new Random();
         for (int i = 0; i < nbSweets; i++) {
-            int j, k;
+            int x, y;
             do {
-                j = random.nextInt(height);
-                k = random.nextInt(width);
-            } while (board.hasElement(j, k));
+                x = random.nextInt(height);
+                y = random.nextInt(width);
+            } while (board.hasComponent(x, y) || x == 0 && y == 0 || x == width - 1 && y == 0 || x == width - 1 && y == height - 1 || x == 0 && y == height - 1);
 
             final Sweet sweet = new Sweet();
-            sweet.setXYPos(j, k);
-            board.setElement(sweet);
+            sweet.setXYPos(x, y);
+            board.setComponent(sweet);
         }
 
         return board;

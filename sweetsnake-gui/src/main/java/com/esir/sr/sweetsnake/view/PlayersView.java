@@ -1,30 +1,38 @@
 package com.esir.sr.sweetsnake.view;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.JScrollPane;
+import javax.swing.ListModel;
+import javax.swing.ToolTipManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.esir.sr.sweetsnake.component.ImagePanel;
+import com.esir.sr.sweetsnake.component.SweetSnakeList;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
-import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
-import com.esir.sr.sweetsnake.uicomponent.SweetSnakeList;
+import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 
 /**
  * 
@@ -70,9 +78,6 @@ public class PlayersView extends AbstractView
 
     /** The request button */
     private JButton                   requestBTN;
-
-    /** The selected player in the players list */
-    private PlayerDTO                 selectedPlayer;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -121,15 +126,14 @@ public class PlayersView extends AbstractView
         initCenterPL();
         add(centerPL, BorderLayout.CENTER);
 
-        final List<PlayerDTO> players;
+        List<PlayerDTO> players = new LinkedList<PlayerDTO>();
+
         if (client != null) {
-            players = client.getPlayersList();
-        } else {
-            players = new LinkedList<PlayerDTO>();// client.getPlayersList();
+            players = new LinkedList<PlayerDTO>(client.getPlayersList());
         }
 
         initPlayersLST(players);
-        centerPL.add(playersLST);
+        centerPL.add(new JScrollPane(playersLST));
 
         // bottom panel
         initBottomPL();
@@ -155,6 +159,20 @@ public class PlayersView extends AbstractView
         gbc.weighty = 1;
         gbc.fill = GridBagConstraints.NONE;
         bottomPL.add(requestBTN, gbc);
+    }
+
+    /**
+     * 
+     * @param playersList
+     */
+    public void refreshPlayersList(final List<PlayerDTO> playersList) { // FIXME bugs when called from server side
+        if (isBuilded) {
+            playersLST.removeAllElements();
+            final List<PlayerDTO> players = new LinkedList<PlayerDTO>(playersList);
+            for (final PlayerDTO player : players) {
+                playersLST.addElement(player);
+            }
+        }
     }
 
     /**********************************************************************************************
@@ -194,16 +212,64 @@ public class PlayersView extends AbstractView
         for (final PlayerDTO player : players) {
             playersLST.addElement(player);
         }
-        playersLST.addListSelectionListener(new ListSelectionListener() {
-            @SuppressWarnings("unchecked")
+        ToolTipManager.sharedInstance().registerComponent(playersLST);
+
+        playersLST.setCellRenderer(new DefaultListCellRenderer() {
+            private static final long serialVersionUID = 5859407590339448327L;
+
+            @SuppressWarnings("rawtypes")
             @Override
-            public void valueChanged(final ListSelectionEvent e) {
-                // FIXME pourquoi ça marche que par le getSource et pas l'attribut direct ? :/ fait chier ce cast est trop laid
-                selectedPlayer = ((JList<PlayerDTO>) e.getSource()).getSelectedValue();
+            public java.awt.Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+                final JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                final PlayerDTO player = (PlayerDTO) value;
+                ImageIcon imageIcon = new ImageIcon(PlayersView.class.getResource(GuiConstants.UNAVAILABLE_ICON_PATH));
+                if (player.getStatus() == PlayerStatus.AVAILABLE) {
+                    imageIcon = new ImageIcon(PlayersView.class.getResource(GuiConstants.AVAILABLE_ICON_PATH));
+                }
+                if (player.getStatus() == PlayerStatus.INVITED || player.getStatus() == PlayerStatus.INVITING) {
+                    imageIcon = new ImageIcon(PlayersView.class.getResource(GuiConstants.INVITE_ICON_PATH));
+                }
+                label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0), BorderFactory.createEmptyBorder(3, 10, 3, 10)));
+                label.setFont(new Font("sans-serif", Font.PLAIN, 16));
+                label.setIcon(imageIcon);
+                return label;
             }
         });
-        // playersJLT.setOpaque(false);
-        // ((javax.swing.DefaultListCellRenderer) playersJLT.getCellRenderer()).setOpaque(false);
+
+        playersLST.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(final MouseEvent e) {
+                @SuppressWarnings("unchecked")
+                final JList<PlayerDTO> list = (JList<PlayerDTO>) e.getSource();
+                final ListModel<PlayerDTO> model = list.getModel();
+                final int index = list.locationToIndex(e.getPoint());
+                list.setToolTipText(null);
+                if (index > -1) {
+                    final PlayerDTO player = model.getElementAt(index);
+                    String text = player.getName();
+                    switch (player.getStatus()) {
+                        case AVAILABLE:
+                            text += " is ready to play";
+                            break;
+                        case DISCONNECTED:
+                            text += " is not connected";
+                            break;
+                        case INVITED:
+                            text += " has already been invited by someone else";
+                            break;
+                        case INVITING:
+                            text += " has already invited someone else";
+                            break;
+                        case PLAYING:
+                            text += " is playing with someone else";
+                            break;
+                        default:
+                            break;
+                    }
+                    list.setToolTipText(text);
+                }
+            }
+        });
     }
 
     /**
@@ -251,11 +317,11 @@ public class PlayersView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
-            playersLST.removeAllElements();
-            final List<PlayerDTO> players = client.getPlayersList();
-            for (final PlayerDTO player : players) {
-                playersLST.addElement(player);
+            List<PlayerDTO> playersList = new LinkedList<PlayerDTO>();
+            if (client != null) {
+                playersList = new LinkedList<PlayerDTO>(client.getPlayersList());
             }
+            refreshPlayersList(playersList);
         }
 
     }
@@ -276,8 +342,9 @@ public class PlayersView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
+            final PlayerDTO selectedPlayer = playersLST.getSelectedValue();
             if (selectedPlayer == null) {
-                JOptionPane.showMessageDialog(gui, "Please select an opponent first", "Error", JOptionPane.ERROR_MESSAGE);
+                gui.displayErrorMessage("Please select an opponent first");
             } else {
                 gui.requestGame(selectedPlayer);
             }

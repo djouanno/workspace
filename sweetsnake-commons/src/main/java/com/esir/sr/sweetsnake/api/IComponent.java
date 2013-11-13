@@ -1,6 +1,6 @@
 package com.esir.sr.sweetsnake.api;
 
-import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
 /**
@@ -9,7 +9,7 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
  * @author Damien Jouanno
  * 
  */
-public interface IElement
+public interface IComponent
 {
 
     /**
@@ -59,6 +59,6 @@ public interface IElement
      * 
      * @return
      */
-    ElementType getType();
+    ComponentType getType();
 
 }

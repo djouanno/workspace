@@ -45,6 +45,15 @@ public class Player
     /** The current game session id (only one at a time) */
     private String                        gameSessionId;
 
+    /** The current game player's number */
+    private int                           number;
+
+    /** The current game player's snake id */
+    private String                        snakeId;
+
+    /** The current game player's score */
+    private int                           score;
+
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
@@ -128,6 +137,30 @@ public class Player
         return gameSessionId;
     }
 
+    /**
+     * 
+     * @return
+     */
+    public int getNumber() {
+        return number;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public String getSnakeId() {
+        return snakeId;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public int getScore() {
+        return score;
+    }
+
     /**********************************************************************************************
      * [BLOCK] SETTERS
      **********************************************************************************************/
@@ -162,6 +195,31 @@ public class Player
      */
     public void setGameSessionId(final String _gameSessionId) {
         gameSessionId = _gameSessionId;
+    }
+
+    /**
+     * 
+     * @param _number
+     */
+    public void setNumber(final int _number) {
+        number = _number;
+    }
+
+    /**
+     * 
+     * @param _snakeId
+     * @return
+     */
+    public void setSnakeId(final String _snakeId) {
+        snakeId = _snakeId;
+    }
+
+    /**
+     * 
+     * @param _score
+     */
+    public void setScore(final int _score) {
+        score = _score;
     }
 
 }

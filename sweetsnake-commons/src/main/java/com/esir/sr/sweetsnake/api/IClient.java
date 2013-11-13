@@ -34,6 +34,12 @@ public interface IClient
     void disconnect();
 
     /**
+     * 
+     * @param playersList
+     */
+    void refreshPlayersList(List<PlayerDTO> playersList);
+
+    /**
      * from the gui
      * 
      * @param player
@@ -72,14 +78,21 @@ public interface IClient
     /**
      * 
      * @param session
+     * @param leaver
      */
-    void gameLeaved(GameSessionDTO session);
+    void gameLeaved(GameSessionDTO session, PlayerDTO leaver);
 
     /**
      * 
      * @param direction
      */
-    void moveConfirmed(MoveDirection direction);
+    void moveSnake(MoveDirection direction);
+
+    /**
+     * 
+     * @param session
+     */
+    void refreshGame(GameSessionDTO session);
 
     /**
      * 

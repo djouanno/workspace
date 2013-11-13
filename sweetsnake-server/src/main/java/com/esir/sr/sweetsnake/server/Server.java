@@ -139,12 +139,11 @@ public class Server implements IServer
      * @param session
      */
     private void addSession(final GameSession session) {
-        final Player player1 = session.getPlayer1(), player2 = session.getPlayer2();
-        player1.setGameSessionId(session.getId());
-        player2.setGameSessionId(session.getId());
         gameSessions.add(session);
-        player1.setStatus(PlayerStatus.PLAYING);
-        player2.setStatus(PlayerStatus.PLAYING);
+        for (final Player player : session.getPlayers()) {
+            player.setGameSessionId(session.getId());
+            player.setStatus(PlayerStatus.PLAYING);
+        }
     }
 
     /**
@@ -154,14 +153,28 @@ public class Server implements IServer
     private void removeSession(final String sessionId) {
         try {
             final GameSession session = gameSessions.get(sessionId);
-            final Player player1 = session.getPlayer1(), player2 = session.getPlayer2();
             gameSessions.remove(session.getId());
-            player1.setGameSessionId(null);
-            player2.setGameSessionId(null);
-            player1.setStatus(PlayerStatus.AVAILABLE);
-            player2.setStatus(PlayerStatus.AVAILABLE);
+            for (final Player player : session.getPlayers()) {
+                player.setGameSessionId(null);
+                player.setStatus(PlayerStatus.AVAILABLE);
+            }
         } catch (final GameSessionNotFoundException e) {
             log.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 
+     */
+    private void sendRefreshPlayersList() {
+        for (final String playerName : players.getPlayersName()) {
+            try {
+                final Player player = players.get(playerName);
+                final IClientCallback callback = player.getClientCallback();
+                callback.refreshPlayersList(this.getPlayersList(callback));
+            } catch (RemoteException | PlayerNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
         }
     }
 
@@ -186,6 +199,7 @@ public class Server implements IServer
         final Player player = new Player(client);
         player.setStatus(PlayerStatus.AVAILABLE);
         players.add(player);
+        sendRefreshPlayersList();
         log.info("New client with username {} has connected", clientName);
     }
 
@@ -206,7 +220,6 @@ public class Server implements IServer
         }
         if (player.getGameSessionId() != null) {
             try {
-                log.debug("Removing current session {} for player {}", gameSessions.get(player.getGameSessionId()), player);
                 // TODO does not work when client brutally closes the window !!!!!
                 leaveGame(client, DtoConverterFactory.convertGameSession(gameSessions.get(player.getGameSessionId())));
             } catch (final GameSessionNotFoundException e) {
@@ -214,6 +227,12 @@ public class Server implements IServer
             }
         }
         players.remove(clientName);
+        try {
+            Thread.sleep(300);
+        } catch (final InterruptedException e) {
+            log.error(e.getMessage(), e);
+        }
+        sendRefreshPlayersList();
         log.info("Client with username {} has disconnected", clientName);
     }
 
@@ -243,6 +262,7 @@ public class Server implements IServer
             @Override
             public void run() {
                 try {
+                    sendRefreshPlayersList();
                     player2.getClientCallback().gameRequested(requestDTO);
                 } catch (final RemoteException e) {
                     log.error(e.getMessage(), e);
@@ -272,8 +292,11 @@ public class Server implements IServer
 
         removeRequest(requestDTO.getId());
 
+        final List<Player> players = new LinkedList<Player>();
         final Player player1 = request.getRequestingPlayer(), player2 = request.getRequestedPlayer();
-        final GameSession gameSession = new GameSession(player1, player2);
+        players.add(player1);
+        players.add(player2);
+        final GameSession gameSession = new GameSession(players);
         addSession(gameSession);
         gameSession.startGame();
 
@@ -298,6 +321,7 @@ public class Server implements IServer
         removeRequest(requestDTO.getId());
 
         try {
+            sendRefreshPlayersList();
             player1.getClientCallback().gameRefused(requestDTO);
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
@@ -313,12 +337,11 @@ public class Server implements IServer
     public void leaveGame(final IClientCallback client, final GameSessionDTO sessionDTO) throws GameSessionNotFoundException {
         final GameSession session = gameSessions.get(sessionDTO.getId());
         try {
-            log.debug("Leaving session {} from player {}", session, client.getUsername());
-            session.getPlayer1().getClientCallback().gameLeaved(sessionDTO);
-            session.getPlayer2().getClientCallback().gameLeaved(sessionDTO);
-            session.stopGame();
-            removeSession(session.getId());
-        } catch (final RemoteException e) {
+            final Player leaver = players.get(retrieveClientName(client));
+            removeSession(session.getId()); // TODO do not remove if nbplayers > 1
+            session.leaveGame(leaver);
+            sendRefreshPlayersList();
+        } catch (final PlayerNotFoundException e) {
             log.error(e.getMessage(), e);
         }
     }
@@ -349,13 +372,11 @@ public class Server implements IServer
         final GameSession session = gameSessions.get(sessionDTO.getId());
         final Player player = players.get(retrieveClientName(client));
 
-        if (player != session.getPlayer1() && player != session.getPlayer2()) {
+        if (!session.contains(player)) {
             throw new PlayerNotFoundException("unauthorized session for this player");
         }
 
-        if (session.isGameStarted()) {
-            session.movePlayer(player, direction);
-        }
+        session.movePlayer(player, direction);
     }
 
     /*

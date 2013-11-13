@@ -1,37 +1,39 @@
-package com.esir.sr.sweetsnake.uicomponent;
+package com.esir.sr.sweetsnake.dto;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
+import java.io.Serializable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.esir.sr.sweetsnake.enumeration.ComponentType;
 
 /**
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
- * @param <E>
  */
-public class SweetSnakeList<E> extends JList<E>
+public class ComponentDTO implements Serializable
 {
-
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long         serialVersionUID = -7399464786914708398L;
-
-    /** The logger */
-    private static final Logger       log              = LoggerFactory.getLogger(SweetSnakeList.class);
+    private static final long   serialVersionUID = 4845304179195761034L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The list model */
-    private final DefaultListModel<E> model;
+    /** The element id */
+    protected String            id;
+
+    /** The element x position on the game map */
+    protected int               x;
+
+    /** The element y position on the game map */
+    protected int               y;
+
+    /** The element type */
+    protected final ComponentType type;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -39,41 +41,52 @@ public class SweetSnakeList<E> extends JList<E>
 
     /**
      * 
+     * @param _id
+     * @param _x
+     * @param _y
+     * @param _type
      */
-    public SweetSnakeList() {
-        super();
-        model = new DefaultListModel<E>();
-        setModel(model);
+    public ComponentDTO(final String _id, final int _x, final int _y, final ComponentType _type) {
+        id = _id;
+        x = _x;
+        y = _y;
+        type = _type;
     }
 
     /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
+     * [BLOCK] GETTERS
      **********************************************************************************************/
 
     /**
      * 
-     * @param element
+     * @return
      */
-    public void addElement(final E element) {
-        log.debug("Adding element {} to list", element);
-        model.addElement(element);
+    public String getId() {
+        return id;
     }
 
     /**
      * 
-     * @param element
+     * @return
      */
-    public void removeElement(final E element) {
-        log.debug("Removing element {} to list", element);
-        model.removeElement(element);
+    public int getX() {
+        return x;
     }
 
     /**
      * 
+     * @return
      */
-    public void removeAllElements() {
-        log.debug("Removing all elements from list");
-        model.removeAllElements();
+    public int getY() {
+        return y;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public ComponentType getType() {
+        return type;
     }
 
 }

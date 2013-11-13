@@ -1,16 +1,19 @@
-package com.esir.sr.sweetsnake.utils;
+package com.esir.sr.sweetsnake.component;
 
-import java.io.Serializable;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
- * @param <T>
  * @param <E>
  */
-public class Pair<T, E> implements Serializable
+public class SweetSnakeList<E> extends JList<E>
 {
 
     /**********************************************************************************************
@@ -18,17 +21,17 @@ public class Pair<T, E> implements Serializable
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long serialVersionUID = -835416453579183853L;
+    private static final long         serialVersionUID = -7399464786914708398L;
+
+    /** The logger */
+    private static final Logger       log              = LoggerFactory.getLogger(SweetSnakeList.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The first element */
-    private T                 first;
-
-    /** The second element */
-    private E                 second;
+    /** The list model */
+    private final DefaultListModel<E> model;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -36,52 +39,41 @@ public class Pair<T, E> implements Serializable
 
     /**
      * 
-     * @param _first
-     * @param _second
      */
-    public Pair(final T _first, final E _second) {
-        first = _first;
-        second = _second;
+    public SweetSnakeList() {
+        super();
+        model = new DefaultListModel<E>();
+        setModel(model);
     }
 
     /**********************************************************************************************
-     * [BLOCK] GETTERS
+     * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
     /**
      * 
-     * @return
+     * @param element
      */
-    public T getFirst() {
-        return first;
+    public void addElement(final E element) {
+        log.debug("Adding element {} to list", element);
+        model.addElement(element);
     }
 
     /**
      * 
-     * @return
+     * @param element
      */
-    public E getSecond() {
-        return second;
-    }
-
-    /**********************************************************************************************
-     * [BLOCK] SETTERS
-     **********************************************************************************************/
-
-    /**
-     * 
-     * @param _first
-     */
-    public void setFirst(final T _first) {
-        first = _first;
+    public void removeElement(final E element) {
+        log.debug("Removing element {} to list", element);
+        model.removeElement(element);
     }
 
     /**
      * 
-     * @param _second
      */
-    public void setSecond(final E _second) {
-        second = _second;
+    public void removeAllElements() {
+        log.debug("Removing all elements from list");
+        model.removeAllElements();
     }
 
 }

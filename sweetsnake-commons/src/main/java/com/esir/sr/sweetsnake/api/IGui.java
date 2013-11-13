@@ -1,6 +1,11 @@
 package com.esir.sr.sweetsnake.api;
 
+import java.util.List;
+import java.util.Map;
+
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
+import com.esir.sr.sweetsnake.dto.GameRequestDTO;
+import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
  * 
@@ -31,33 +36,66 @@ public interface IGui
 
     /**
      * 
+     * @param playersList
+     */
+    void refreshPlayersList(List<PlayerDTO> playersList);
+
+    /**
+     * 
+     * @param request
+     * @return
+     */
+    int requestAlreadyPending(GameRequestDTO request);
+
+    /**
+     * 
+     * @param request
+     * @return
+     */
+    int gameRequested(GameRequestDTO request);
+
+    /**
+     * 
+     * @param request
+     */
+    void requestSent(GameRequestDTO request);
+
+    /**
+     * 
+     * @param request
+     */
+    void requestRefused(GameRequestDTO request);
+
+    /**
+     * 
+     * @param playerNb
+     * @param playersSnakes
      * @param gameBoard
      */
-    void gameStarted(GameBoardDTO gameBoard);
+    void gameStarted(int playerNb, Map<Integer, String> playersSnakes, GameBoardDTO gameBoard);
 
     /**
      * 
+     * @param leaver
      */
-    void gameLeaved();
+    void gameLeaved(String leaver);
 
     /**
      * 
-     * @param message
+     * @param gameBoard
      */
-    void displayInfoMessage(String message);
+    void refreshGameboard(GameBoardDTO gameBoard);
+
+    /**
+     * 
+     * @param playersScores
+     */
+    void refreshScores(Map<Integer, Integer> playersScores);
 
     /**
      * 
      * @param message
      */
     void displayErrorMessage(String message);
-
-    /**
-     * 
-     * @param message
-     * @param buttons
-     * @return
-     */
-    int displayCustomMessage(String message, String[] buttons);
 
 }

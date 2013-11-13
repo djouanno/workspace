@@ -2,6 +2,7 @@ package com.esir.sr.sweetsnake.callback;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,7 @@ import com.esir.sr.sweetsnake.api.IClient;
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
+import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
  * 
@@ -56,6 +57,16 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
     /*
      * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#refreshPlayersList(java.util.List)
+     */
+    @Override
+    public void refreshPlayersList(final List<PlayerDTO> playersList) throws RemoteException {
+        client.refreshPlayersList(playersList);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see
      * com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#gameRequested(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
      */
@@ -87,22 +98,22 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClientCallback#gameLeaved(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#gameLeaved(com.esir.sr.sweetsnake.dto.GameSessionDTO,
+     * com.esir.sr.sweetsnake.dto.PlayerDTO)
      */
     @Override
-    public void gameLeaved(final GameSessionDTO session) throws RemoteException {
-        client.gameLeaved(session);
+    public void gameLeaved(final GameSessionDTO session, final PlayerDTO leaver) throws RemoteException {
+        client.gameLeaved(session, leaver);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#moveConfirmed(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#refreshGame(com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void moveConfirmed(final MoveDirection direction) throws RemoteException {
-        client.moveConfirmed(direction);
+    public void refreshGame(final GameSessionDTO session) throws RemoteException {
+        client.refreshGame(session);
     }
 
     /*

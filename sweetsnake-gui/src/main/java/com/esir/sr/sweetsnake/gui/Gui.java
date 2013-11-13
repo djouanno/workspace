@@ -4,12 +4,17 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
@@ -19,10 +24,13 @@ import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClient;
 import com.esir.sr.sweetsnake.api.IGui;
+import com.esir.sr.sweetsnake.component.ImagePanel;
+import com.esir.sr.sweetsnake.component.Toast;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
+import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
-import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
+import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.view.AbstractView;
 import com.esir.sr.sweetsnake.view.ConnectionView;
 import com.esir.sr.sweetsnake.view.GameView;
@@ -73,6 +81,18 @@ public class Gui extends JFrame implements IGui
     @Autowired
     private GameView              gameView;
 
+    /** The gui current view */
+    private AbstractView          currentView;
+
+    /** The menu bar */
+    private JMenuBar              menuBar;
+
+    /** The server menu */
+    private JMenu                 serverMenu;
+
+    /** The disonnect menu item */
+    private JMenuItem             disconnectMenuItem;
+
     /** The GUI dimension */
     private Dimension             dimension;
 
@@ -94,6 +114,7 @@ public class Gui extends JFrame implements IGui
     protected void init() {
         log.info("Initializing a new SweetSnakeIhm");
         initFrameParameters();
+        initMenuBar();
     }
 
     /**
@@ -132,13 +153,34 @@ public class Gui extends JFrame implements IGui
 
     /**
      * 
+     */
+    private void initMenuBar() {
+        menuBar = new JMenuBar();
+        menuBar.setOpaque(false);
+
+        serverMenu = new JMenu("server");
+        disconnectMenuItem = new JMenuItem("disconnect");
+        serverMenu.add(disconnectMenuItem);
+        disconnectMenuItem.addActionListener(null /* TODO */);
+        menuBar.add(serverMenu);
+
+        setJMenuBar(menuBar);
+    }
+
+    /**
+     * 
      * @param view
      */
     private void switchView(final AbstractView view) {
+        initMenuBar();
         view.build();
+        if (view.getMenu() != null) {
+            menuBar.add(view.getMenu());
+        }
         getContentPane().removeAll();
         getContentPane().add(view);
         refreshUI();
+        currentView = view;
         log.debug("View switched to {}", view.getClass().getName());
     }
 
@@ -155,6 +197,54 @@ public class Gui extends JFrame implements IGui
             pane = (JOptionPane) parent;
         }
         return pane;
+    }
+
+    /**
+     * 
+     * @param message
+     */
+    private void displayInfoMessage(final String title, final String message) {
+        // showMessageDialog is a blocking method while the user has not closed the dialog so we have to launch it in
+        // a new thread
+        final Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(Gui.this, message, title, JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        t.start();
+    }
+
+    /**
+     * 
+     * @param message
+     */
+    private void displayToast(final String message) {
+        Toast.displayToast(this, message);
+    }
+
+    /**
+     * 
+     * @param message
+     * @param buttonsText
+     * @return
+     */
+    private int displayCustomQuestion(final String title, final String message, final String[] buttonsText) {
+        final Object[] buttons = new Object[buttonsText.length];
+        int i = 0;
+        for (final String buttonText : buttonsText) {
+            final JButton button = new JButton(buttonText);
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    final JOptionPane pane = getOptionPane((JComponent) e.getSource());
+                    pane.setValue(button);
+                }
+            });
+            buttons[i] = button;
+            i++;
+        }
+        return JOptionPane.showOptionDialog(this, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[0]);
     }
 
     /**********************************************************************************************
@@ -194,41 +284,99 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#startGame(com.esir.sr.sweetsnake.dto.GameBoardDTO)
+     * @see com.esir.sr.sweetsnake.api.IGui#refreshPlayersList(java.util.List)
      */
     @Override
-    public void gameStarted(final GameBoardDTO gameBoard) {
-        gameView.setGameBoardDto(gameBoard);
+    public void refreshPlayersList(final List<PlayerDTO> playersList) {
+        if (currentView == playersView) {
+            log.debug("Refreshing players list with {} players", playersList.size());
+            playersView.refreshPlayersList(playersList);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#requestAlreadyPending(com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     */
+    @Override
+    public int requestAlreadyPending(final GameRequestDTO request) {
+        return displayCustomQuestion("A request is already pending", "Your already asked for a game with " + request.getRequestedPlayerDto().getName() + "\nPlease wait for your opponent to respond or cancel the request", new String[] { "wait", "cancel request" });
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#gameRequested(com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     */
+    @Override
+    public int gameRequested(final GameRequestDTO request) {
+        return displayCustomQuestion("Someone wants to play with you", request.getRequestingPlayerDto().getName() + " wants to play with you", new String[] { "accept", "deny" });
+    }
+
+    /*
+     * 
+     */
+    @Override
+    public void requestSent(final GameRequestDTO request) {
+        displayToast("Your request has been sent to " + request.getRequestedPlayerDto().getName());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#requestRefused(com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     */
+    @Override
+    public void requestRefused(final GameRequestDTO request) {
+        displayInfoMessage("Request denied", request.getRequestedPlayerDto().getName() + " has denied your request");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#gameStarted(boolean, java.util.Map, com.esir.sr.sweetsnake.dto.GameBoardDTO)
+     */
+    @Override
+    public void gameStarted(final int playerNb, final Map<Integer, String> playersSnakes, final GameBoardDTO gameBoard) {
+        gameView.setPlayerNb(playerNb);
+        gameView.setPlayersSnakesMap(playersSnakes);
+        gameView.setGameboardDto(gameBoard);
         switchView(gameView);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#leaveGame()
+     * @see com.esir.sr.sweetsnake.api.IGui#gameLeaved(com.esir.sr.sweetsnake.dto.PlayerDTO)
      */
     @Override
-    public void gameLeaved() {
+    public void gameLeaved(final String leaver) {
         switchView(playersView);
-        displayInfoMessage("Game has been left");
+        if (leaver != null) {
+            displayInfoMessage("Game stopped", leaver + " has left the game :(");
+        }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeIhm#displayInfoMessage(java.lang.String)
+     * @see com.esir.sr.sweetsnake.api.IGui#refreshGameboard(com.esir.sr.sweetsnake.dto.GameBoardDTO)
      */
     @Override
-    public void displayInfoMessage(final String message) {
-        // showMessageDialog is a blocking method while the user has not closed the dialog so we have to launch it in
-        // a new thread
-        final Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JOptionPane.showMessageDialog(Gui.this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        t.start();
+    public void refreshGameboard(final GameBoardDTO gameBoard) {
+        gameView.setGameboardDto(gameBoard);
+        gameView.drawGameboard();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#refreshScores(java.util.Map)
+     */
+    @Override
+    public void refreshScores(final Map<Integer, Integer> playersScores) {
+        gameView.refreshScores(playersScores);
     }
 
     /*
@@ -249,33 +397,16 @@ public class Gui extends JFrame implements IGui
         t.start();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IGui#displayCustomMessage(java.lang.String, java.lang.String[])
-     */
-    @Override
-    public int displayCustomMessage(final String message, final String[] buttonsText) {
-        final Object[] buttons = new Object[buttonsText.length];
-        int i = 0;
-        for (final String buttonText : buttonsText) {
-            final JButton button = new JButton(buttonText);
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final JOptionPane pane = getOptionPane((JComponent) e.getSource());
-                    pane.setValue(button);
-                }
-            });
-            buttons[i] = button;
-            i++;
-        }
-        return JOptionPane.showOptionDialog(this, message, "Information", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[0]);
-    }
-
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
+
+    /**
+     * 
+     */
+    public void reachServer() {
+        client.reachServer();
+    }
 
     /**
      * 
@@ -295,9 +426,22 @@ public class Gui extends JFrame implements IGui
 
     /**
      * 
+     * @param direction
      */
-    public void reachServer() {
-        client.reachServer();
+    public void moveSnake(final MoveDirection direction) {
+        client.moveSnake(direction);
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] GETTERS
+     **********************************************************************************************/
+
+    /**
+     * 
+     * @return
+     */
+    public Dimension getDimension() {
+        return dimension;
     }
 
 }

@@ -40,12 +40,12 @@ public class ServerTest
     private static final Logger                   log                   = LoggerFactory.getLogger(ServerTest.class);
     private static final String                   player1               = "player1", player2 = "player2";
     private static ClassPathXmlApplicationContext context;
-    private static IClientCallback      client1, client2;
+    private static IClientCallback                client1, client2;
     private static boolean                        runDataInitialization = true;
 
     @Autowired
     @Qualifier("sweetSnakeServiceRMI")
-    private IServer                     server;
+    private IServer                               server;
 
     @BeforeClass
     public static void beforeClass() {
@@ -109,7 +109,7 @@ public class ServerTest
     public void gameSessionTest() throws PlayerNotFoundException, PlayerNotAvailableException, GameRequestNotFoundException, GameSessionNotFoundException, RemoteException {
         log.debug("---------------------------- gameSessionTest() ----------------------------");
 
-        final PlayerDTO player2DTO = new PlayerDTO(client2.getUsername(), PlayerStatus.AVAILABLE);
+        final PlayerDTO player2DTO = new PlayerDTO(client2.getUsername(), PlayerStatus.AVAILABLE, "", 0);
         final GameRequestDTO requestDTO = server.requestGame(client1, player2DTO);
         final GameSessionDTO sessionDTO = server.acceptGame(client2, requestDTO);
 

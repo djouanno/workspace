@@ -1,6 +1,9 @@
 package com.esir.sr.sweetsnake.dto;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -16,23 +19,20 @@ public class GameSessionDTO implements Serializable
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long  serialVersionUID = 459664230963147646L;
+    private static final long     serialVersionUID = 459664230963147646L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The session id */
-    private final String       id;
+    private final String          id;
 
-    /** The first player DTO */
-    private final PlayerDTO    player1Dto;
-
-    /** The second player DTO */
-    private final PlayerDTO    player2Dto;
+    /** The players list DTO */
+    private final List<PlayerDTO> playersDto;
 
     /** The game board DTO */
-    private final GameBoardDTO gameBoardDto;
+    private final GameBoardDTO    gameBoardDto;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -41,14 +41,12 @@ public class GameSessionDTO implements Serializable
     /**
      * 
      * @param _id
-     * @param _player1Dto
-     * @param _player2Dto
+     * @param _playersDto
      * @param _gameBoardDto
      */
-    public GameSessionDTO(final String _id, final PlayerDTO _player1Dto, final PlayerDTO _player2Dto, final GameBoardDTO _gameBoardDto) {
+    public GameSessionDTO(final String _id, final List<PlayerDTO> _playersDto, final GameBoardDTO _gameBoardDto) {
         id = _id;
-        player1Dto = _player1Dto;
-        player2Dto = _player2Dto;
+        playersDto = new LinkedList<PlayerDTO>(_playersDto);
         gameBoardDto = _gameBoardDto;
     }
 
@@ -68,16 +66,8 @@ public class GameSessionDTO implements Serializable
      * 
      * @return
      */
-    public PlayerDTO getPlayer1Dto() {
-        return player1Dto;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public PlayerDTO getPlayer2Dto() {
-        return player2Dto;
+    public List<PlayerDTO> getPlayersDto() {
+        return Collections.unmodifiableList(playersDto);
     }
 
     /**

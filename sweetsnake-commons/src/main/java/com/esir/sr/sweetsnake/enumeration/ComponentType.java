@@ -6,7 +6,7 @@ package com.esir.sr.sweetsnake.enumeration;
  * @author Damien Jouanno
  * 
  */
-public enum ElementType
+public enum ComponentType
 {
 
     /** The snake type */
@@ -22,7 +22,7 @@ public enum ElementType
      * 
      * @param _value
      */
-    ElementType(final String _value) {
+    ComponentType(final String _value) {
         value = _value;
     }
 

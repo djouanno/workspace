@@ -22,9 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
-import com.esir.sr.sweetsnake.uicomponent.ImagePanel;
 
 /**
  * 
@@ -47,7 +47,7 @@ public class ConnectionView extends AbstractView
     private static final Logger log              = LoggerFactory.getLogger(ConnectionView.class);
 
     /** The username textfield text */
-    private static final String USERNAME_TF_TEXT = "choose an username";
+    private static final String USERNAME_TF_TEXT = " choose an username";
 
     /** The connect button text */
     private static final String CONNECT_BTN_TEXT = "connect";

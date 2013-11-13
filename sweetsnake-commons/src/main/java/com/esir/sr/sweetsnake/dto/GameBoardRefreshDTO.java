@@ -2,7 +2,7 @@ package com.esir.sr.sweetsnake.dto;
 
 import java.io.Serializable;
 
-import com.esir.sr.sweetsnake.enumeration.ElementType;
+import com.esir.sr.sweetsnake.enumeration.RefreshAction;
 
 /**
  * 
@@ -10,30 +10,25 @@ import com.esir.sr.sweetsnake.enumeration.ElementType;
  * @author Damien Jouanno
  * 
  */
-public class ElementDTO implements Serializable
+public class GameBoardRefreshDTO implements Serializable
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long   serialVersionUID = 4845304179195761034L;
+    private static final long   serialVersionUID = 6781521970787788523L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The element id */
-    protected String            id;
+    /** The component DTO to refresh */
+    private final ComponentDTO  componentDto;
 
-    /** The element x position on the game map */
-    protected int               x;
-
-    /** The element y position on the game map */
-    protected int               y;
-
-    /** The element type */
-    protected final ElementType type;
+    /** The action to perform */
+    private final RefreshAction action;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -41,16 +36,12 @@ public class ElementDTO implements Serializable
 
     /**
      * 
-     * @param _id
-     * @param _x
-     * @param _y
-     * @param _type
+     * @param _componentDto
+     * @param _action
      */
-    public ElementDTO(final String _id, final int _x, final int _y, final ElementType _type) {
-        id = _id;
-        x = _x;
-        y = _y;
-        type = _type;
+    public GameBoardRefreshDTO(final ComponentDTO _componentDto, final RefreshAction _action) {
+        componentDto = _componentDto;
+        action = _action;
     }
 
     /**********************************************************************************************
@@ -61,32 +52,16 @@ public class ElementDTO implements Serializable
      * 
      * @return
      */
-    public String getId() {
-        return id;
+    public ComponentDTO getComponentDto() {
+        return componentDto;
     }
 
     /**
      * 
      * @return
      */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public int getY() {
-        return y;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public ElementType getType() {
-        return type;
+    public RefreshAction getAction() {
+        return action;
     }
 
 }

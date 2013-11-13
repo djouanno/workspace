@@ -1,12 +1,17 @@
 package com.esir.sr.sweetsnake.factory;
 
-import com.esir.sr.sweetsnake.api.IElement;
-import com.esir.sr.sweetsnake.dto.ElementDTO;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.esir.sr.sweetsnake.api.IComponent;
+import com.esir.sr.sweetsnake.dto.ComponentDTO;
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
+import com.esir.sr.sweetsnake.dto.GameBoardRefreshDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.game.map.GameBoard;
+import com.esir.sr.sweetsnake.game.map.GameBoardRefresh;
 import com.esir.sr.sweetsnake.session.GameRequest;
 import com.esir.sr.sweetsnake.session.GameSession;
 import com.esir.sr.sweetsnake.session.Player;
@@ -39,7 +44,7 @@ public class DtoConverterFactory
      * @return
      */
     public static GameSessionDTO convertGameSession(final GameSession session) {
-        return new GameSessionDTO(session.getId(), convertPlayer(session.getPlayer1()), convertPlayer(session.getPlayer2()), convertGameBoard(session.getGameEngine().getGameBoard()));
+        return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), convertGameBoard(session.getGameEngine().getGameBoard()));
     }
 
     /**
@@ -48,7 +53,20 @@ public class DtoConverterFactory
      * @return
      */
     public static PlayerDTO convertPlayer(final Player player) {
-        return new PlayerDTO(player.getName(), player.getStatus());
+        return new PlayerDTO(player.getName(), player.getStatus(), player.getSnakeId(), player.getScore());
+    }
+
+    /**
+     * 
+     * @param players
+     * @return
+     */
+    public static List<PlayerDTO> convertPlayers(final List<Player> players) {
+        final List<PlayerDTO> playersDto = new LinkedList<PlayerDTO>();
+        for (final Player player : players) {
+            playersDto.add(convertPlayer(player));
+        }
+        return playersDto;
     }
 
     /**
@@ -57,16 +75,30 @@ public class DtoConverterFactory
      * @return
      */
     public static GameBoardDTO convertGameBoard(final GameBoard gameBoard) {
-        final ElementDTO[][] elements = new ElementDTO[gameBoard.getWidth()][gameBoard.getHeight()];
-        for (int x = 0; x < gameBoard.getWidth(); x++) {
-            for (int y = 0; y < gameBoard.getHeight(); y++) {
-                final IElement element = gameBoard.getElement(x, y);
-                if (element != null) {
-                    elements[x][y] = new ElementDTO(element.getId(), x, y, element.getType());
-                }
-            }
-        }
-
-        return new GameBoardDTO(gameBoard.getWidth(), gameBoard.getHeight(), elements, gameBoard.getNbSweets());
+        return new GameBoardDTO(gameBoard.getWidth(), gameBoard.getHeight(), gameBoard.getNbSweets(), convertGameBoardRefreshes(gameBoard.getRefreshes()));
     }
+
+    /**
+     * 
+     * @param refreshes
+     * @return
+     */
+    public static List<GameBoardRefreshDTO> convertGameBoardRefreshes(final List<GameBoardRefresh> refreshes) {
+        final List<GameBoardRefreshDTO> refreshesDto = new LinkedList<GameBoardRefreshDTO>();
+        for (final GameBoardRefresh refresh : refreshes) {
+            final ComponentDTO componentDto = convertComponent(refresh.getComponent());
+            refreshesDto.add(new GameBoardRefreshDTO(componentDto, refresh.getAction()));
+        }
+        return refreshesDto;
+    }
+
+    /**
+     * 
+     * @param component
+     * @return
+     */
+    public static ComponentDTO convertComponent(final IComponent component) {
+        return new ComponentDTO(component.getId(), component.getXPos(), component.getYPos(), component.getType());
+    }
+
 }

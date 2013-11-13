@@ -13,12 +13,18 @@ public class GameConstants
      **********************************************************************************************/
 
     /** */
-    public static final int GRID_SIZE        = 20;
+    public static final int GRID_SIZE             = 20;
 
     /** */
-    public static final int CELL_SIZE        = 20;
+    public static final int CELL_SIZE             = 20;
 
     /** */
-    public static final int NUMBER_OF_SWEETS = 10;
+    public static final int NUMBER_OF_SWEETS      = 20;
+
+    /** */
+    public static final int MAX_NUMBER_OF_PLAYERS = 4;
+
+    /** */
+    public static final int SWEET_SCORE_VALUE     = 10;
 
 }

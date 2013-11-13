@@ -1,9 +1,7 @@
-package com.esir.sr.sweetsnake.game.component;
+package com.esir.sr.sweetsnake.game.map;
 
-import org.slf4j.LoggerFactory;
-
-import com.esir.sr.sweetsnake.enumeration.ComponentType;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
+import com.esir.sr.sweetsnake.api.IComponent;
+import com.esir.sr.sweetsnake.enumeration.RefreshAction;
 
 /**
  * 
@@ -11,14 +9,18 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
  * @author Damien Jouanno
  * 
  */
-public class Sweet extends AbstractComponent
+public class GameBoardRefresh
 {
+
     /**********************************************************************************************
-     * [BLOCK] STATIC FIELDS
+     * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The logger */
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Sweet.class);
+    /** The component to refresh */
+    private final IComponent    component;
+
+    /** The action to perform */
+    private final RefreshAction action;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -26,23 +28,32 @@ public class Sweet extends AbstractComponent
 
     /**
      * 
+     * @param _component
+     * @param _action
      */
-    public Sweet() {
-        super(ComponentType.SWEET);
+    public GameBoardRefresh(final IComponent _component, final RefreshAction _action) {
+        component = _component;
+        action = _action;
     }
 
     /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
+     * [BLOCK] GETTERS
      **********************************************************************************************/
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see com.esir.sr.sweetsnake.game.SweetSnakeAbstractElement#move(com.esir.sr.sweetsnake.enumeration.SweetSnakeDirection)
+     * @return
      */
-    @Override
-    public void move(final MoveDirection direction) {
-        log.info("Moving sweet to the {}", direction);
+    public IComponent getComponent() {
+        return component;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public RefreshAction getAction() {
+        return action;
     }
 
 }

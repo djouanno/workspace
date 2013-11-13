@@ -2,10 +2,11 @@ package com.esir.sr.sweetsnake.api;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
+import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
  * 
@@ -15,6 +16,13 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
  */
 public interface IClientCallback extends Remote
 {
+
+    /**
+     * 
+     * @param players
+     * @throws RemoteException
+     */
+    void refreshPlayersList(List<PlayerDTO> players) throws RemoteException;
 
     /**
      * 
@@ -40,16 +48,17 @@ public interface IClientCallback extends Remote
     /**
      * 
      * @param session
+     * @param leaver
      * @throws RemoteException
      */
-    void gameLeaved(GameSessionDTO session) throws RemoteException;
+    void gameLeaved(GameSessionDTO session, PlayerDTO leaver) throws RemoteException;
 
     /**
      * 
-     * @param direction
+     * @param session
      * @throws RemoteException
      */
-    void moveConfirmed(MoveDirection direction) throws RemoteException;
+    void refreshGame(GameSessionDTO session) throws RemoteException;
 
     /**
      * 
