@@ -18,15 +18,24 @@
         final GameView gv = new GameView();
         gv.gui = gui;
 
-        final ComponentDTO[][] elems = new ComponentDTO[20][20];
-        elems[0][0] = new ComponentDTO("id1", 0, 0, ComponentType.SNAKE);
-        elems[19][19] = new ComponentDTO("id2", 19, 19, ComponentType.SNAKE);
-        final GameBoardDTO dto = new GameBoardDTO(20, 20, elems, 10);
+        final Map<Integer, String> playersSnakes = new LinkedHashMap<Integer, String>();
+        playersSnakes.put(1, "id1");
+        playersSnakes.put(2, "id2");
+        // playersSnakes.put(3, "id3");
+        // playersSnakes.put(4, "id4");
 
-        gv.setGameboardDto(dto);
+        final List<GameBoardRefreshDTO> elems = new LinkedList<GameBoardRefreshDTO>();
+        elems.add(new GameBoardRefreshDTO(new ComponentDTO("id1", 0, 0, ComponentType.SNAKE), RefreshAction.SET));
+        elems.add(new GameBoardRefreshDTO(new ComponentDTO("id2", 19, 19, ComponentType.SNAKE), RefreshAction.SET));
+        // elems.add(new GameBoardRefreshDTO(new ComponentDTO("id3", 0, 19, ComponentType.SNAKE), RefreshAction.SET));
+        // elems.add(new GameBoardRefreshDTO(new ComponentDTO("id4", 19, 0, ComponentType.SNAKE), RefreshAction.SET));
+        final GameBoardDTO dto = new GameBoardDTO(20, 20, 10, elems);
+
         gv.init();
+        gv.setPlayerNb(1);
+        gv.setPlayersSnakesMap(playersSnakes);
+        gv.setGameboardDto(dto);
         gv.build();
-        gui.getContentPane().removeAll();
-        gui.getContentPane().add(gv);
+        gui.switchView(gv);
         gui.refreshUI();
     }

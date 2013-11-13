@@ -1,6 +1,8 @@
 package com.esir.sr.sweetsnake.client;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -262,8 +264,15 @@ public class Client implements IClient
     @Override
     public void gameStarted(final GameSessionDTO _sessionDto) {
         sessionDto = _sessionDto;
-        final boolean firstPlayer = sessionDto.getPlayer1Dto().getName().equals(username);
-        gui.gameStarted(firstPlayer, sessionDto.getPlayer1Dto().getSnakeId(), sessionDto.getPlayer2Dto().getSnakeId(), sessionDto.getGameBoardDto());
+        final Map<Integer, String> playersSnakes = new LinkedHashMap<Integer, String>();
+        int playerNb = 0, myPlayerNb = 1;
+        for (final PlayerDTO player : sessionDto.getPlayersDto()) {
+            playersSnakes.put(++playerNb, player.getSnakeId());
+            if (player.getName().equals(username)) {
+                myPlayerNb = playerNb;
+            }
+        }
+        gui.gameStarted(myPlayerNb, playersSnakes, sessionDto.getGameBoardDto());
         status = PlayerStatus.PLAYING;
     }
 
@@ -316,7 +325,13 @@ public class Client implements IClient
     @Override
     public void refreshGame(final GameSessionDTO session) {
         gui.refreshGameboard(session.getGameBoardDto());
-        gui.refreshScores(session.getPlayer1Dto().getScore(), session.getPlayer2Dto().getScore());
+        final Map<Integer, Integer> playersScores = new LinkedHashMap<Integer, Integer>();
+        int i = 0;
+        for (final PlayerDTO player : sessionDto.getPlayersDto()) {
+            log.debug("Player {} score : {}", i + 1, player.getScore());
+            playersScores.put(++i, player.getScore());
+        }
+        gui.refreshScores(playersScores);
     }
 
     /**********************************************************************************************

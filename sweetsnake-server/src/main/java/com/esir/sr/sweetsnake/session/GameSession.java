@@ -1,12 +1,18 @@
 package com.esir.sr.sweetsnake.session;
 
 import java.rmi.RemoteException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.LoggerFactory;
 
+import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.constants.PropertiesConstants;
+import com.esir.sr.sweetsnake.dto.GameSessionDTO;
+import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
+import com.esir.sr.sweetsnake.exception.MaximumNumberOfPlayersException;
 import com.esir.sr.sweetsnake.factory.DtoConverterFactory;
 import com.esir.sr.sweetsnake.game.engine.GameEngine;
 
@@ -30,17 +36,17 @@ public class GameSession
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The game engine */
-    private final GameEngine              engine;
-
     /** The session id */
     private final String                  id;
 
-    /** The session first player */
-    private final Player                  player1;
+    /** The players list */
+    private final List<Player>            players;
 
-    /** The session second player */
-    private final Player                  player2;
+    /** The game engine */
+    private GameEngine                    engine;
+
+    /** The number of players */
+    private int                           nbPlayers;
 
     /** Is the game started */
     private boolean                       isGameStarted;
@@ -51,15 +57,24 @@ public class GameSession
 
     /**
      * 
+     */
+    public GameSession() {
+        log.info("Initializing a new game session");
+        id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
+        players = new LinkedList<Player>();
+    }
+
+    /**
+     * 
      * @param _player1
      * @param _player2
      */
-    public GameSession(final Player _player1, final Player _player2) {
-        log.info("Initializing a new game session between {} and {}", _player1, _player2);
-        id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
-        player1 = _player1;
-        player2 = _player2;
-        engine = new GameEngine(this);
+    public GameSession(final List<Player> _players) {
+        this();
+        for (final Player player : _players) {
+            player.setNumber(++nbPlayers);
+            players.add(player);
+        }
     }
 
     /**********************************************************************************************
@@ -72,15 +87,38 @@ public class GameSession
 
     /**
      * 
+     * @param player
+     * @throws MaximumNumberOfPlayersException
+     */
+    public void addPlayer(final Player player) throws MaximumNumberOfPlayersException {
+        if (players.size() >= GameConstants.MAX_NUMBER_OF_PLAYERS) {
+            throw new MaximumNumberOfPlayersException("maximum number of players reached");
+        }
+        players.add(player);
+    }
+
+    /**
+     * 
+     * @param player
+     * @return
+     */
+    public boolean contains(final Player player) {
+        return players.contains(player);
+    }
+
+    /**
+     * 
      */
     public void startGame() {
+        engine = new GameEngine(this);
         try {
-            player1.getClientCallback().gameStarted(DtoConverterFactory.convertGameSession(this));
-            player2.getClientCallback().gameStarted(DtoConverterFactory.convertGameSession(this));
-            // TODO maybe reconfirm from client side to synchronize game start
+            final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
+            for (final Player player : players) {
+                player.getClientCallback().gameStarted(sessionDto);
+            }
             isGameStarted = true;
-            engine.getGameBoard().clearComponentsToRefresh();
-            log.info("Game session between {} and {} has been started", player1, player2);
+            engine.getGameBoard().clearRefreshes();
+            log.info("Game session has been started");
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }
@@ -91,12 +129,17 @@ public class GameSession
      */
     public void leaveGame(final Player leaver) {
         try {
-            player1.getClientCallback().gameLeaved(DtoConverterFactory.convertGameSession(this), DtoConverterFactory.convertPlayer(leaver));
-            player2.getClientCallback().gameLeaved(DtoConverterFactory.convertGameSession(this), DtoConverterFactory.convertPlayer(leaver));
+            final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
+            final PlayerDTO leaverDto = DtoConverterFactory.convertPlayer(leaver);
+            for (final Player player : players) {
+                player.getClientCallback().gameLeaved(sessionDto, leaverDto);
+            }
+            leaver.setGameSessionId(null);
+            leaver.setNumber(0);
+            leaver.setScore(0);
+            players.remove(leaver);
             isGameStarted = false;
-            player1.setScore(0);
-            player2.setScore(0);
-            log.info("Game session between {} and {} has been stopped", player1, player2);
+            log.info("Game session has been stopped");
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }
@@ -107,13 +150,15 @@ public class GameSession
      * @param player
      * @param direction
      */
-    public void movePlayer(final Player player, final MoveDirection direction) {
+    public void movePlayer(final Player _player, final MoveDirection direction) {
         if (isGameStarted) {
             try {
-                engine.moveSnake(direction, player);
-                player1.getClientCallback().refreshGame(DtoConverterFactory.convertGameSession(this));
-                player2.getClientCallback().refreshGame(DtoConverterFactory.convertGameSession(this));
-                engine.getGameBoard().clearComponentsToRefresh();
+                engine.moveSnake(direction, _player);
+                final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
+                for (final Player player : players) {
+                    player.getClientCallback().refreshGame(sessionDto);
+                }
+                engine.getGameBoard().clearRefreshes();
             } catch (final RemoteException e) {
                 log.error(e.getMessage(), e);
             }
@@ -135,7 +180,7 @@ public class GameSession
      */
     @Override
     public String toString() {
-        return "session[id=" + id + ", player1=" + player1 + ", player2=" + player2 + ", started=" + isGameStarted + "]";
+        return "session[id=" + id + ", nbPlayers=" + nbPlayers + ", started=" + isGameStarted + "]";
     }
 
     /**********************************************************************************************
@@ -154,16 +199,8 @@ public class GameSession
      * 
      * @return
      */
-    public Player getPlayer1() {
-        return player1;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public Player getPlayer2() {
-        return player2;
+    public List<Player> getPlayers() {
+        return players;
     }
 
     /**

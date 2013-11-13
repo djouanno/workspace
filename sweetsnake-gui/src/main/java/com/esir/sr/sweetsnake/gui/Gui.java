@@ -5,12 +5,16 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
@@ -80,6 +84,15 @@ public class Gui extends JFrame implements IGui
     /** The gui current view */
     private AbstractView          currentView;
 
+    /** The menu bar */
+    private JMenuBar              menuBar;
+
+    /** The server menu */
+    private JMenu                 serverMenu;
+
+    /** The disonnect menu item */
+    private JMenuItem             disconnectMenuItem;
+
     /** The GUI dimension */
     private Dimension             dimension;
 
@@ -101,6 +114,7 @@ public class Gui extends JFrame implements IGui
     protected void init() {
         log.info("Initializing a new SweetSnakeIhm");
         initFrameParameters();
+        initMenuBar();
     }
 
     /**
@@ -139,10 +153,30 @@ public class Gui extends JFrame implements IGui
 
     /**
      * 
+     */
+    private void initMenuBar() {
+        menuBar = new JMenuBar();
+        menuBar.setOpaque(false);
+
+        serverMenu = new JMenu("server");
+        disconnectMenuItem = new JMenuItem("disconnect");
+        serverMenu.add(disconnectMenuItem);
+        disconnectMenuItem.addActionListener(null /* TODO */);
+        menuBar.add(serverMenu);
+
+        setJMenuBar(menuBar);
+    }
+
+    /**
+     * 
      * @param view
      */
     private void switchView(final AbstractView view) {
+        initMenuBar();
         view.build();
+        if (view.getMenu() != null) {
+            menuBar.add(view.getMenu());
+        }
         getContentPane().removeAll();
         getContentPane().add(view);
         refreshUI();
@@ -301,15 +335,13 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#gameStarted(boolean, java.lang.String, java.lang.String,
-     * com.esir.sr.sweetsnake.dto.GameBoardDTO)
+     * @see com.esir.sr.sweetsnake.api.IGui#gameStarted(boolean, java.util.Map, com.esir.sr.sweetsnake.dto.GameBoardDTO)
      */
     @Override
-    public void gameStarted(final boolean isFirstPlayer, final String player1SnakeId, final String player2SnakeId, final GameBoardDTO gameBoard) {
+    public void gameStarted(final int playerNb, final Map<Integer, String> playersSnakes, final GameBoardDTO gameBoard) {
+        gameView.setPlayerNb(playerNb);
+        gameView.setPlayersSnakesMap(playersSnakes);
         gameView.setGameboardDto(gameBoard);
-        gameView.setFirstPlayer(isFirstPlayer);
-        gameView.setPlayer1SnakeId(player1SnakeId);
-        gameView.setPlayer2SnakeId(player2SnakeId);
         switchView(gameView);
     }
 
@@ -340,11 +372,11 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#refreshScores(int, int)
+     * @see com.esir.sr.sweetsnake.api.IGui#refreshScores(java.util.Map)
      */
     @Override
-    public void refreshScores(final int player1Score, final int player2Score) {
-        gameView.refreshScores(player1Score, player2Score);
+    public void refreshScores(final Map<Integer, Integer> playersScores) {
+        gameView.refreshScores(playersScores);
     }
 
     /*
@@ -392,8 +424,24 @@ public class Gui extends JFrame implements IGui
         client.requestGame(requestedPlayer);
     }
 
+    /**
+     * 
+     * @param direction
+     */
     public void moveSnake(final MoveDirection direction) {
         client.moveSnake(direction);
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] GETTERS
+     **********************************************************************************************/
+
+    /**
+     * 
+     * @return
+     */
+    public Dimension getDimension() {
+        return dimension;
     }
 
 }

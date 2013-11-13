@@ -1,6 +1,7 @@
 package com.esir.sr.sweetsnake.api;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
@@ -67,12 +68,11 @@ public interface IGui
 
     /**
      * 
-     * @param isFirstPlayer
-     * @param player1SnakeId
-     * @param player2SnakeId
+     * @param playerNb
+     * @param playersSnakes
      * @param gameBoard
      */
-    void gameStarted(boolean isFirstPlayer, String player1SnakeId, String player2SnakeId, GameBoardDTO gameBoard);
+    void gameStarted(int playerNb, Map<Integer, String> playersSnakes, GameBoardDTO gameBoard);
 
     /**
      * 
@@ -88,10 +88,9 @@ public interface IGui
 
     /**
      * 
-     * @param player1Score
-     * @param player2Score
+     * @param playersScores
      */
-    void refreshScores(int player1Score, int player2Score);
+    void refreshScores(Map<Integer, Integer> playersScores);
 
     /**
      * 

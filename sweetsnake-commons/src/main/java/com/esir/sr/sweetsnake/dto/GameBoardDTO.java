@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import com.esir.sr.sweetsnake.enumeration.RefreshAction;
-import com.esir.sr.sweetsnake.utils.Pair;
-
 /**
  * 
  * @author Herminaël Rougier
@@ -21,23 +18,23 @@ public class GameBoardDTO implements Serializable
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long                               serialVersionUID = 7019697058656634742L;
+    private static final long               serialVersionUID = 7019697058656634742L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The map width */
-    private final int                                       width;
+    private final int                       width;
 
     /** The map height */
-    private final int                                       height;
+    private final int                       height;
 
     /** The number of sweets */
-    private final int                                       nbSweets;
+    private final int                       nbSweets;
 
     /** The components to refresh */
-    private final List<Pair<ComponentDTO, RefreshAction>> componentsToRefresh;
+    private final List<GameBoardRefreshDTO> refreshes;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -50,11 +47,11 @@ public class GameBoardDTO implements Serializable
      * @param _nbSweets
      * @param _componentsToRefresh
      */
-    public GameBoardDTO(final int _width, final int _height, final int _nbSweets, final List<Pair<ComponentDTO, RefreshAction>> _componentsToRefresh) {
+    public GameBoardDTO(final int _width, final int _height, final int _nbSweets, final List<GameBoardRefreshDTO> _componentsToRefresh) {
         width = _width;
         height = _height;
         nbSweets = _nbSweets;
-        componentsToRefresh = _componentsToRefresh;
+        refreshes = _componentsToRefresh;
     }
 
     /**********************************************************************************************
@@ -89,8 +86,8 @@ public class GameBoardDTO implements Serializable
      * 
      * @return
      */
-    public List<Pair<ComponentDTO, RefreshAction>> getComponentsToRefresh() {
-        return Collections.unmodifiableList(componentsToRefresh);
+    public List<GameBoardRefreshDTO> getComponentsToRefresh() {
+        return Collections.unmodifiableList(refreshes);
     }
 
 }

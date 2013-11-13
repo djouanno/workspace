@@ -38,8 +38,8 @@ public class GameBoardPanel extends JPanel
     /** The components */
     private final Map<String, IComponent> components;
 
-    /** Is the the current player player1 */
-    private final boolean                 isFirstPlayer;
+    /** The current player's number */
+    private final int                     playerNb;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -52,11 +52,11 @@ public class GameBoardPanel extends JPanel
      * @param _nbSweets
      * @param _isFirstPlayer
      */
-    public GameBoardPanel(final int _width, final int _height, final boolean _isFirstPlayer) {
+    public GameBoardPanel(final int _width, final int _height, final int _playerNb) {
         super();
         width = _width;
         height = _height;
-        isFirstPlayer = _isFirstPlayer;
+        playerNb = _playerNb;
         components = new LinkedHashMap<String, IComponent>();
         setLayout(null);
         setOpaque(false);
@@ -76,9 +76,24 @@ public class GameBoardPanel extends JPanel
             components.put(component.getId(), component);
             final JComponent jcomponent = (JComponent) component;
             int x = component.getXPos(), y = component.getYPos();
-            if (!isFirstPlayer) {
-                x = width - 1 - component.getXPos();
-                y = height - 1 - component.getYPos();
+            // map translation (everybody sees himself on the top left corner)
+            switch (playerNb) {
+                case 2:
+                    x = width - 1 - component.getXPos();
+                    y = height - 1 - component.getYPos();
+                    break;
+                case 3:
+                    final int oldX = x;
+                    x = width - 1 - y;
+                    y = oldX;
+                    break;
+                case 4:
+                    final int oldY = y;
+                    y = height - 1 - x;
+                    x = oldY;
+                    break;
+                default:
+                    break;
             }
             jcomponent.setLocation(x * GameConstants.CELL_SIZE, y * GameConstants.CELL_SIZE);
             add(jcomponent);

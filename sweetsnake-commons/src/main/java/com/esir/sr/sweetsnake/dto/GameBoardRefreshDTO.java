@@ -1,9 +1,8 @@
 package com.esir.sr.sweetsnake.dto;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+
+import com.esir.sr.sweetsnake.enumeration.RefreshAction;
 
 /**
  * 
@@ -11,7 +10,7 @@ import java.util.List;
  * @author Damien Jouanno
  * 
  */
-public class GameSessionDTO implements Serializable
+public class GameBoardRefreshDTO implements Serializable
 {
 
     /**********************************************************************************************
@@ -19,20 +18,17 @@ public class GameSessionDTO implements Serializable
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long     serialVersionUID = 459664230963147646L;
+    private static final long   serialVersionUID = 6781521970787788523L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The session id */
-    private final String          id;
+    /** The component DTO to refresh */
+    private final ComponentDTO  componentDto;
 
-    /** The players list DTO */
-    private final List<PlayerDTO> playersDto;
-
-    /** The game board DTO */
-    private final GameBoardDTO    gameBoardDto;
+    /** The action to perform */
+    private final RefreshAction action;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -40,14 +36,12 @@ public class GameSessionDTO implements Serializable
 
     /**
      * 
-     * @param _id
-     * @param _playersDto
-     * @param _gameBoardDto
+     * @param _componentDto
+     * @param _action
      */
-    public GameSessionDTO(final String _id, final List<PlayerDTO> _playersDto, final GameBoardDTO _gameBoardDto) {
-        id = _id;
-        playersDto = new LinkedList<PlayerDTO>(_playersDto);
-        gameBoardDto = _gameBoardDto;
+    public GameBoardRefreshDTO(final ComponentDTO _componentDto, final RefreshAction _action) {
+        componentDto = _componentDto;
+        action = _action;
     }
 
     /**********************************************************************************************
@@ -58,24 +52,16 @@ public class GameSessionDTO implements Serializable
      * 
      * @return
      */
-    public String getId() {
-        return id;
+    public ComponentDTO getComponentDto() {
+        return componentDto;
     }
 
     /**
      * 
      * @return
      */
-    public List<PlayerDTO> getPlayersDto() {
-        return Collections.unmodifiableList(playersDto);
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public GameBoardDTO getGameBoardDto() {
-        return gameBoardDto;
+    public RefreshAction getAction() {
+        return action;
     }
 
 }

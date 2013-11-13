@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.esir.sr.sweetsnake.api.IComponent;
 import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.RefreshAction;
-import com.esir.sr.sweetsnake.utils.Pair;
 
 /**
  * 
@@ -25,26 +24,26 @@ public class GameBoard
      **********************************************************************************************/
 
     /** The logger */
-    private static final Logger                         log = LoggerFactory.getLogger(GameBoard.class);
+    private static final Logger          log = LoggerFactory.getLogger(GameBoard.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The game map */
-    private final IComponent[][]                        gameMap;
+    private final IComponent[][]         gameMap;
 
     /** The map width */
-    private final int                                   width;
+    private final int                    width;
 
     /** The map height */
-    private final int                                   height;
+    private final int                    height;
 
     /** The number of sweets */
-    private int                                         nbSweets;
+    private int                          nbSweets;
 
-    /** The components to refresh */
-    private final List<Pair<IComponent, RefreshAction>> componentsToRefresh;
+    /** The refreshes to do */
+    private final List<GameBoardRefresh> refreshes;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -60,7 +59,7 @@ public class GameBoard
         width = _width;
         height = _height;
         gameMap = new IComponent[width][height];
-        componentsToRefresh = new LinkedList<Pair<IComponent, RefreshAction>>();
+        refreshes = new LinkedList<GameBoardRefresh>();
     }
 
     /**********************************************************************************************
@@ -69,28 +68,28 @@ public class GameBoard
 
     /**
      * 
-     * @param element
+     * @param component
      */
-    public void setElement(final IComponent element) {
-        log.debug("Setting element {} on the map", element);
-        if (element.getType() == ComponentType.SWEET) {
+    public void setComponent(final IComponent component) {
+        // log.debug("Setting component {} on the map", component);
+        if (component.getType() == ComponentType.SWEET) {
             nbSweets++;
         }
-        gameMap[element.getXPos()][element.getYPos()] = element;
-        componentsToRefresh.add(new Pair<IComponent, RefreshAction>(element, RefreshAction.SET));
+        gameMap[component.getXPos()][component.getYPos()] = component;
+        refreshes.add(new GameBoardRefresh(component, RefreshAction.SET));
     }
 
     /**
      * 
-     * @param element
+     * @param component
      */
-    public void removeElement(final IComponent element) {
-        log.debug("Removing element {} from the map", element);
-        if (element.getType() == ComponentType.SWEET) {
+    public void removeComponent(final IComponent component) {
+        // log.debug("Removing component {} from the map", component);
+        if (component.getType() == ComponentType.SWEET) {
             nbSweets--;
         }
-        gameMap[element.getXPos()][element.getYPos()] = null;
-        componentsToRefresh.add(new Pair<IComponent, RefreshAction>(element, RefreshAction.REMOVE));
+        gameMap[component.getXPos()][component.getYPos()] = null;
+        refreshes.add(new GameBoardRefresh(component, RefreshAction.REMOVE));
     }
 
     /**
@@ -99,7 +98,7 @@ public class GameBoard
      * @param y
      * @return
      */
-    public IComponent getElement(final int x, final int y) {
+    public IComponent getComponent(final int x, final int y) {
         return gameMap[x][y];
     }
 
@@ -109,15 +108,15 @@ public class GameBoard
      * @param y
      * @return
      */
-    public boolean hasElement(final int x, final int y) {
-        return getElement(x, y) != null;
+    public boolean hasComponent(final int x, final int y) {
+        return getComponent(x, y) != null;
     }
 
     /**
      * 
      */
-    public void clearComponentsToRefresh() {
-        componentsToRefresh.clear();
+    public void clearRefreshes() {
+        refreshes.clear();
     }
 
     /**********************************************************************************************
@@ -144,14 +143,6 @@ public class GameBoard
      * 
      * @return
      */
-    public IComponent[][] getGameMap() {
-        return gameMap;
-    }
-
-    /**
-     * 
-     * @return
-     */
     public int getNbSweets() {
         return nbSweets;
     }
@@ -160,8 +151,8 @@ public class GameBoard
      * 
      * @return
      */
-    public List<Pair<IComponent, RefreshAction>> getComponentsToRefresh() {
-        return componentsToRefresh;
+    public List<GameBoardRefresh> getRefreshes() {
+        return refreshes;
     }
 
 }

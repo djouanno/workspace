@@ -55,17 +55,16 @@ public class GameEngine
         gameBoard = GameBoardGenerator.generateBoard(GameConstants.GRID_SIZE, GameConstants.GRID_SIZE, GameConstants.NUMBER_OF_SWEETS);
         playersMap = new LinkedHashMap<Player, IComponent>();
 
-        final Snake player1Snake = new Snake();
-        player1Snake.setXYPos(0, 0);
-        playersMap.put(session.getPlayer1(), player1Snake);
-        session.getPlayer1().setSnakeId(player1Snake.getId());
-        gameBoard.setElement(player1Snake);
-
-        final Snake player2Snake = new Snake();
-        player2Snake.setXYPos(GameConstants.GRID_SIZE - 1, GameConstants.GRID_SIZE - 1);
-        playersMap.put(session.getPlayer2(), player2Snake);
-        session.getPlayer2().setSnakeId(player2Snake.getId());
-        gameBoard.setElement(player2Snake);
+        int i = 1;
+        for (final Player player : session.getPlayers()) {
+            final Snake snake = new Snake();
+            player.setSnakeId(snake.getId());
+            final PlayerPosition position = new PlayerPosition(gameBoard.getWidth(), gameBoard.getHeight(), i);
+            snake.setXYPos(position.getXPos(), position.getYPos());
+            playersMap.put(player, snake);
+            gameBoard.setComponent(snake);
+            i++;
+        }
     }
 
     /**********************************************************************************************
@@ -82,22 +81,22 @@ public class GameEngine
         final IComponent snake = playersMap.get(player);
         final int x = (snake.getXPos() + direction.getValue()[0] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
         final int y = (snake.getYPos() + direction.getValue()[1] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
-        final IComponent currentElement = gameBoard.getElement(x, y);
+        final IComponent currentComponent = gameBoard.getComponent(x, y);
 
-        gameBoard.removeElement(snake);
+        gameBoard.removeComponent(snake);
 
-        if (currentElement == null) {
+        if (currentComponent == null) {
             snake.move(direction);
-            gameBoard.setElement(snake);
+            gameBoard.setComponent(snake);
         } else {
-            switch (currentElement.getType()) {
+            switch (currentComponent.getType()) {
                 case SNAKE: // other player snake cell
-                    gameBoard.setElement(snake);
+                    gameBoard.setComponent(snake);
                     break;
                 case SWEET: // sweet cell
-                    gameBoard.removeElement(currentElement);
+                    gameBoard.removeComponent(currentComponent);
                     snake.move(direction);
-                    gameBoard.setElement(snake);
+                    gameBoard.setComponent(snake);
                     player.setScore(player.getScore() + GameConstants.SWEET_SCORE_VALUE);
                     break;
                 default:

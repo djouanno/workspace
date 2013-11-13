@@ -139,12 +139,11 @@ public class Server implements IServer
      * @param session
      */
     private void addSession(final GameSession session) {
-        final Player player1 = session.getPlayer1(), player2 = session.getPlayer2();
-        player1.setGameSessionId(session.getId());
-        player2.setGameSessionId(session.getId());
         gameSessions.add(session);
-        player1.setStatus(PlayerStatus.PLAYING);
-        player2.setStatus(PlayerStatus.PLAYING);
+        for (final Player player : session.getPlayers()) {
+            player.setGameSessionId(session.getId());
+            player.setStatus(PlayerStatus.PLAYING);
+        }
     }
 
     /**
@@ -154,12 +153,11 @@ public class Server implements IServer
     private void removeSession(final String sessionId) {
         try {
             final GameSession session = gameSessions.get(sessionId);
-            final Player player1 = session.getPlayer1(), player2 = session.getPlayer2();
             gameSessions.remove(session.getId());
-            player1.setGameSessionId(null);
-            player2.setGameSessionId(null);
-            player1.setStatus(PlayerStatus.AVAILABLE);
-            player2.setStatus(PlayerStatus.AVAILABLE);
+            for (final Player player : session.getPlayers()) {
+                player.setGameSessionId(null);
+                player.setStatus(PlayerStatus.AVAILABLE);
+            }
         } catch (final GameSessionNotFoundException e) {
             log.error(e.getMessage(), e);
         }
@@ -294,8 +292,11 @@ public class Server implements IServer
 
         removeRequest(requestDTO.getId());
 
+        final List<Player> players = new LinkedList<Player>();
         final Player player1 = request.getRequestingPlayer(), player2 = request.getRequestedPlayer();
-        final GameSession gameSession = new GameSession(player1, player2);
+        players.add(player1);
+        players.add(player2);
+        final GameSession gameSession = new GameSession(players);
         addSession(gameSession);
         gameSession.startGame();
 
@@ -337,8 +338,8 @@ public class Server implements IServer
         final GameSession session = gameSessions.get(sessionDTO.getId());
         try {
             final Player leaver = players.get(retrieveClientName(client));
+            removeSession(session.getId()); // TODO do not remove if nbplayers > 1
             session.leaveGame(leaver);
-            removeSession(session.getId());
             sendRefreshPlayersList();
         } catch (final PlayerNotFoundException e) {
             log.error(e.getMessage(), e);
@@ -371,7 +372,7 @@ public class Server implements IServer
         final GameSession session = gameSessions.get(sessionDTO.getId());
         final Player player = players.get(retrieveClientName(client));
 
-        if (player != session.getPlayer1() && player != session.getPlayer2()) {
+        if (!session.contains(player)) {
             throw new PlayerNotFoundException("unauthorized session for this player");
         }
 
