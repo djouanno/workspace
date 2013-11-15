@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import com.esir.sr.sweetsnake.api.IComponent;
 import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
+import com.esir.sr.sweetsnake.game.board.GameBoard;
+import com.esir.sr.sweetsnake.game.board.GameBoardGenerator;
 import com.esir.sr.sweetsnake.game.component.Snake;
-import com.esir.sr.sweetsnake.game.map.GameBoard;
-import com.esir.sr.sweetsnake.game.map.GameBoardGenerator;
 import com.esir.sr.sweetsnake.session.GameSession;
 import com.esir.sr.sweetsnake.session.Player;
 

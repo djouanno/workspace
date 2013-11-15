@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.game.map;
+package com.esir.sr.sweetsnake.game.board;
 
 import java.util.Random;
 

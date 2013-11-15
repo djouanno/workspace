@@ -1,5 +1,6 @@
 package com.esir.sr.sweetsnake.game.component;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.esir.sr.sweetsnake.enumeration.ComponentType;
@@ -18,7 +19,7 @@ public class Sweet extends AbstractComponent
      **********************************************************************************************/
 
     /** The logger */
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Sweet.class);
+    private static final Logger log = LoggerFactory.getLogger(Sweet.class);
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR

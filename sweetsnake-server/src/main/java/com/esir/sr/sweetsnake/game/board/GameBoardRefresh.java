@@ -1,4 +1,4 @@
-package com.esir.sr.sweetsnake.game.map;
+package com.esir.sr.sweetsnake.game.board;
 
 import com.esir.sr.sweetsnake.api.IComponent;
 import com.esir.sr.sweetsnake.enumeration.RefreshAction;

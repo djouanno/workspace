@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
@@ -28,14 +29,14 @@ public class GameSessionsRegistry
      **********************************************************************************************/
 
     /** The logger */
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(GameSessionsRegistry.class);
+    private static final Logger      log = LoggerFactory.getLogger(GameSessionsRegistry.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The sessions map */
-    private Map<String, GameSession>      sessions;
+    private Map<String, GameSession> sessions;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR

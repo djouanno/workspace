@@ -25,6 +25,7 @@ import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 import com.esir.sr.sweetsnake.factory.DtoConverterFactory;
+import com.esir.sr.sweetsnake.provider.BeanProvider;
 import com.esir.sr.sweetsnake.registry.GameRequestsRegistry;
 import com.esir.sr.sweetsnake.registry.GameSessionsRegistry;
 import com.esir.sr.sweetsnake.registry.PlayersRegistry;
@@ -52,6 +53,10 @@ public class Server implements IServer
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
+
+    /** The bean provider */
+    @Autowired
+    private BeanProvider         beanProvider;
 
     /** The players registry */
     @Autowired
@@ -148,7 +153,7 @@ public class Server implements IServer
         }
 
         // creating player
-        final Player player = new Player(client);
+        final Player player = beanProvider.getPrototype(Player.class, client);
         players.add(player);
 
         // wait for everything to be updated properly before sending refresh
@@ -233,7 +238,7 @@ public class Server implements IServer
             // session does not exist
             if (player1.getGameSessionId() == null) {
                 log.debug("Game session is null, creating new one");
-                gameSession = new GameSession(this);
+                gameSession = beanProvider.getPrototype(GameSession.class);
                 gameSession.addPlayer(player1);
                 gameSession.addFictivePlayer(player2);
                 gameSessions.add(gameSession);
@@ -246,7 +251,7 @@ public class Server implements IServer
             }
 
             // creating request
-            final GameRequest request = new GameRequest(gameSession.getId(), player1, player2);
+            final GameRequest request = beanProvider.getPrototype(GameRequest.class, gameSession.getId(), player1, player2);
             gameRequests.add(request);
         } catch (final MaximumNumberOfPlayersException | GameSessionNotFoundException e) {
             log.error(e.getMessage(), e);
@@ -316,7 +321,7 @@ public class Server implements IServer
 
         if (allDenied) {
             try {
-                getSessionsRegistry().remove(requestDTO.getSessionId());
+                gameSessions.remove(requestDTO.getSessionId());
             } catch (final GameSessionNotFoundException e) {
                 log.error(e.getMessage(), e);
             }
@@ -360,68 +365,5 @@ public class Server implements IServer
             }
         }
     }
-
-    /**
-     * 
-     * @return
-     */
-    public PlayersRegistry getPlayersRegistry() {
-        return players;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public GameSessionsRegistry getSessionsRegistry() {
-        return gameSessions;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public GameRequestsRegistry getRequestsRegistry() {
-        return gameRequests;
-    }
-
-    // @Override
-    // public void startGame(final IClientCallback client, final GameSessionDTO sessionDTO) throws GameSessionNotFoundException {
-    // final GameSession session = gameSessions.get(sessionDTO.getId());
-    // for (final Player player : session.getPlayers()) {
-    // player.setStatus(PlayerStatus.PLAYING);
-    // }
-    // session.startGame();
-    // sendRefreshPlayersList();
-    // }
-    //
-    // @Override
-    // public void leaveGame(final IClientCallback client, final GameSessionDTO sessionDTO) throws GameSessionNotFoundException {
-    // final GameSession session = gameSessions.get(sessionDTO.getId());
-    // try {
-    // final Player leaver = players.get(retrieveClientName(client));
-    // session.leaveGame(leaver);
-    // if (session.getPlayers().size() <= 1) {
-    // removeSession(session.getId());
-    // }
-    // leaver.setGameSessionId(null);
-    // sendRefreshPlayersList();
-    // } catch (final PlayerNotFoundException e) {
-    // log.error(e.getMessage(), e);
-    // }
-    // }
-    //
-    // @Override
-    // public void requestMove(final IClientCallback client, final GameSessionDTO sessionDTO, final MoveDirection direction)
-    // throws PlayerNotFoundException, GameSessionNotFoundException {
-    // final GameSession session = gameSessions.get(sessionDTO.getId());
-    // final Player player = players.get(retrieveClientName(client));
-    //
-    // if (!session.contains(player)) {
-    // throw new PlayerNotFoundException("unauthorized session for this player");
-    // }
-    //
-    // session.movePlayer(player, direction);
-    // }
 
 }

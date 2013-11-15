@@ -5,7 +5,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
@@ -16,6 +19,8 @@ import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
  * @author Damien Jouanno
  * 
  */
+@Component
+@Scope("prototype")
 public class Player
 {
 
@@ -24,41 +29,41 @@ public class Player
      **********************************************************************************************/
 
     /** The logger */
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Player.class);
+    private static final Logger log = LoggerFactory.getLogger(Player.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The client callback */
-    private IClientCallback               callback;
+    private IClientCallback     callback;
 
     /** The player name */
-    private String                        name;
+    private String              name;
 
     /** The player status */
-    private PlayerStatus                  status;
+    private PlayerStatus        status;
 
     /** The sent requests */
-    private List<String>                  sentRequestsIds;
+    private List<String>        sentRequestsIds;
 
     /** The received request id (only one at a time) */
-    private String                        receivedRequestId;
+    private String              receivedRequestId;
 
     /** The current game session id (only one at a time) */
-    private String                        gameSessionId;
+    private String              gameSessionId;
 
     /** The current game player's number */
-    private int                           number;
+    private int                 number;
 
     /** The current game player's snake id */
-    private String                        snakeId;
+    private String              snakeId;
 
     /** The current game player's score */
-    private int                           score;
+    private int                 score;
 
     /** Is the player a fictive one */
-    private boolean                       fictive;
+    private boolean             fictive;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -68,7 +73,7 @@ public class Player
      * 
      * @param _client
      */
-    public Player(final IClientCallback _client) {
+    protected Player(final IClientCallback _client) {
         callback = _client;
         sentRequestsIds = new LinkedList<String>();
         try {
@@ -84,7 +89,7 @@ public class Player
      * 
      * @param _name
      */
-    public Player(final String _name) {
+    protected Player(final String _name) {
         name = _name;
         fictive = true;
     }

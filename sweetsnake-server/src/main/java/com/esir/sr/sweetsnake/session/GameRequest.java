@@ -2,8 +2,13 @@ package com.esir.sr.sweetsnake.session;
 
 import java.rmi.RemoteException;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.constants.PropertiesConstants;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
@@ -16,7 +21,9 @@ import com.esir.sr.sweetsnake.factory.DtoConverterFactory;
  * @author Damien Jouanno
  * 
  */
-public class GameRequest
+@Component
+@Scope("prototype")
+public class GameRequest extends AbstractSession
 {
 
     /**********************************************************************************************
@@ -24,26 +31,26 @@ public class GameRequest
      **********************************************************************************************/
 
     /** The logger */
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(GameRequest.class);
+    private static final Logger log = LoggerFactory.getLogger(GameRequest.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The request id */
-    private final String                  id;
+    private final String        id;
 
     /** The session id */
-    private final String                  sessionId;
+    private final String        sessionId;
 
     /** The requesting player */
-    private final Player                  requestingPlayer;
+    private final Player        requestingPlayer;
 
     /** The requested player */
-    private final Player                  requestedPlayer;
+    private final Player        requestedPlayer;
 
     /**********************************************************************************************
-     * [BLOCK] CONSTRUCTOR
+     * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
 
     /**
@@ -51,13 +58,20 @@ public class GameRequest
      * @param _requestingPlayer
      * @param _requestedPlayer
      */
-    public GameRequest(final String _sessionId, final Player _requestingPlayer, final Player _requestedPlayer) {
-        log.info("Initializing new game request between {} and {}", _requestingPlayer.getName(), _requestedPlayer.getName());
-
+    protected GameRequest(final String _sessionId, final Player _requestingPlayer, final Player _requestedPlayer) {
+        super();
         id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
         sessionId = _sessionId;
         requestingPlayer = _requestingPlayer;
         requestedPlayer = _requestedPlayer;
+    }
+
+    /**
+     * 
+     */
+    @PostConstruct
+    protected void init() {
+        log.info("Initializing new game request between {} and {}", requestingPlayer.getName(), requestedPlayer.getName());
 
         requestingPlayer.addSentRequestId(id);
         requestedPlayer.setReceivedRequestId(id);
@@ -74,7 +88,7 @@ public class GameRequest
 
         // requestReceived() on client side is a blocking method while the other player has not answered
         // so we have to launch it from a new thread
-        final Thread t = new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -83,8 +97,7 @@ public class GameRequest
                     log.error(e.getMessage(), e);
                 }
             }
-        });
-        t.start();
+        }).start();
     }
 
     /**********************************************************************************************

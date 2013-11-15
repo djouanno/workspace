@@ -6,11 +6,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.api.IGameSessionCallback;
+import com.esir.sr.sweetsnake.callback.GameSessionCallback;
 import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.constants.PropertiesConstants;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
@@ -23,7 +29,6 @@ import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnauthorizedActionException;
 import com.esir.sr.sweetsnake.factory.DtoConverterFactory;
 import com.esir.sr.sweetsnake.game.engine.GameEngine;
-import com.esir.sr.sweetsnake.server.Server;
 
 /**
  * 
@@ -31,7 +36,9 @@ import com.esir.sr.sweetsnake.server.Server;
  * @author Damien Jouanno
  * 
  */
-public class GameSession
+@Component
+@Scope("prototype")
+public class GameSession extends AbstractSession
 {
 
     /**********************************************************************************************
@@ -39,52 +46,52 @@ public class GameSession
      **********************************************************************************************/
 
     /** The logger */
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(GameSession.class);
+    private static final Logger log = LoggerFactory.getLogger(GameSession.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The server */
-    private Server                        server;
-
     /** The session id */
-    private String                        id;
+    private String              id;
 
     /** The players list */
-    private List<Player>                  players;
+    private List<Player>        players;
 
     /** The fictive players mapping */
-    private Map<String, Player>           fictivePlayers;
+    private Map<String, Player> fictivePlayers;
 
     /** The game engine */
-    private GameEngine                    engine;
+    private GameEngine          engine;
 
     /** Is the game started */
-    private boolean                       isGameStarted;
+    private boolean             isGameStarted;
 
     /** The game session callback */
-    private GameSessionCallback           callback;
+    private GameSessionCallback callback;
 
     /**********************************************************************************************
-     * [BLOCK] CONSTRUCTOR
+     * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
 
     /**
      * 
      */
-    public GameSession(final Server _server) {
+    protected GameSession() {
         super();
+    }
+
+    /**
+     * 
+     * @throws RemoteException
+     */
+    @PostConstruct
+    protected void init() {
         log.info("Initializing a new game session");
-        try {
-            server = _server;
-            id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
-            players = new LinkedList<Player>();
-            fictivePlayers = new LinkedHashMap<String, Player>();
-            callback = new GameSessionCallback(this);
-        } catch (final RemoteException e) {
-            log.error(e.getMessage(), e);
-        }
+        id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
+        players = new LinkedList<Player>();
+        fictivePlayers = new LinkedHashMap<String, Player>();
+        callback = beanProvider.getPrototype(GameSessionCallback.class, this);
     }
 
     /**********************************************************************************************
@@ -164,7 +171,7 @@ public class GameSession
      * @param player
      */
     public void addFictivePlayer(final Player player) {
-        final Player fictivePlayer = new Player(player.getName());
+        final Player fictivePlayer = beanProvider.getPrototype(Player.class, player.getName());
         fictivePlayers.put(fictivePlayer.getName(), fictivePlayer);
 
         players.add(fictivePlayer);
@@ -239,7 +246,7 @@ public class GameSession
      */
     public void startGame(final IClientCallback starterClient) throws UnauthorizedActionException {
         try {
-            final Player starter = server.getPlayersRegistry().get(starterClient.getName());
+            final Player starter = playersRegistry.get(starterClient.getName());
 
             if (starter.getNumber() != 1) {
                 throw new UnauthorizedActionException("unauthorized start");
@@ -265,7 +272,7 @@ public class GameSession
      */
     public void leaveGame(final IClientCallback leaverClient, final boolean fromDisconnect) {
         try {
-            final Player leaver = server.getPlayersRegistry().get(leaverClient.getName());
+            final Player leaver = playersRegistry.get(leaverClient.getName());
             final PlayerDTO leaverDto = DtoConverterFactory.convertPlayer(leaver);
 
             log.debug("Player {} is leaving session {}", leaver.getName(), id);
@@ -290,7 +297,7 @@ public class GameSession
             }
 
             if (players.size() <= 1) {
-                server.getSessionsRegistry().remove(id);
+                sessionsRegistry.remove(id);
             } else {
                 if (isGameStarted) {
                     engine.getGameBoard().clearRefreshes();
@@ -311,7 +318,7 @@ public class GameSession
     public void movePlayer(final IClientCallback client, final MoveDirection direction) {
         if (isGameStarted) {
             try {
-                final Player player = server.getPlayersRegistry().get(client.getName());
+                final Player player = playersRegistry.get(client.getName());
                 engine.moveSnake(direction, player);
                 final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
                 for (final Player _player : players) {

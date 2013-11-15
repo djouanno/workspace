@@ -1,16 +1,25 @@
-package com.esir.sr.sweetsnake.session;
+package com.esir.sr.sweetsnake.callback;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.api.IGameSessionCallback;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.exception.UnauthorizedActionException;
+import com.esir.sr.sweetsnake.session.GameSession;
 
+/**
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
+@Component
+@Scope("prototype")
 public class GameSessionCallback extends UnicastRemoteObject implements IGameSessionCallback
 {
 
@@ -19,16 +28,14 @@ public class GameSessionCallback extends UnicastRemoteObject implements IGameSes
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long   serialVersionUID = 1029287568352053172L;
-
-    /** The logger */
-    private static final Logger log              = LoggerFactory.getLogger(GameSessionCallback.class);
+    private static final long serialVersionUID = 1029287568352053172L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    private final GameSession   session;
+    /** The game session */
+    private final GameSession session;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -38,17 +45,10 @@ public class GameSessionCallback extends UnicastRemoteObject implements IGameSes
      * @throws RemoteException
      * 
      */
-    public GameSessionCallback(final GameSession _session) throws RemoteException {
+    protected GameSessionCallback(final GameSession _session) throws RemoteException {
         super();
         session = _session;
-        log.info("Initializing new game session callback for session {}", session.getId());
     }
-
-    /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
-     **********************************************************************************************/
-
-
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
