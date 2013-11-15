@@ -38,7 +38,7 @@ public class GameEngine
     /** The game board */
     private final GameBoard               gameBoard;
 
-    /** The players map */
+    /** The players' snakes mapping */
     private final Map<Player, IComponent> playersMap;
 
     /**********************************************************************************************
@@ -62,7 +62,7 @@ public class GameEngine
             final PlayerPosition position = new PlayerPosition(gameBoard.getWidth(), gameBoard.getHeight(), i);
             snake.setXYPos(position.getXPos(), position.getYPos());
             playersMap.put(player, snake);
-            gameBoard.setComponent(snake);
+            gameBoard.addComponent(snake);
             i++;
         }
     }
@@ -75,7 +75,6 @@ public class GameEngine
      * 
      * @param direction
      * @param player
-     * @return
      */
     public void moveSnake(final MoveDirection direction, final Player player) {
         final IComponent snake = playersMap.get(player);
@@ -83,23 +82,21 @@ public class GameEngine
         final int y = (snake.getYPos() + direction.getValue()[1] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
         final IComponent currentComponent = gameBoard.getComponent(x, y);
 
-        gameBoard.removeComponent(snake);
-
         if (currentComponent == null) {
-            snake.move(direction);
-            gameBoard.setComponent(snake);
+            log.debug("Current component is null");
+            gameBoard.moveComponent(snake, direction);
         } else {
+            log.debug("Current component is not null");
             switch (currentComponent.getType()) {
-                case SNAKE: // other player snake cell
-                    gameBoard.setComponent(snake);
+            // other player snake cell
+                case SNAKE:
+                    // do nothing
                     break;
-                case SWEET: // sweet cell
+                // sweet cell
+                case SWEET:
                     gameBoard.removeComponent(currentComponent);
-                    snake.move(direction);
-                    gameBoard.setComponent(snake);
+                    gameBoard.moveComponent(snake, direction);
                     player.setScore(player.getScore() + GameConstants.SWEET_SCORE_VALUE);
-                    break;
-                default:
                     break;
             }
         }
@@ -107,6 +104,16 @@ public class GameEngine
         if (gameBoard.getNbSweets() == 0) {
 
         }
+    }
+
+    /**
+     * 
+     * @param player
+     */
+    public void removeSnake(final Player player) {
+        final IComponent snake = playersMap.get(player);
+        gameBoard.removeComponent(snake);
+        player.setSnakeId(null);
     }
 
     /**********************************************************************************************

@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esir.sr.sweetsnake.api.IGameSessionCallback;
+
 /**
  * 
  * @author Herminaël Rougier
@@ -19,20 +21,23 @@ public class GameSessionDTO implements Serializable
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long     serialVersionUID = 459664230963147646L;
+    private static final long          serialVersionUID = 459664230963147646L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The session id */
-    private final String          id;
+    private final String               id;
 
     /** The players list DTO */
-    private final List<PlayerDTO> playersDto;
+    private final List<PlayerDTO>      playersDto;
 
     /** The game board DTO */
-    private final GameBoardDTO    gameBoardDto;
+    private final GameBoardDTO         gameBoardDto;
+
+    /** The session rmi callback */
+    private final IGameSessionCallback callback;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -43,11 +48,13 @@ public class GameSessionDTO implements Serializable
      * @param _id
      * @param _playersDto
      * @param _gameBoardDto
+     * @param _callback
      */
-    public GameSessionDTO(final String _id, final List<PlayerDTO> _playersDto, final GameBoardDTO _gameBoardDto) {
+    public GameSessionDTO(final String _id, final List<PlayerDTO> _playersDto, final GameBoardDTO _gameBoardDto, final IGameSessionCallback _callback) {
         id = _id;
         playersDto = new LinkedList<PlayerDTO>(_playersDto);
         gameBoardDto = _gameBoardDto;
+        callback = _callback;
     }
 
     /**********************************************************************************************
@@ -76,6 +83,14 @@ public class GameSessionDTO implements Serializable
      */
     public GameBoardDTO getGameBoardDto() {
         return gameBoardDto;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public IGameSessionCallback getCallback() {
+        return callback;
     }
 
 }

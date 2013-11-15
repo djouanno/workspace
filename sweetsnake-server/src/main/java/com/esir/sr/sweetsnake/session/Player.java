@@ -1,6 +1,9 @@
 package com.esir.sr.sweetsnake.session;
 
 import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +31,7 @@ public class Player
      **********************************************************************************************/
 
     /** The client callback */
-    private final IClientCallback         client;
+    private IClientCallback               callback;
 
     /** The player name */
     private String                        name;
@@ -36,8 +39,8 @@ public class Player
     /** The player status */
     private PlayerStatus                  status;
 
-    /** The sent request (only one at a time) */
-    private String                        sentRequestId;
+    /** The sent requests */
+    private List<String>                  sentRequestsIds;
 
     /** The received request id (only one at a time) */
     private String                        receivedRequestId;
@@ -54,6 +57,9 @@ public class Player
     /** The current game player's score */
     private int                           score;
 
+    /** Is the player a fictive one */
+    private boolean                       fictive;
+
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
@@ -63,17 +69,45 @@ public class Player
      * @param _client
      */
     public Player(final IClientCallback _client) {
-        client = _client;
+        callback = _client;
+        sentRequestsIds = new LinkedList<String>();
         try {
-            name = client.getUsername();
+            name = callback.getName();
         } catch (final RemoteException e) {
             log.error("unable to retrieve client name : {}", e.getMessage(), e);
         }
+        status = PlayerStatus.AVAILABLE;
+    }
+
+    /**
+     * fictive player
+     * 
+     * @param _name
+     */
+    public Player(final String _name) {
+        name = _name;
+        fictive = true;
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
+
+    /**
+     * 
+     * @param sentRequestId
+     */
+    public void addSentRequestId(final String sentRequestId) {
+        sentRequestsIds.add(sentRequestId);
+    }
+
+    /**
+     * 
+     * @param sentRequestId
+     */
+    public void removeSentRequestId(final String sentRequestId) {
+        sentRequestsIds.remove(sentRequestId);
+    }
 
     /*
      * (non-Javadoc)
@@ -93,8 +127,8 @@ public class Player
      * 
      * @return
      */
-    public IClientCallback getClientCallback() {
-        return client;
+    public IClientCallback getCallback() {
+        return callback;
     }
 
     /**
@@ -117,8 +151,8 @@ public class Player
      * 
      * @return
      */
-    public String getSentRequestId() {
-        return sentRequestId;
+    public List<String> getSentRequestsIds() {
+        return Collections.unmodifiableList(sentRequestsIds);
     }
 
     /**
@@ -161,6 +195,14 @@ public class Player
         return score;
     }
 
+    /**
+     * 
+     * @return
+     */
+    public boolean isFictive() {
+        return fictive;
+    }
+
     /**********************************************************************************************
      * [BLOCK] SETTERS
      **********************************************************************************************/
@@ -171,14 +213,6 @@ public class Player
      */
     public void setStatus(final PlayerStatus _status) {
         status = _status;
-    }
-
-    /**
-     * 
-     * @param _sentRequestId
-     */
-    public void setSentRequestId(final String _sentRequestId) {
-        sentRequestId = _sentRequestId;
     }
 
     /**

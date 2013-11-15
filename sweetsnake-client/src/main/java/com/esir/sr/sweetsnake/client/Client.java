@@ -1,6 +1,8 @@
 package com.esir.sr.sweetsnake.client;
 
+import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +25,11 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
 import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
+import com.esir.sr.sweetsnake.exception.MaximumNumberOfPlayersException;
 import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
+import com.esir.sr.sweetsnake.exception.UnauthorizedActionException;
 import com.esir.sr.sweetsnake.provider.RmiProvider;
 
 /**
@@ -43,7 +47,7 @@ public class Client implements IClient
      **********************************************************************************************/
 
     /** The logger */
-    private static final Logger log = LoggerFactory.getLogger(Client.class);
+    private static final Logger  log = LoggerFactory.getLogger(Client.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
@@ -51,30 +55,30 @@ public class Client implements IClient
 
     /** The client callback */
     @Autowired
-    private IClientCallback     callback;
+    private IClientCallback      callback;
 
     /** The rmi provider */
     @Autowired
-    private RmiProvider         rmiProvider;
+    private RmiProvider          rmiProvider;
 
     /** The GUI */
     @Autowired
-    private IGui                gui;
+    private IGui                 gui;
 
     /** The server */
-    private IServer             server;
+    private IServer              server;
 
     /** The username */
-    private String              username;
+    private String               username;
 
     /** The player status */
-    private PlayerStatus        status;
+    private PlayerStatus         status;
 
-    /** The sent request DTO (only one at a time) */
-    private GameRequestDTO      requestDto;
+    /** The sent requests DTO */
+    private List<GameRequestDTO> requests;
 
     /** The session DTO (only one at a time) */
-    private GameSessionDTO      sessionDto;
+    private GameSessionDTO       session;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -93,6 +97,7 @@ public class Client implements IClient
     @PostConstruct
     protected void init() {
         log.info("Initialiazing a new SweetSnakeClient");
+        requests = new LinkedList<GameRequestDTO>();
         server = rmiProvider.getRmiService();
         if (server == null) {
             gui.serverNotReachable();
@@ -121,11 +126,6 @@ public class Client implements IClient
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#reachServer()
-     */
     @Override
     public void reachServer() {
         if (server == null) {
@@ -139,11 +139,6 @@ public class Client implements IClient
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#connect(java.lang.String)
-     */
     @Override
     public void connect(final String _username) throws UnableToConnectException {
         if (_username == null || _username.isEmpty()) {
@@ -156,78 +151,48 @@ public class Client implements IClient
         gui.connectedToServer();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#disconnect()
-     */
     @Override
     public void disconnect() {
         log.debug("Disconnecting from username {}", username);
-        try {
-            server.disconnect(callback);
-            status = PlayerStatus.DISCONNECTED;
-        } catch (final PlayerNotFoundException e) {
-            log.error(e.getMessage(), e);
-        }
+        server.disconnect(callback);
+        status = PlayerStatus.DISCONNECTED;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IClient#refreshPlayersList(java.util.List)
-     */
     @Override
     public void refreshPlayersList(final List<PlayerDTO> playersList) {
         gui.refreshPlayersList(playersList);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#requestGame(com.esir.sr.sweetsnake.dto.SweetSnakePlayerDTO)
-     */
     @Override
-    public void requestGame(final PlayerDTO player) {
-        if (status == PlayerStatus.INVITING) {
-            final int answer = gui.requestAlreadyPending(requestDto);
-            if (answer == 1) {
-                try {
-                    server.cancelGameRequest(callback, requestDto);
-                    status = PlayerStatus.AVAILABLE;
-                } catch (PlayerNotFoundException | GameRequestNotFoundException e) {
-                    gui.displayErrorMessage(e.getMessage());
-                }
-            }
-        } else {
-            try {
-                requestDto = server.requestGame(callback, player);
-                status = PlayerStatus.INVITING;
-                gui.requestSent(requestDto);
-            } catch (PlayerNotFoundException | PlayerNotAvailableException e) {
-                gui.displayErrorMessage(e.getMessage());
-            }
+    public void sendRequest(final PlayerDTO playerDto) {
+        try {
+            server.sendRequest(callback, playerDto);
+        } catch (PlayerNotFoundException | PlayerNotAvailableException e) {
+            gui.displayErrorMessage(e.getMessage());
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#gameRequested(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
-     */
     @Override
-    public void gameRequested(final GameRequestDTO requestDTO) {
+    public void requestSent(final GameRequestDTO requestDto) {
+        requests.add(requestDto);
+        status = PlayerStatus.INVITING;
+        gui.requestSent(requestDto);
+    }
+
+    @Override
+    public void requestReceived(final GameRequestDTO requestDTO) {
         status = PlayerStatus.INVITED;
         final int answer = gui.gameRequested(requestDTO);
         if (answer == 0) {
             try {
-                server.acceptGame(callback, requestDTO);
-            } catch (PlayerNotFoundException | GameRequestNotFoundException e) {
+                server.acceptRequest(callback, requestDTO);
+                gui.gameJoined(session.getPlayersDto());
+            } catch (GameRequestNotFoundException | GameSessionNotFoundException | MaximumNumberOfPlayersException e) {
                 gui.displayErrorMessage(e.getMessage());
             }
         } else {
             try {
-                server.refuseGame(callback, requestDTO);
+                server.denyRequest(callback, requestDTO);
             } catch (final GameRequestNotFoundException e) {
                 gui.displayErrorMessage(e.getMessage());
             }
@@ -235,101 +200,83 @@ public class Client implements IClient
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#gameRefused(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
-     */
     @Override
-    public void gameRefused(final GameRequestDTO requestDTO) {
+    public void requestDenied(final boolean allDenied, final GameRequestDTO requestDTO) {
         status = PlayerStatus.AVAILABLE;
-        gui.requestRefused(requestDTO);
+        gui.requestRefused(allDenied, requestDTO);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IClient#startGame()
-     */
     @Override
-    public void startGame() {
-        // TODO
+    public void sessionJoined(final GameSessionDTO sessionDto) {
+        session = sessionDto;
+        gui.gameJoined(session.getPlayersDto());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#gameStarted(com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO)
-     */
     @Override
-    public void gameStarted(final GameSessionDTO _sessionDto) {
-        sessionDto = _sessionDto;
+    public void startSession() {
+        try {
+            session.getCallback().startGame(callback);
+        } catch (final NullPointerException e) {
+            gui.displayErrorMessage("you are not currently playing");
+        } catch (final UnauthorizedActionException | RemoteException e) {
+            gui.displayErrorMessage(e.getMessage());
+        }
+    }
+
+    @Override
+    public void sessionStarted(final GameSessionDTO _sessionDto) {
+        session = _sessionDto;
         final Map<Integer, String> playersSnakes = new LinkedHashMap<Integer, String>();
-        int playerNb = 0, myPlayerNb = 1;
-        for (final PlayerDTO player : sessionDto.getPlayersDto()) {
-            playersSnakes.put(++playerNb, player.getSnakeId());
+        int myPlayerNb = 1;
+        for (final PlayerDTO player : session.getPlayersDto()) {
+            playersSnakes.put(player.getNumber(), player.getSnakeId());
             if (player.getName().equals(username)) {
-                myPlayerNb = playerNb;
+                myPlayerNb = player.getNumber();
             }
         }
-        gui.gameStarted(myPlayerNb, playersSnakes, sessionDto.getGameBoardDto());
+        gui.gameStarted(myPlayerNb, playersSnakes, session.getGameBoardDto());
         status = PlayerStatus.PLAYING;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IClient#leaveGame()
-     */
     @Override
-    public void leaveGame() {
+    public void leaveSession() {
         try {
-            server.leaveGame(callback, sessionDto);
-        } catch (final GameSessionNotFoundException e) {
-            log.error(e.getMessage(), e);
+            session.getCallback().leaveGame(callback);
+        } catch (final NullPointerException e) {
+            gui.displayErrorMessage("you are not currently playing");
+        } catch (final RemoteException e) {
+            gui.displayErrorMessage(e.getMessage());
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IClient#gameLeaved(com.esir.sr.sweetsnake.dto.GameSessionDTO)
-     */
     @Override
-    public void gameLeaved(final GameSessionDTO session, final PlayerDTO leaver) {
-        log.debug("Game leaved by {}", leaver);
-        sessionDto = null;
-        gui.gameLeaved(leaver.getName().equals(username) ? null : leaver.getName());
-        status = PlayerStatus.AVAILABLE;
+    public void sessionLeft(final GameSessionDTO sessionDto, final PlayerDTO leaver) {
+        log.debug("Game left by {}", leaver);
+        final boolean finished = sessionDto.getPlayersDto().size() <= 1 || leaver.getName().equals(username);
+        if (finished) {
+            session = null;
+            status = PlayerStatus.AVAILABLE;
+        }
+        gui.gameLeft(leaver, finished);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IClient#moveSnake(com.esir.sr.sweetsnake.enumeration.MoveDirection)
-     */
     @Override
     public void moveSnake(final MoveDirection direction) {
         try {
-            server.requestMove(callback, sessionDto, direction);
-        } catch (PlayerNotFoundException | GameSessionNotFoundException e) {
-            log.error(e.getMessage(), e);
+            session.getCallback().move(callback, direction);
+        } catch (final NullPointerException e) {
+            gui.displayErrorMessage("you are not currently playing");
+        } catch (final UnauthorizedActionException | RemoteException e) {
+            gui.displayErrorMessage(e.getMessage());
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IClient#refreshGameboard(com.esir.sr.sweetsnake.dto.GameBoardDTO)
-     */
     @Override
-    public void refreshGame(final GameSessionDTO session) {
-        gui.refreshGameboard(session.getGameBoardDto());
+    public void refreshSession(final GameSessionDTO sessionDto) {
+        gui.refreshGameboard(sessionDto.getGameBoardDto());
         final Map<Integer, Integer> playersScores = new LinkedHashMap<Integer, Integer>();
-        int i = 0;
         for (final PlayerDTO player : sessionDto.getPlayersDto()) {
-            log.debug("Player {} score : {}", i + 1, player.getScore());
-            playersScores.put(++i, player.getScore());
+            playersScores.put(player.getNumber(), player.getScore());
         }
         gui.refreshScores(playersScores);
     }
@@ -346,50 +293,6 @@ public class Client implements IClient
     @Override
     public String getUsername() {
         return username;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#getStatus()
-     */
-    @Override
-    public PlayerStatus getStatus() {
-        return status;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#getScore()
-     */
-    @Override
-    public long getScore() {
-        return 0;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#getPlayersList()
-     */
-    @Override
-    public List<PlayerDTO> getPlayersList() {
-        return server.getPlayersList(callback);
-    }
-
-    /**********************************************************************************************
-     * [BLOCK] SETTERS
-     **********************************************************************************************/
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#setScore(long)
-     */
-    @Override
-    public void setScore(final long score) {
-        log.debug("New client score set to {}", score);
     }
 
 }

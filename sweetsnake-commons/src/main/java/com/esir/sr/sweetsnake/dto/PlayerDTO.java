@@ -18,11 +18,12 @@ public class PlayerDTO implements Serializable
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long  serialVersionUID = -7478382230116293470L;
+    private static final long  serialVersionUID = -5312088899568544528L;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
+
 
     /** The player name */
     private final String       name;
@@ -33,8 +34,11 @@ public class PlayerDTO implements Serializable
     /** The player's snake id */
     private final String       snakeId;
 
+    /** The player number */
+    private final String       number;
+
     /** The player score */
-    private final int          score;
+    private final String       score;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -46,11 +50,12 @@ public class PlayerDTO implements Serializable
      * @param _status
      * @param _score
      */
-    public PlayerDTO(final String _name, final PlayerStatus _status, final String _snakeId, final int _score) {
+    public PlayerDTO(final String _name, final PlayerStatus _status, final String _snakeId, final int _number, final int _score) {
         name = _name;
         status = _status;
         snakeId = _snakeId;
-        score = _score;
+        number = "" + _number;
+        score = "" + _score;
     }
 
     /**********************************************************************************************
@@ -99,8 +104,16 @@ public class PlayerDTO implements Serializable
      * 
      * @return
      */
+    public int getNumber() {
+        return Integer.parseInt(number);
+    }
+
+    /**
+     * 
+     * @return
+     */
     public int getScore() {
-        return score;
+        return Integer.parseInt(score);
     }
 
 }

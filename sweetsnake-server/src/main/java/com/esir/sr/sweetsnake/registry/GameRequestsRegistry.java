@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
@@ -28,14 +29,14 @@ public class GameRequestsRegistry
      **********************************************************************************************/
 
     /** The logger */
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(GameRequestsRegistry.class);
+    private static final Logger      log = LoggerFactory.getLogger(GameRequestsRegistry.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The requests map */
-    private Map<String, GameRequest>      requests;
+    private Map<String, GameRequest> requests;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -76,7 +77,7 @@ public class GameRequestsRegistry
      */
     public void add(final GameRequest request) {
         requests.put(request.getId(), request);
-        log.debug("Request {} has been added", requests.get(request.getId()));
+        log.debug("Request {} has been added to registry", request.getId());
     }
 
     /**
@@ -102,8 +103,9 @@ public class GameRequestsRegistry
             throw new GameRequestNotFoundException("request no more available");
         }
         final GameRequest request = requests.get(id);
+        request.destroy();
         requests.remove(id);
-        log.debug("Request {} has been removed", request);
+        log.debug("Request {} has been removed from registry", request.getId());
     }
 
     /**

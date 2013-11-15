@@ -76,7 +76,7 @@ public class GameSessionsRegistry
      */
     public void add(final GameSession session) {
         sessions.put(session.getId(), session);
-        log.debug("Session {} has been added", sessions.get(session.getId()));
+        log.debug("Session {} has been added to registry", session.getId());
     }
 
     /**
@@ -102,8 +102,9 @@ public class GameSessionsRegistry
             throw new GameSessionNotFoundException("session not found");
         }
         final GameSession session = sessions.get(id);
+        session.destroy();
         sessions.remove(id);
-        log.debug("Session {} has been removed", session);
+        log.debug("Session {} has been removed from registry", session.getId());
     }
 
     /**

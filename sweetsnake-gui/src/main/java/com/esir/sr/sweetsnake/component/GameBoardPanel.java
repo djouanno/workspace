@@ -70,8 +70,8 @@ public class GameBoardPanel extends JPanel
      * 
      * @param component
      */
-    public void setComponent(final IComponent component) {
-        log.debug("Setting element {} on the map", component);
+    public void addComponent(final IComponent component) {
+        log.debug("Adding component {} on the map", component);
         if (component != null) {
             components.put(component.getId(), component);
             final JComponent jcomponent = (JComponent) component;
@@ -104,8 +104,40 @@ public class GameBoardPanel extends JPanel
      * 
      * @param component
      */
+    public void moveComponent(final IComponent component) {
+        log.debug("Moving component {} on the map", component);
+        if (component != null) {
+            final JComponent jcomponent = (JComponent) component;
+            int x = component.getXPos(), y = component.getYPos();
+            // map translation (everybody sees himself on the top left corner)
+            switch (playerNb) {
+                case 2:
+                    x = width - 1 - component.getXPos();
+                    y = height - 1 - component.getYPos();
+                    break;
+                case 3:
+                    final int oldX = x;
+                    x = width - 1 - y;
+                    y = oldX;
+                    break;
+                case 4:
+                    final int oldY = y;
+                    y = height - 1 - x;
+                    x = oldY;
+                    break;
+                default:
+                    break;
+            }
+            jcomponent.setLocation(x * GameConstants.CELL_SIZE, y * GameConstants.CELL_SIZE);
+        }
+    }
+
+    /**
+     * 
+     * @param component
+     */
     public void removeComponent(final IComponent component) {
-        log.debug("Removing element {} from the map", component);
+        log.debug("Removing component {} from the map", component);
         if (component != null) {
             components.remove(component.getId());
             remove((JComponent) component);

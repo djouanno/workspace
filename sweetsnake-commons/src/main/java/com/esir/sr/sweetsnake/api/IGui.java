@@ -45,13 +45,6 @@ public interface IGui
      * @param request
      * @return
      */
-    int requestAlreadyPending(GameRequestDTO request);
-
-    /**
-     * 
-     * @param request
-     * @return
-     */
     int gameRequested(GameRequestDTO request);
 
     /**
@@ -62,9 +55,16 @@ public interface IGui
 
     /**
      * 
+     * @param allDenied
      * @param request
      */
-    void requestRefused(GameRequestDTO request);
+    void requestRefused(boolean allDenied, GameRequestDTO request);
+
+    /**
+     * 
+     * @param players
+     */
+    void gameJoined(List<PlayerDTO> players);
 
     /**
      * 
@@ -77,8 +77,9 @@ public interface IGui
     /**
      * 
      * @param leaver
+     * @param finished
      */
-    void gameLeaved(String leaver);
+    void gameLeft(PlayerDTO leaver, boolean finished);
 
     /**
      * 

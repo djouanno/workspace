@@ -9,10 +9,13 @@ package com.esir.sr.sweetsnake.enumeration;
 public enum RefreshAction
 {
 
-    /** */
-    SET("set"),
+    /** The add action */
+    ADD("add"),
 
-    /** */
+    /** The move action */
+    MOVE("move"),
+
+    /** The remove action */
     REMOVE("remove");
 
     /** */

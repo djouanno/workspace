@@ -1,8 +1,5 @@
 package com.esir.sr.sweetsnake.server;
 
-import java.rmi.RemoteException;
-import java.util.List;
-
 import junit.framework.Assert;
 
 import org.junit.AfterClass;
@@ -20,15 +17,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.api.IServer;
-import com.esir.sr.sweetsnake.dto.GameRequestDTO;
-import com.esir.sr.sweetsnake.dto.GameSessionDTO;
-import com.esir.sr.sweetsnake.dto.PlayerDTO;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
-import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
-import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
-import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
-import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
-import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 import com.esir.sr.sweetsnake.utils.ClientCallbackMock;
 
@@ -85,34 +73,4 @@ public class ServerTest
         server.connect(client1);
     }
 
-
-    @Test
-    public void getPlayersListTest() {
-        log.debug("---------------------------- getPlayersListTest() ----------------------------");
-
-        List<PlayerDTO> playersList = server.getPlayersList(client1);
-        log.debug("Number of other players seen by client1 : {}", playersList.size());
-        for (final PlayerDTO player : playersList) {
-            log.debug("Player[name={}, status={}]", player.getName(), player.getStatus());
-        }
-        Assert.assertTrue("Number of players must be positive", playersList.size() >= 0);
-
-        playersList = server.getPlayersList(client2);
-        log.debug("Number of other players seen by client2 : {}", playersList.size());
-        for (final PlayerDTO player : playersList) {
-            log.debug("Player[name={}, status={}]", player.getName(), player.getStatus());
-        }
-        Assert.assertTrue("Number of players must be positive", playersList.size() >= 0);
-    }
-
-    @Test
-    public void gameSessionTest() throws PlayerNotFoundException, PlayerNotAvailableException, GameRequestNotFoundException, GameSessionNotFoundException, RemoteException {
-        log.debug("---------------------------- gameSessionTest() ----------------------------");
-
-        final PlayerDTO player2DTO = new PlayerDTO(client2.getUsername(), PlayerStatus.AVAILABLE, "", 0);
-        final GameRequestDTO requestDTO = server.requestGame(client1, player2DTO);
-        final GameSessionDTO sessionDTO = server.acceptGame(client2, requestDTO);
-
-        server.requestMove(client1, sessionDTO, MoveDirection.RIGHT);
-    }
 }

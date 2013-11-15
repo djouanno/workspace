@@ -1,3 +1,6 @@
+    
+    ####################################################################################################### PLAYERS VIEW
+    
     public static void main(final String[] args) {
         final Gui gui = new Gui();
         gui.init();
@@ -11,6 +14,22 @@
         gui.refreshUI();
     }
     
+    ####################################################################################################### LOBBY VIEW
+    
+    public static void main(final String[] args) {
+        final Gui gui = new Gui();
+        gui.init();
+        final LobbyView lv = new LobbyView();
+        lv.gui = gui;
+
+        lv.init();
+        lv.build();
+        gui.getContentPane().removeAll();
+        gui.getContentPane().add(lv);
+        gui.refreshUI();
+    }
+    
+    ####################################################################################################### GAME VIEW
     
     public static void main(final String[] args) {
         final Gui gui = new Gui();
@@ -21,14 +40,14 @@
         final Map<Integer, String> playersSnakes = new LinkedHashMap<Integer, String>();
         playersSnakes.put(1, "id1");
         playersSnakes.put(2, "id2");
-        // playersSnakes.put(3, "id3");
-        // playersSnakes.put(4, "id4");
+        playersSnakes.put(3, "id3");
+        playersSnakes.put(4, "id4");
 
         final List<GameBoardRefreshDTO> elems = new LinkedList<GameBoardRefreshDTO>();
         elems.add(new GameBoardRefreshDTO(new ComponentDTO("id1", 0, 0, ComponentType.SNAKE), RefreshAction.SET));
         elems.add(new GameBoardRefreshDTO(new ComponentDTO("id2", 19, 19, ComponentType.SNAKE), RefreshAction.SET));
-        // elems.add(new GameBoardRefreshDTO(new ComponentDTO("id3", 0, 19, ComponentType.SNAKE), RefreshAction.SET));
-        // elems.add(new GameBoardRefreshDTO(new ComponentDTO("id4", 19, 0, ComponentType.SNAKE), RefreshAction.SET));
+        elems.add(new GameBoardRefreshDTO(new ComponentDTO("id3", 0, 19, ComponentType.SNAKE), RefreshAction.SET));
+        elems.add(new GameBoardRefreshDTO(new ComponentDTO("id4", 19, 0, ComponentType.SNAKE), RefreshAction.SET));
         final GameBoardDTO dto = new GameBoardDTO(20, 20, 10, elems);
 
         gv.init();
@@ -36,6 +55,7 @@
         gv.setPlayersSnakesMap(playersSnakes);
         gv.setGameboardDto(dto);
         gv.build();
-        gui.switchView(gv);
+        gui.getContentPane().removeAll();
+        gui.getContentPane().add(gv);
         gui.refreshUI();
     }

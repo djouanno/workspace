@@ -29,21 +29,36 @@ public interface IClientCallback extends Remote
      * @param request
      * @throws RemoteException
      */
-    void gameRequested(GameRequestDTO request) throws RemoteException;
+    void requestSent(GameRequestDTO request) throws RemoteException;
 
     /**
      * 
      * @param request
      * @throws RemoteException
      */
-    void gameRefused(GameRequestDTO request) throws RemoteException;
+    void requestReceived(GameRequestDTO request) throws RemoteException;
+
+    /**
+     * 
+     * @param allDenied
+     * @param request
+     * @throws RemoteException
+     */
+    void requestDenied(boolean allDenied, GameRequestDTO request) throws RemoteException;
 
     /**
      * 
      * @param session
      * @throws RemoteException
      */
-    void gameStarted(GameSessionDTO session) throws RemoteException;
+    void sessionJoined(GameSessionDTO session) throws RemoteException;
+
+    /**
+     * 
+     * @param session
+     * @throws RemoteException
+     */
+    void sessionStarted(GameSessionDTO session) throws RemoteException;
 
     /**
      * 
@@ -51,27 +66,20 @@ public interface IClientCallback extends Remote
      * @param leaver
      * @throws RemoteException
      */
-    void gameLeaved(GameSessionDTO session, PlayerDTO leaver) throws RemoteException;
+    void sessionLeft(GameSessionDTO session, PlayerDTO leaver) throws RemoteException;
 
     /**
      * 
      * @param session
      * @throws RemoteException
      */
-    void refreshGame(GameSessionDTO session) throws RemoteException;
-
-    /**
-     * 
-     * @param score
-     * @throws RemoteException
-     */
-    void setScore(long score) throws RemoteException;
+    void refreshSession(GameSessionDTO session) throws RemoteException;
 
     /**
      * 
      * @return
      * @throws RemoteException
      */
-    String getUsername() throws RemoteException;
+    String getName() throws RemoteException;
 
 }

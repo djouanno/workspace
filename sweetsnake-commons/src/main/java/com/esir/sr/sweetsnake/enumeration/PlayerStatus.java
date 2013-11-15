@@ -21,6 +21,12 @@ public enum PlayerStatus
     /** The invited status */
     INVITED("invited"),
 
+    /** The present status */
+    PRESENT("present"),
+
+    /** The denied status */
+    DENIED("denied"),
+
     /** The playing status */
     PLAYING("playing");
 

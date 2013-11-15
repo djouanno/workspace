@@ -6,7 +6,6 @@ import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
-import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
 /**
@@ -18,110 +17,124 @@ import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 public interface IClient
 {
 
+    /**********************************************************************************************
+     * [BLOCK] GUI EXPOSED METHODS
+     **********************************************************************************************/
+
     /**
+     * from the gui
      * 
      */
     void reachServer();
 
     /**
+     * from the gui
      * 
      */
     void connect(String username) throws UnableToConnectException;
 
     /**
+     * from the gui
      * 
      */
     void disconnect();
-
-    /**
-     * 
-     * @param playersList
-     */
-    void refreshPlayersList(List<PlayerDTO> playersList);
 
     /**
      * from the gui
      * 
      * @param player
      */
-    void requestGame(PlayerDTO player);
+    void sendRequest(PlayerDTO player);
+
+    /**
+     * from the gui
+     * 
+     */
+    void startSession();
+
+    /**
+     * from the gui
+     * 
+     */
+    void leaveSession();
+
+    /**
+     * from the gui
+     * 
+     * @param direction
+     */
+    void moveSnake(MoveDirection direction);
+
+    /**********************************************************************************************
+     * [BLOCK] SERVER EXPOSED METHODS
+     **********************************************************************************************/
+
+    /**
+     * from the server
+     * 
+     * @param playersList
+     */
+    void refreshPlayersList(List<PlayerDTO> playersList);
 
     /**
      * from the server
      * 
      * @param request
      */
-    void gameRequested(GameRequestDTO request);
+    void requestSent(GameRequestDTO request);
 
     /**
+     * from the server
      * 
      * @param request
      */
-    void gameRefused(GameRequestDTO request);
+    void requestReceived(GameRequestDTO request);
 
     /**
+     * from the server
      * 
+     * @param allDenied
+     * @param request
      */
-    void startGame();
+    void requestDenied(boolean allDenied, GameRequestDTO request);
 
     /**
+     * from the server
      * 
      * @param session
      */
-    void gameStarted(GameSessionDTO session);
+    void sessionJoined(GameSessionDTO session);
 
     /**
+     * from the server
      * 
+     * @param session
      */
-    void leaveGame();
+    void sessionStarted(GameSessionDTO session);
 
     /**
+     * from the server
      * 
      * @param session
      * @param leaver
      */
-    void gameLeaved(GameSessionDTO session, PlayerDTO leaver);
+    void sessionLeft(GameSessionDTO session, PlayerDTO leaver);
 
     /**
-     * 
-     * @param direction
-     */
-    void moveSnake(MoveDirection direction);
-
-    /**
+     * from the server
      * 
      * @param session
      */
-    void refreshGame(GameSessionDTO session);
+    void refreshSession(GameSessionDTO session);
+
+    /**********************************************************************************************
+     * [BLOCK] CLIENT EXPOSED METHODS
+     **********************************************************************************************/
 
     /**
      * 
      * @return
      */
     String getUsername();
-
-    /**
-     * 
-     * @return
-     */
-    PlayerStatus getStatus();
-
-    /**
-     * 
-     * @return
-     */
-    long getScore();
-
-    /**
-     * 
-     * @param score
-     */
-    void setScore(long score);
-
-    /**
-     * 
-     * @return
-     */
-    List<PlayerDTO> getPlayersList();
 
 }

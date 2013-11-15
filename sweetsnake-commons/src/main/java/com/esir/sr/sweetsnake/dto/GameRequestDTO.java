@@ -25,6 +25,9 @@ public class GameRequestDTO implements Serializable
     /** The request id */
     private final String      id;
 
+    /** The session id */
+    private final String      sessionId;
+
     /** The requesting player DTO */
     private final PlayerDTO   requestingPlayerDto;
 
@@ -38,11 +41,13 @@ public class GameRequestDTO implements Serializable
     /**
      * 
      * @param _id
+     * @param _sessionId
      * @param _requestingPlayerDto
      * @param _requestedPlayerDto
      */
-    public GameRequestDTO(final String _id, final PlayerDTO _requestingPlayerDto, final PlayerDTO _requestedPlayerDto) {
+    public GameRequestDTO(final String _id, final String _sessionId, final PlayerDTO _requestingPlayerDto, final PlayerDTO _requestedPlayerDto) {
         id = _id;
+        sessionId = _sessionId;
         requestingPlayerDto = _requestingPlayerDto;
         requestedPlayerDto = _requestedPlayerDto;
     }
@@ -57,6 +62,14 @@ public class GameRequestDTO implements Serializable
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public String getSessionId() {
+        return sessionId;
     }
 
     /**

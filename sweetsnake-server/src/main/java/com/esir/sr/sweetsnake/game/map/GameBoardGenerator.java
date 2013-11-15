@@ -47,7 +47,7 @@ public class GameBoardGenerator
 
             final Sweet sweet = new Sweet();
             sweet.setXYPos(x, y);
-            board.setComponent(sweet);
+            board.addComponent(sweet);
         }
 
         return board;

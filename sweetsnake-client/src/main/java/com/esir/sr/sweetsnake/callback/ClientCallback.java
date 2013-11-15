@@ -67,73 +67,82 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#gameRequested(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#requestSent(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public void gameRequested(final GameRequestDTO request) throws RemoteException {
-        client.gameRequested(request);
+    public void requestSent(final GameRequestDTO request) throws RemoteException {
+        client.requestSent(request);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#gameRefused(com.esir.sr.sweetsnake.dto.SweetSnakeGameRequestDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#requestReceived(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public void gameRefused(final GameRequestDTO request) throws RemoteException {
-        client.gameRefused(request);
+    public void requestReceived(final GameRequestDTO request) throws RemoteException {
+        client.requestReceived(request);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#gameStarted(com.esir.sr.sweetsnake.dto.SweetSnakeGameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#requestDenied(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public void gameStarted(final GameSessionDTO session) throws RemoteException {
-        client.gameStarted(session);
+    public void requestDenied(final boolean allDenied, final GameRequestDTO request) throws RemoteException {
+        client.requestDenied(allDenied, request);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClientCallback#gameLeaved(com.esir.sr.sweetsnake.dto.GameSessionDTO,
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionJoined(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void sessionJoined(final GameSessionDTO session) throws RemoteException {
+        client.sessionJoined(session);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionStarted(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void sessionStarted(final GameSessionDTO session) throws RemoteException {
+        client.sessionStarted(session);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionLeft(com.esir.sr.sweetsnake.dto.GameSessionDTO,
      * com.esir.sr.sweetsnake.dto.PlayerDTO)
      */
     @Override
-    public void gameLeaved(final GameSessionDTO session, final PlayerDTO leaver) throws RemoteException {
-        client.gameLeaved(session, leaver);
+    public void sessionLeft(final GameSessionDTO session, final PlayerDTO leaver) throws RemoteException {
+        client.sessionLeft(session, leaver);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClientCallback#refreshGame(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#refreshSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void refreshGame(final GameSessionDTO session) throws RemoteException {
-        client.refreshGame(session);
+    public void refreshSession(final GameSessionDTO session) throws RemoteException {
+        client.refreshSession(session);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#getUsername()
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#getName()
      */
     @Override
-    public String getUsername() throws RemoteException {
+    public String getName() throws RemoteException {
         return client.getUsername();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClientCallback#setScore(long)
-     */
-    @Override
-    public void setScore(final long score) throws RemoteException {
-        client.setScore(score);
     }
 
 }

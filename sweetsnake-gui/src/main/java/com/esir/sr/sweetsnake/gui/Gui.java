@@ -12,9 +12,6 @@ import javax.annotation.PreDestroy;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
@@ -34,6 +31,7 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.view.AbstractView;
 import com.esir.sr.sweetsnake.view.ConnectionView;
 import com.esir.sr.sweetsnake.view.GameView;
+import com.esir.sr.sweetsnake.view.LobbyView;
 import com.esir.sr.sweetsnake.view.PlayersView;
 import com.esir.sr.sweetsnake.view.UnreachableServerView;
 
@@ -77,21 +75,16 @@ public class Gui extends JFrame implements IGui
     @Autowired
     private PlayersView           playersView;
 
+    /** The lobby view */
+    @Autowired
+    private LobbyView             lobbyView;
+
     /** The game view */
     @Autowired
     private GameView              gameView;
 
     /** The gui current view */
     private AbstractView          currentView;
-
-    /** The menu bar */
-    private JMenuBar              menuBar;
-
-    /** The server menu */
-    private JMenu                 serverMenu;
-
-    /** The disonnect menu item */
-    private JMenuItem             disconnectMenuItem;
 
     /** The GUI dimension */
     private Dimension             dimension;
@@ -114,7 +107,6 @@ public class Gui extends JFrame implements IGui
     protected void init() {
         log.info("Initializing a new SweetSnakeIhm");
         initFrameParameters();
-        initMenuBar();
     }
 
     /**
@@ -153,30 +145,10 @@ public class Gui extends JFrame implements IGui
 
     /**
      * 
-     */
-    private void initMenuBar() {
-        menuBar = new JMenuBar();
-        menuBar.setOpaque(false);
-
-        serverMenu = new JMenu("server");
-        disconnectMenuItem = new JMenuItem("disconnect");
-        serverMenu.add(disconnectMenuItem);
-        disconnectMenuItem.addActionListener(null /* TODO */);
-        menuBar.add(serverMenu);
-
-        setJMenuBar(menuBar);
-    }
-
-    /**
-     * 
      * @param view
      */
     private void switchView(final AbstractView view) {
-        initMenuBar();
         view.build();
-        if (view.getMenu() != null) {
-            menuBar.add(view.getMenu());
-        }
         getContentPane().removeAll();
         getContentPane().add(view);
         refreshUI();
@@ -297,16 +269,6 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#requestAlreadyPending(com.esir.sr.sweetsnake.dto.GameRequestDTO)
-     */
-    @Override
-    public int requestAlreadyPending(final GameRequestDTO request) {
-        return displayCustomQuestion("A request is already pending", "Your already asked for a game with " + request.getRequestedPlayerDto().getName() + "\nPlease wait for your opponent to respond or cancel the request", new String[] { "wait", "cancel request" });
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see com.esir.sr.sweetsnake.api.IGui#gameRequested(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
@@ -319,17 +281,41 @@ public class Gui extends JFrame implements IGui
      */
     @Override
     public void requestSent(final GameRequestDTO request) {
-        displayToast("Your request has been sent to " + request.getRequestedPlayerDto().getName());
+        // displayToast("Your request has been sent to " + request.getRequestedPlayerDto().getName());
+        if (currentView == lobbyView) {
+
+        } else {
+            switchView(lobbyView);
+        }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#requestRefused(com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     * @see com.esir.sr.sweetsnake.api.IGui#requestRefused(boolean, com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public void requestRefused(final GameRequestDTO request) {
-        displayInfoMessage("Request denied", request.getRequestedPlayerDto().getName() + " has denied your request");
+    public void requestRefused(final boolean allDenied, final GameRequestDTO request) {
+        displayToast(request.getRequestedPlayerDto().getName() + " has denied your request");
+        if (allDenied) {
+            switchView(playersView);
+            displayInfoMessage("No one wants to play", "Everyone has denied your request :(");
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#gameJoined(java.util.List)
+     */
+    @Override
+    public void gameJoined(final List<PlayerDTO> players) {
+        if (currentView != lobbyView) {
+            switchView(lobbyView);
+        }
+        lobbyView.setPlayers(players);
+        lobbyView.refreshPlayers();
+        refreshUI();
     }
 
     /*
@@ -348,14 +334,22 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#gameLeaved(com.esir.sr.sweetsnake.dto.PlayerDTO)
+     * @see com.esir.sr.sweetsnake.api.IGui#gameLeaved(java.lang.String, boolean)
      */
     @Override
-    public void gameLeaved(final String leaver) {
-        switchView(playersView);
-        if (leaver != null) {
-            displayInfoMessage("Game stopped", leaver + " has left the game :(");
+    public void gameLeft(final PlayerDTO leaver, final boolean finished) {
+        if (finished) {
+            switchView(playersView);
+            if (!leaver.getName().equals(client.getUsername())) {
+                displayInfoMessage("Game stopped", "everyone has left the game :(");
+            }
+        } else {
+            displayToast(leaver + " has left the game :(");
+            if (currentView == gameView) {
+                gameView.hideScore(leaver.getNumber());
+            }
         }
+        refreshUI();
     }
 
     /*
@@ -365,8 +359,10 @@ public class Gui extends JFrame implements IGui
      */
     @Override
     public void refreshGameboard(final GameBoardDTO gameBoard) {
-        gameView.setGameboardDto(gameBoard);
-        gameView.drawGameboard();
+        if (currentView == gameView) {
+            gameView.setGameboardDto(gameBoard);
+            gameView.drawGameboard();
+        }
     }
 
     /*
@@ -376,7 +372,9 @@ public class Gui extends JFrame implements IGui
      */
     @Override
     public void refreshScores(final Map<Integer, Integer> playersScores) {
-        gameView.refreshScores(playersScores);
+        if (currentView == gameView) {
+            gameView.refreshScores(playersScores);
+        }
     }
 
     /*
@@ -421,7 +419,21 @@ public class Gui extends JFrame implements IGui
      * @param requestedPlayer
      */
     public void requestGame(final PlayerDTO requestedPlayer) {
-        client.requestGame(requestedPlayer);
+        client.sendRequest(requestedPlayer);
+    }
+
+    /**
+     * 
+     */
+    public void startGame() {
+        client.startSession();
+    }
+
+    /**
+     * 
+     */
+    public void quitGame() {
+        client.leaveSession();
     }
 
     /**

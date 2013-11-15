@@ -1,6 +1,8 @@
 package com.esir.sr.sweetsnake.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -11,15 +13,14 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.component.ImagePanel;
-import com.esir.sr.sweetsnake.component.PlayersList;
 import com.esir.sr.sweetsnake.constants.GuiConstants;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
@@ -30,7 +31,7 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
  * 
  */
 @Component
-public class PlayersView extends AbstractView
+public class LobbyView extends AbstractView
 {
 
     /**********************************************************************************************
@@ -38,32 +39,35 @@ public class PlayersView extends AbstractView
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long      serialVersionUID = -5820091417435340407L;
+    private static final long   serialVersionUID = 7442409526614747493L;
 
     /** The logger */
-    private static final Logger    log              = LoggerFactory.getLogger(PlayersView.class);
+    private static final Logger log              = LoggerFactory.getLogger(LobbyView.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
     /** The view title panel */
-    private ImagePanel             playersListIPL;
+    private ImagePanel          playersListIPL;
 
     /** The top panel */
-    private JPanel                 topPL;
+    private JPanel              topPL;
 
     /** The center panel */
-    private JPanel                 centerPL;
+    private JPanel              centerPL;
 
     /** The bottom panel */
-    private JPanel                 bottomPL;
+    private JPanel              bottomPL;
+
+    /** The quit button */
+    private JButton             quitBTN;
+
+    /** The start button */
+    private JButton             startBTN;
 
     /** The players list */
-    private PlayersList<PlayerDTO> playersLST;
-
-    /** The request button */
-    private JButton                requestBTN;
+    private List<PlayerDTO>     players;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -72,7 +76,7 @@ public class PlayersView extends AbstractView
     /**
      * 
      */
-    protected PlayersView() {
+    protected LobbyView() {
         super();
     }
 
@@ -85,7 +89,7 @@ public class PlayersView extends AbstractView
     @PostConstruct
     protected void init() {
         super.init();
-        log.info("Initializing a new SweetSnakePlayersView");
+        log.info("Initializing a new LobbyView");
     }
 
     /**********************************************************************************************
@@ -112,10 +116,7 @@ public class PlayersView extends AbstractView
         initCenterPL();
         add(centerPL, BorderLayout.CENTER);
 
-        final List<PlayerDTO> players = new LinkedList<PlayerDTO>();
-
-        initPlayersLST(players);
-        centerPL.add(new JScrollPane(playersLST));
+        players = new LinkedList<PlayerDTO>();
 
         // bottom panel
         initBottomPL();
@@ -123,30 +124,50 @@ public class PlayersView extends AbstractView
 
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        initRequestBTN();
+        initQuitBTN();
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(5, 0, 0, 0);
-        bottomPL.add(requestBTN, gbc);
+        bottomPL.add(quitBTN, gbc);
+
+        initStartBTN();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        bottomPL.add(startBTN, gbc);
     }
 
     /**
      * 
-     * @param playersList
      */
-    public void refreshPlayersList(final List<PlayerDTO> playersList) { // FIXME bugs when called from server side
-        if (isBuilded) {
-            playersLST.removeAllElements();
-            List<PlayerDTO> players = new LinkedList<PlayerDTO>(playersList);
-            for (final PlayerDTO player : players) {
-                playersLST.addElement(player);
-            }
-            playersLST.removeAllElements();
-            players = new LinkedList<PlayerDTO>(playersList);
-            for (final PlayerDTO player : players) {
-                playersLST.addElement(player);
-            }
+    public void refreshPlayers() {
+        final GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        centerPL.removeAll();
+        for (final PlayerDTO player : players) {
+            log.debug("Player to add in lobby : {}", player);
+            final JLabel l = new JLabel(player.getNumber() + " ) " + player.getName() + " - " + player.getStatus());
+            l.setForeground(Color.white);
+            l.setFont(new Font("sans-serif", Font.BOLD, 16));
+            centerPL.add(l, gbc);
+            gbc.gridy++;
         }
+    }
+
+    /**
+     * 
+     * @param _players
+     */
+    public void setPlayers(final List<PlayerDTO> _players) {
+        players = new LinkedList<PlayerDTO>(_players);
     }
 
     /**********************************************************************************************
@@ -165,7 +186,7 @@ public class PlayersView extends AbstractView
      * 
      */
     private void initPlayersListIPL() {
-        playersListIPL = new ImagePanel(GuiConstants.PLAYERS_LIST_PATH);
+        playersListIPL = new ImagePanel(GuiConstants.GAME_LOBBY_PATH);
     }
 
     /**
@@ -174,18 +195,7 @@ public class PlayersView extends AbstractView
     private void initCenterPL() {
         centerPL = new JPanel();
         centerPL.setOpaque(false);
-        centerPL.setLayout(new BorderLayout());
-    }
-
-    /**
-     * 
-     * @param players
-     */
-    private void initPlayersLST(final List<PlayerDTO> players) {
-        playersLST = new PlayersList<PlayerDTO>();
-        for (final PlayerDTO player : players) {
-            playersLST.addElement(player);
-        }
+        centerPL.setLayout(new GridBagLayout());
     }
 
     /**
@@ -200,9 +210,17 @@ public class PlayersView extends AbstractView
     /**
      * 
      */
-    private void initRequestBTN() {
-        requestBTN = new JButton("request game");
-        requestBTN.addActionListener(new RequestGameListener());
+    private void initQuitBTN() {
+        quitBTN = new JButton("quit game");
+        quitBTN.addActionListener(new QuitGameListener());
+    }
+
+    /**
+     * 
+     */
+    private void initStartBTN() {
+        startBTN = new JButton("start game");
+        startBTN.addActionListener(new StartGameListener());
     }
 
     /**********************************************************************************************
@@ -215,7 +233,7 @@ public class PlayersView extends AbstractView
      * @author Damien Jouanno
      * 
      */
-    private class RequestGameListener implements ActionListener
+    private class QuitGameListener implements ActionListener
     {
 
         /*
@@ -225,14 +243,28 @@ public class PlayersView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
-            final List<PlayerDTO> selectedPlayers = playersLST.getSelectedValuesList();
-            if (selectedPlayers.size() == 0) {
-                gui.displayErrorMessage("Please select an opponent first");
-            } else {
-                for (final PlayerDTO player : selectedPlayers) {
-                    gui.requestGame(player);
-                }
-            }
+            gui.quitGame();
+        }
+
+    }
+
+    /**
+     * 
+     * @author Herminaël Rougier
+     * @author Damien Jouanno
+     * 
+     */
+    private class StartGameListener implements ActionListener
+    {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            gui.startGame();
         }
 
     }

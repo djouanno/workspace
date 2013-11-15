@@ -43,28 +43,23 @@ public class ClientCallbackMock implements IClientCallback, Serializable
     }
 
     @Override
-    public void gameRequested(final GameRequestDTO request) {
+    public void requestReceived(final GameRequestDTO request) {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public void gameRefused(final GameRequestDTO request) throws RemoteException {
+    public void sessionStarted(final GameSessionDTO session) {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public void gameStarted(final GameSessionDTO session) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void gameLeaved(final GameSessionDTO session, final PlayerDTO leaver) throws RemoteException {
+    public void sessionLeft(final GameSessionDTO session, final PlayerDTO leaver) throws RemoteException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void refreshGame(final GameSessionDTO session) throws RemoteException {
+    public void refreshSession(final GameSessionDTO session) throws RemoteException {
         // TODO Auto-generated method stub
 
     }
@@ -74,7 +69,7 @@ public class ClientCallbackMock implements IClientCallback, Serializable
      **********************************************************************************************/
 
     @Override
-    public String getUsername() throws RemoteException {
+    public String getName() throws RemoteException {
         return name;
     }
 
@@ -83,8 +78,21 @@ public class ClientCallbackMock implements IClientCallback, Serializable
      **********************************************************************************************/
 
     @Override
-    public void setScore(final long score) throws RemoteException {
+    public void sessionJoined(final GameSessionDTO session) throws RemoteException {
         // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void requestSent(final GameRequestDTO request) throws RemoteException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void requestDenied(final boolean allDenied, final GameRequestDTO request) throws RemoteException {
+        // TODO Auto-generated method stub
+
     }
 
 }

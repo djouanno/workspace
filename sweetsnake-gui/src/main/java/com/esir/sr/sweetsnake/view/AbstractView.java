@@ -2,7 +2,6 @@ package com.esir.sr.sweetsnake.view;
 
 import java.awt.Dimension;
 
-import javax.swing.JMenu;
 import javax.swing.JPanel;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +37,6 @@ public abstract class AbstractView extends JPanel
     /** The GUI */
     @Autowired
     protected Gui             gui;
-
-    /** The view custom menu */
-    protected JMenu           menu;
 
     /** The view dimension */
     protected Dimension       dimension;
@@ -93,14 +89,6 @@ public abstract class AbstractView extends JPanel
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
-
-    /**
-     * 
-     * @return
-     */
-    public JMenu getMenu() {
-        return menu;
-    }
 
     /**
      * 

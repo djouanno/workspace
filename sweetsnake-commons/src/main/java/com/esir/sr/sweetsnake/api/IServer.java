@@ -1,13 +1,10 @@
 package com.esir.sr.sweetsnake.api;
 
-import java.util.List;
-
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
-import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
 import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
+import com.esir.sr.sweetsnake.exception.MaximumNumberOfPlayersException;
 import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
@@ -21,6 +18,10 @@ import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 public interface IServer
 {
 
+    /**********************************************************************************************
+     * [BLOCK] CONNECTION METHODS
+     **********************************************************************************************/
+
     /**
      * 
      * @param client
@@ -31,37 +32,38 @@ public interface IServer
     /**
      * 
      * @param client
-     * @throws PlayerNotFoundException
      */
-    void disconnect(IClientCallback client) throws PlayerNotFoundException;
+    void disconnect(IClientCallback client);
+
+    /**********************************************************************************************
+     * [BLOCK] GAME REQUESTS METHODS
+     **********************************************************************************************/
 
     /**
      * 
      * @param client
      * @param otherPlayer
-     * @return
      * @throws PlayerNotFoundException
      * @throws PlayerNotAvailableException
      */
-    GameRequestDTO requestGame(IClientCallback client, PlayerDTO otherPlayer) throws PlayerNotFoundException, PlayerNotAvailableException;
+    void sendRequest(IClientCallback client, PlayerDTO otherPlayer) throws PlayerNotFoundException, PlayerNotAvailableException;
 
     /**
      * 
      * @param client
-     * @throws PlayerNotFoundException
      * @throws GameRequestNotFoundException
      */
-    void cancelGameRequest(IClientCallback client, GameRequestDTO requestDTO) throws PlayerNotFoundException, GameRequestNotFoundException;
+    void cancelRequest(IClientCallback client, GameRequestDTO requestDTO) throws GameRequestNotFoundException;
 
     /**
      * 
      * @param client
      * @param request
-     * @return
-     * @throws PlayerNotFoundException
      * @throws GameRequestNotFoundException
+     * @throws GameSessionNotFoundException
+     * @throws MaximumNumberOfPlayersException
      */
-    GameSessionDTO acceptGame(IClientCallback client, GameRequestDTO requestDTO) throws PlayerNotFoundException, GameRequestNotFoundException;
+    void acceptRequest(IClientCallback client, GameRequestDTO requestDTO) throws GameRequestNotFoundException, GameSessionNotFoundException, MaximumNumberOfPlayersException;
 
     /**
      * 
@@ -69,31 +71,6 @@ public interface IServer
      * @param requestDTO
      * @throws GameRequestNotFoundException
      */
-    void refuseGame(IClientCallback client, GameRequestDTO requestDTO) throws GameRequestNotFoundException;
-
-    /**
-     * 
-     * @param client
-     * @param sessionDTO
-     * @throws GameSessionNotFoundException
-     */
-    void leaveGame(IClientCallback client, GameSessionDTO sessionDTO) throws GameSessionNotFoundException;
-
-    /**
-     * 
-     * @param client
-     * @return
-     */
-    List<PlayerDTO> getPlayersList(IClientCallback client);
-
-    /**
-     * 
-     * @param client
-     * @param session
-     * @param direction
-     * @throws PlayerNotFoundException
-     * @throws GameSessionNotFoundException
-     */
-    void requestMove(IClientCallback client, GameSessionDTO session, MoveDirection direction) throws PlayerNotFoundException, GameSessionNotFoundException;
+    void denyRequest(IClientCallback client, GameRequestDTO requestDTO) throws GameRequestNotFoundException;
 
 }

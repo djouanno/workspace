@@ -19,8 +19,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -128,15 +126,9 @@ public class GameView extends AbstractView
     public void buildImpl() {
         setLayout(new BorderLayout());
 
-        // menu
-        initMenu();
-
         // top panel
         initTopPL();
         add(topPL, BorderLayout.NORTH);
-
-        // initGameOnIPL();
-        // topPL.add(gameOnIPL);
 
         initPlayersScoresLB();
         final GridBagConstraints gbc = new GridBagConstraints();
@@ -166,16 +158,16 @@ public class GameView extends AbstractView
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(5, 0, 0, 170);
+        gbc.insets = new Insets(5, 0, 0, 120);
         bottomPL.add(playersScoresLB[positions[playerNb - 1][2]], gbc);
 
         initLeaveBTN();
         gbc.gridx = 1;
-        // gbc.insets = new Insets(5, 0, 0, 0);
-        // bottomPL.add(leaveBTN, gbc);
+        gbc.insets = new Insets(5, 0, 0, 0);
+        bottomPL.add(leaveBTN, gbc);
 
-        gbc.gridx = 1;
-        gbc.insets = new Insets(5, 170, 0, 0);
+        gbc.gridx = 2;
+        gbc.insets = new Insets(5, 120, 0, 0);
         bottomPL.add(playersScoresLB[positions[playerNb - 1][3]], gbc);
 
         addKeyListener(new KeyboardListener());
@@ -191,6 +183,10 @@ public class GameView extends AbstractView
         for (final Integer nb : playersScores.keySet()) {
             playersScoresLB[nb - 1].setText(intToString(playersScores.get(nb), 3));
         }
+    }
+
+    public void hideScore(final int _playerNb) {
+        playersScoresLB[_playerNb - 1].setForeground(findSnakeColor(null, _playerNb));
     }
 
     /**
@@ -220,13 +216,6 @@ public class GameView extends AbstractView
     /**********************************************************************************************
      * [BLOCK] PRIVATE METHODS
      **********************************************************************************************/
-
-    private void initMenu() {
-        menu = new JMenu("game session");
-        final JMenuItem quitMenuItem = new JMenuItem("quit");
-        quitMenuItem.addActionListener(new LeaveGameListener());
-        menu.add(quitMenuItem);
-    }
 
     /**
      * 
@@ -291,37 +280,34 @@ public class GameView extends AbstractView
      * 
      */
     public void drawGameboard() {
-        final List<GameBoardRefreshDTO> componentsToRefresh = gameBoardDto.getComponentsToRefresh();
-        for (final GameBoardRefreshDTO pair : componentsToRefresh) {
-            final ComponentDTO componentDto = pair.getComponentDto();
-            final RefreshAction action = pair.getAction();
+        final List<GameBoardRefreshDTO> refreshes = gameBoardDto.getComponentsToRefresh();
+        for (final GameBoardRefreshDTO refresh : refreshes) {
+            final ComponentDTO componentDto = refresh.getComponentDto();
+            final RefreshAction action = refresh.getAction();
             final IComponent component = gameBoardPL.getComponentById(componentDto.getId());
 
-            if (component == null) {
-                IComponent newComponent = null;
-                final int x = componentDto.getX(), y = componentDto.getY();
-                switch (componentDto.getType()) {
-                    case SNAKE:
-                        newComponent = new Snake(componentDto.getId(), x, y, findSnakeIconPath(componentDto.getId()));
-                        break;
-                    case SWEET:
-                        newComponent = new Sweet(componentDto.getId(), x, y);
-                        break;
-                    default:
-                        break;
-                }
-                gameBoardPL.setComponent(newComponent);
-            } else {
-                switch (action) {
-                    case REMOVE:
-                        gameBoardPL.removeComponent(component);
-                        break;
-                    case SET: // TODO never used, component always removed so uses the first if condition
-                        gameBoardPL.setComponent(component);
-                        break;
-                    default:
-                        break;
-                }
+            switch (action) {
+                case ADD:
+                    IComponent newComponent = null;
+                    final int x = componentDto.getX(),
+                    y = componentDto.getY();
+                    switch (componentDto.getType()) {
+                        case SNAKE:
+                            newComponent = new Snake(componentDto.getId(), x, y, findSnakeIconPath(componentDto.getId()));
+                            break;
+                        case SWEET:
+                            newComponent = new Sweet(componentDto.getId(), x, y);
+                            break;
+                    }
+                    gameBoardPL.addComponent(newComponent);
+                    break;
+                case MOVE:
+                    component.setXYPos(componentDto.getX(), componentDto.getY());
+                    gameBoardPL.moveComponent(component);
+                    break;
+                case REMOVE:
+                    gameBoardPL.removeComponent(component);
+                    break;
             }
         }
         gui.refreshUI();
@@ -406,7 +392,7 @@ public class GameView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
-            client.leaveGame();
+            client.leaveSession();
         }
 
     }
@@ -424,16 +410,31 @@ public class GameView extends AbstractView
 
         public KeyboardListener() {
             moveTable = new LinkedHashMap<Integer, MoveDirection>();
-            if (playerNb == 1) {
-                moveTable.put(KeyEvent.VK_DOWN, MoveDirection.DOWN);
-                moveTable.put(KeyEvent.VK_UP, MoveDirection.UP);
-                moveTable.put(KeyEvent.VK_LEFT, MoveDirection.LEFT);
-                moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.RIGHT);
-            } else {
-                moveTable.put(KeyEvent.VK_DOWN, MoveDirection.UP);
-                moveTable.put(KeyEvent.VK_UP, MoveDirection.DOWN);
-                moveTable.put(KeyEvent.VK_LEFT, MoveDirection.RIGHT);
-                moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.LEFT);
+            switch (playerNb) {
+                case 2:
+                    moveTable.put(KeyEvent.VK_DOWN, MoveDirection.UP);
+                    moveTable.put(KeyEvent.VK_UP, MoveDirection.DOWN);
+                    moveTable.put(KeyEvent.VK_LEFT, MoveDirection.RIGHT);
+                    moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.LEFT);
+                    break;
+                case 3:
+                    moveTable.put(KeyEvent.VK_DOWN, MoveDirection.RIGHT);
+                    moveTable.put(KeyEvent.VK_UP, MoveDirection.LEFT);
+                    moveTable.put(KeyEvent.VK_LEFT, MoveDirection.DOWN);
+                    moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.UP);
+                    break;
+                case 4:
+                    moveTable.put(KeyEvent.VK_DOWN, MoveDirection.LEFT);
+                    moveTable.put(KeyEvent.VK_UP, MoveDirection.RIGHT);
+                    moveTable.put(KeyEvent.VK_LEFT, MoveDirection.UP);
+                    moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.DOWN);
+                    break;
+                default:
+                    moveTable.put(KeyEvent.VK_DOWN, MoveDirection.DOWN);
+                    moveTable.put(KeyEvent.VK_UP, MoveDirection.UP);
+                    moveTable.put(KeyEvent.VK_LEFT, MoveDirection.LEFT);
+                    moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.RIGHT);
+                    break;
             }
         }
 

@@ -34,8 +34,8 @@ public class DtoConverterFactory
      * @param request
      * @return
      */
-    public static GameRequestDTO convertGameSessionRequest(final GameRequest request) {
-        return new GameRequestDTO(request.getId(), convertPlayer(request.getRequestingPlayer()), convertPlayer(request.getRequestedPlayer()));
+    public static GameRequestDTO convertGameRequest(final GameRequest request) {
+        return new GameRequestDTO(request.getId(), request.getSessionid(), convertPlayer(request.getRequestingPlayer()), convertPlayer(request.getRequestedPlayer()));
     }
 
     /**
@@ -44,7 +44,10 @@ public class DtoConverterFactory
      * @return
      */
     public static GameSessionDTO convertGameSession(final GameSession session) {
-        return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), convertGameBoard(session.getGameEngine().getGameBoard()));
+        if (session.getGameEngine() == null) {
+            return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), null, session.getCallback());
+        }
+        return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), convertGameBoard(session.getGameEngine().getGameBoard()), session.getCallback());
     }
 
     /**
@@ -53,7 +56,7 @@ public class DtoConverterFactory
      * @return
      */
     public static PlayerDTO convertPlayer(final Player player) {
-        return new PlayerDTO(player.getName(), player.getStatus(), player.getSnakeId(), player.getScore());
+        return new PlayerDTO(player.getName(), player.getStatus(), player.getSnakeId(), player.getNumber(), player.getScore());
     }
 
     /**

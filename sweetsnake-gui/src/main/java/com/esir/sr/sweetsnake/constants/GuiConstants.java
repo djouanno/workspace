@@ -56,7 +56,7 @@ public class GuiConstants
     public static final String  UNAVAILABLE_ICON_PATH = IMG_PATH + "unavailable_icon.png";
 
     /** */
-    public static final String  GAME_ON_PATH          = IMG_PATH + "game_on.png";
+    public static final String  GAME_LOBBY_PATH       = IMG_PATH + "game_lobby.png";
 
     /** */
     private static final String SNAKE_ICON_PATH       = "_snake.png";

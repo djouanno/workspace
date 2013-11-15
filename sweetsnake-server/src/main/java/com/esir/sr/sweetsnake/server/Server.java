@@ -3,6 +3,8 @@ package com.esir.sr.sweetsnake.server;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.annotation.PostConstruct;
 
@@ -14,12 +16,11 @@ import org.springframework.stereotype.Component;
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.api.IServer;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
-import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
 import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
+import com.esir.sr.sweetsnake.exception.MaximumNumberOfPlayersException;
 import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
@@ -94,7 +95,7 @@ public class Server implements IServer
      */
     private String retrieveClientName(final IClientCallback client) {
         try {
-            return client.getUsername();
+            return client.getName();
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }
@@ -104,288 +105,10 @@ public class Server implements IServer
 
     /**
      * 
-     * @param request
+     * @param client
+     * @return
      */
-    private void addRequest(final GameRequest request) {
-        final Player requestingPlayer = request.getRequestingPlayer(), requestedPlayer = request.getRequestedPlayer();
-        requestingPlayer.setSentRequestId(request.getId());
-        requestedPlayer.setReceivedRequestId(request.getId());
-        gameRequests.add(request);
-        requestingPlayer.setStatus(PlayerStatus.INVITING);
-        requestedPlayer.setStatus(PlayerStatus.INVITED);
-    }
-
-    /**
-     * 
-     * @param request
-     * @throws GameRequestNotFoundException
-     */
-    private void removeRequest(final String requestId) {
-        try {
-            final GameRequest request = gameRequests.get(requestId);
-            final Player requestingPlayer = request.getRequestingPlayer(), requestedPlayer = request.getRequestedPlayer();
-            gameRequests.remove(request.getId());
-            requestingPlayer.setSentRequestId(null);
-            requestedPlayer.setReceivedRequestId(null);
-            requestingPlayer.setStatus(PlayerStatus.AVAILABLE);
-            requestedPlayer.setStatus(PlayerStatus.AVAILABLE);
-        } catch (final GameRequestNotFoundException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * 
-     * @param session
-     */
-    private void addSession(final GameSession session) {
-        gameSessions.add(session);
-        for (final Player player : session.getPlayers()) {
-            player.setGameSessionId(session.getId());
-            player.setStatus(PlayerStatus.PLAYING);
-        }
-    }
-
-    /**
-     * 
-     * @param session
-     */
-    private void removeSession(final String sessionId) {
-        try {
-            final GameSession session = gameSessions.get(sessionId);
-            gameSessions.remove(session.getId());
-            for (final Player player : session.getPlayers()) {
-                player.setGameSessionId(null);
-                player.setStatus(PlayerStatus.AVAILABLE);
-            }
-        } catch (final GameSessionNotFoundException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * 
-     */
-    private void sendRefreshPlayersList() {
-        for (final String playerName : players.getPlayersName()) {
-            try {
-                final Player player = players.get(playerName);
-                final IClientCallback callback = player.getClientCallback();
-                callback.refreshPlayersList(this.getPlayersList(callback));
-            } catch (RemoteException | PlayerNotFoundException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-    }
-
-    /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
-     **********************************************************************************************/
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IServer#connect(com.esir.sr.sweetsnake.api.IClientCallback)
-     */
-    @Override
-    public void connect(final IClientCallback client) throws UnableToConnectException {
-        final String clientName = retrieveClientName(client);
-        if (clientName == null) {
-            throw new UnableToConnectException("username cannot be null");
-        }
-        if (players.contains(clientName)) {
-            throw new UnableToConnectException("username " + clientName + " already taken");
-        }
-        final Player player = new Player(client);
-        player.setStatus(PlayerStatus.AVAILABLE);
-        players.add(player);
-        sendRefreshPlayersList();
-        log.info("New client with username {} has connected", clientName);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IServer#disconnect(com.esir.sr.sweetsnake.api.IClientCallback)
-     */
-    @Override
-    public void disconnect(final IClientCallback client) throws PlayerNotFoundException {
-        final String clientName = retrieveClientName(client);
-        final Player player = players.get(clientName);
-        if (player.getSentRequestId() != null) {
-            removeRequest(player.getSentRequestId());
-        }
-        if (player.getReceivedRequestId() != null) {
-            removeRequest(player.getReceivedRequestId());
-        }
-        if (player.getGameSessionId() != null) {
-            try {
-                // TODO does not work when client brutally closes the window !!!!!
-                leaveGame(client, DtoConverterFactory.convertGameSession(gameSessions.get(player.getGameSessionId())));
-            } catch (final GameSessionNotFoundException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        players.remove(clientName);
-        try {
-            Thread.sleep(300);
-        } catch (final InterruptedException e) {
-            log.error(e.getMessage(), e);
-        }
-        sendRefreshPlayersList();
-        log.info("Client with username {} has disconnected", clientName);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IServer#requestGame(com.esir.sr.sweetsnake.api.IClientCallback,
-     * com.esir.sr.sweetsnake.dto.PlayerDTO)
-     */
-    @Override
-    public GameRequestDTO requestGame(final IClientCallback client, final PlayerDTO otherPlayer) throws PlayerNotFoundException, PlayerNotAvailableException {
-        final Player player2 = players.get(otherPlayer.getName());
-
-        if (player2.getStatus() != PlayerStatus.AVAILABLE) {
-            throw new PlayerNotAvailableException("player is not available");
-        }
-
-        final Player player1 = players.get(retrieveClientName(client));
-        final GameRequest request = new GameRequest(player1, player2);
-        addRequest(request);
-
-        final GameRequestDTO requestDTO = DtoConverterFactory.convertGameSessionRequest(request);
-
-        // requestGame() on client side is a blocking method while the other player has not answered
-        // so we have to launch it from a new thread
-        final Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    sendRefreshPlayersList();
-                    player2.getClientCallback().gameRequested(requestDTO);
-                } catch (final RemoteException e) {
-                    log.error(e.getMessage(), e);
-                }
-            }
-        });
-        t.start();
-
-        log.info("Game request between {} and {} is pending", player1, player2);
-
-        return requestDTO;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IServer#acceptGame(com.esir.sr.sweetsnake.api.IClientCallback,
-     * com.esir.sr.sweetsnake.dto.GameRequestDTO)
-     */
-    @Override
-    public GameSessionDTO acceptGame(final IClientCallback client, final GameRequestDTO requestDTO) throws PlayerNotFoundException, GameRequestNotFoundException {
-        final GameRequest request = gameRequests.get(requestDTO.getId());
-
-        if (!request.getRequestedPlayer().getName().equals(retrieveClientName(client))) {
-            throw new GameRequestNotFoundException("no matching request");
-        }
-
-        removeRequest(requestDTO.getId());
-
-        final List<Player> players = new LinkedList<Player>();
-        final Player player1 = request.getRequestingPlayer(), player2 = request.getRequestedPlayer();
-        players.add(player1);
-        players.add(player2);
-        final GameSession gameSession = new GameSession(players);
-        addSession(gameSession);
-        gameSession.startGame();
-
-        return DtoConverterFactory.convertGameSession(gameSession);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IServer#refuseGame(com.esir.sr.sweetsnake.api.IClientCallback,
-     * com.esir.sr.sweetsnake.dto.GameRequestDTO)
-     */
-    @Override
-    public void refuseGame(final IClientCallback client, final GameRequestDTO requestDTO) throws GameRequestNotFoundException {
-        final GameRequest request = gameRequests.get(requestDTO.getId());
-
-        if (!request.getRequestedPlayer().getName().equals(retrieveClientName(client))) {
-            throw new GameRequestNotFoundException("no matching request");
-        }
-
-        final Player player1 = gameRequests.get(requestDTO.getId()).getRequestingPlayer();
-        removeRequest(requestDTO.getId());
-
-        try {
-            sendRefreshPlayersList();
-            player1.getClientCallback().gameRefused(requestDTO);
-        } catch (final RemoteException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IServer#leaveGame(com.esir.sr.sweetsnake.api.IClientCallback)
-     */
-    @Override
-    public void leaveGame(final IClientCallback client, final GameSessionDTO sessionDTO) throws GameSessionNotFoundException {
-        final GameSession session = gameSessions.get(sessionDTO.getId());
-        try {
-            final Player leaver = players.get(retrieveClientName(client));
-            removeSession(session.getId()); // TODO do not remove if nbplayers > 1
-            session.leaveGame(leaver);
-            sendRefreshPlayersList();
-        } catch (final PlayerNotFoundException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IServer#cancelGameRequest(com.esir.sr.sweetsnake.api.IClientCallback,
-     * com.esir.sr.sweetsnake.dto.GameRequestDTO)
-     */
-    @Override
-    public void cancelGameRequest(final IClientCallback client, final GameRequestDTO requestDTO) throws PlayerNotFoundException, GameRequestNotFoundException {
-        final String clientName = retrieveClientName(client);
-        final Player player = players.get(clientName);
-        final GameRequest request = gameRequests.get(requestDTO.getId());
-        removeRequest(requestDTO.getId());
-        log.info("Game request {} canceled by player {}", request, player);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IServer#requestMove(com.esir.sr.sweetsnake.api.IClientCallback,
-     * com.esir.sr.sweetsnake.dto.GameSessionDTO, com.esir.sr.sweetsnake.enumeration.MoveDirection)
-     */
-    @Override
-    public void requestMove(final IClientCallback client, final GameSessionDTO sessionDTO, final MoveDirection direction) throws PlayerNotFoundException, GameSessionNotFoundException {
-        final GameSession session = gameSessions.get(sessionDTO.getId());
-        final Player player = players.get(retrieveClientName(client));
-
-        if (!session.contains(player)) {
-            throw new PlayerNotFoundException("unauthorized session for this player");
-        }
-
-        session.movePlayer(player, direction);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IServer#getPlayersList(com.esir.sr.sweetsnake.api.IClientCallback)
-     */
-    @Override
-    public List<PlayerDTO> getPlayersList(final IClientCallback client) {
+    private List<PlayerDTO> getPlayersList(final IClientCallback client) {
         final String clientName = retrieveClientName(client);
         final List<PlayerDTO> playersList = new LinkedList<PlayerDTO>();
         for (final String player : players.getPlayersName()) {
@@ -400,5 +123,305 @@ public class Server implements IServer
         }
         return playersList;
     }
+
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC IMPLEMENTED METHODS
+     **********************************************************************************************/
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServer#connect(com.esir.sr.sweetsnake.api.IClientCallback)
+     */
+    @Override
+    public void connect(final IClientCallback client) throws UnableToConnectException {
+        final String clientName = retrieveClientName(client);
+
+        // bad username
+        if (clientName == null) {
+            throw new UnableToConnectException("username cannot be null");
+        }
+
+        // username already taken
+        if (players.contains(clientName)) {
+            throw new UnableToConnectException("username " + clientName + " already taken");
+        }
+
+        // creating player
+        final Player player = new Player(client);
+        players.add(player);
+
+        // wait for everything to be updated properly before sending refresh
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                sendRefreshPlayersList();
+            }
+        }, 300);
+
+        log.info("New client with username {} has connected", clientName);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServer#disconnect(com.esir.sr.sweetsnake.api.IClientCallback)
+     */
+    @Override
+    public void disconnect(final IClientCallback client) {
+        try {
+            final String clientName = retrieveClientName(client);
+            final Player player = players.get(clientName);
+
+            // cancel sent requests
+            for (final String requestId : player.getSentRequestsIds()) {
+                final GameRequest request = gameRequests.get(requestId);
+                request.cancel();
+                gameRequests.remove(requestId);
+            }
+
+            // deny received requests
+            if (player.getReceivedRequestId() != null) {
+                final GameRequest request = gameRequests.get(player.getReceivedRequestId());
+                final GameSession gameSession = gameSessions.get(request.getSessionid());
+                request.deny(gameSession.allDenied());
+                gameRequests.remove(request.getId());
+            }
+
+            // leave current session
+            if (player.getGameSessionId() != null) {
+                gameSessions.get(player.getGameSessionId()).leaveGame(client, true);
+            }
+
+            // removing player from registry
+            players.remove(clientName);
+
+            // wait for everything to be updated properly before sending refresh
+            final Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    sendRefreshPlayersList();
+                }
+            }, 300);
+
+            log.info("Player {} has disconnected", clientName);
+        } catch (final PlayerNotFoundException | GameRequestNotFoundException | GameSessionNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServer#sendRequest(com.esir.sr.sweetsnake.api.IClientCallback,
+     * com.esir.sr.sweetsnake.dto.PlayerDTO)
+     */
+    @Override
+    public void sendRequest(final IClientCallback client, final PlayerDTO otherPlayer) throws PlayerNotFoundException, PlayerNotAvailableException {
+        final Player player1 = players.get(retrieveClientName(client)), player2 = players.get(otherPlayer.getName());
+
+        // player is not available to play
+        if (player2.getStatus() != PlayerStatus.AVAILABLE) {
+            throw new PlayerNotAvailableException("player is not available");
+        }
+
+        GameSession gameSession;
+        try {
+            // session does not exist
+            if (player1.getGameSessionId() == null) {
+                log.debug("Game session is null, creating new one");
+                gameSession = new GameSession(this);
+                gameSession.addPlayer(player1);
+                gameSession.addFictivePlayer(player2);
+                gameSessions.add(gameSession);
+            }
+            // session already exists
+            else {
+                log.debug("Game session already exists, adding fictive player {}", player2.getName());
+                gameSession = gameSessions.get(player1.getGameSessionId());
+                gameSession.addFictivePlayer(player2);
+            }
+
+            // creating request
+            final GameRequest request = new GameRequest(gameSession.getId(), player1, player2);
+            gameRequests.add(request);
+        } catch (final MaximumNumberOfPlayersException | GameSessionNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        log.info("Game request between {} and {} is pending", player1.getName(), player2.getName());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServer#acceptRequest(com.esir.sr.sweetsnake.api.IClientCallback,
+     * com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     */
+    @Override
+    public void acceptRequest(final IClientCallback client, final GameRequestDTO requestDTO) throws GameRequestNotFoundException, GameSessionNotFoundException, MaximumNumberOfPlayersException {
+        final GameRequest request = gameRequests.get(requestDTO.getId());
+
+        // request no more available
+        if (!request.getRequestedPlayer().getName().equals(retrieveClientName(client))) {
+            throw new GameRequestNotFoundException("no matching request");
+        }
+
+        // removing request
+        gameRequests.remove(requestDTO.getId());
+
+        // retrieving session & player
+        final GameSession gameSession = gameSessions.get(requestDTO.getSessionId());
+        final Player requestedPlayer = request.getRequestedPlayer();
+        gameSession.addPlayer(requestedPlayer);
+
+        log.info("Player {} joined the session {}", requestedPlayer.getName(), gameSession.getId());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServer#denyRequest(com.esir.sr.sweetsnake.api.IClientCallback,
+     * com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     */
+    @Override
+    public void denyRequest(final IClientCallback client, final GameRequestDTO requestDTO) throws GameRequestNotFoundException {
+        final GameRequest request = gameRequests.get(requestDTO.getId());
+        final Player requestedPlayer = request.getRequestedPlayer();
+
+        // request no more available
+        if (!requestedPlayer.getName().equals(retrieveClientName(client))) {
+            throw new GameRequestNotFoundException("no matching request");
+        }
+
+        boolean allDenied = false;
+
+        // check session status
+        if (gameSessions.contains(request.getSessionid())) {
+            try {
+                final GameSession gameSession = gameSessions.get(request.getSessionid());
+                gameSession.denied(requestedPlayer);
+                allDenied = gameSession.allDenied();
+            } catch (final GameSessionNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+
+        // deny and remove the request
+        request.deny(allDenied);
+        gameRequests.remove(requestDTO.getId());
+
+        if (allDenied) {
+            try {
+                getSessionsRegistry().remove(requestDTO.getSessionId());
+            } catch (final GameSessionNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+
+        log.info("Request {} denied by {}", request.getId(), request.getRequestedPlayer().getName());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServer#cancelRequest(com.esir.sr.sweetsnake.api.IClientCallback,
+     * com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     */
+    @Override
+    public void cancelRequest(final IClientCallback client, final GameRequestDTO requestDTO) throws GameRequestNotFoundException {
+        final GameRequest request = gameRequests.get(requestDTO.getId());
+
+        // cancel and remove the request
+        request.cancel();
+        gameRequests.remove(request.getId());
+
+        log.info("Request {} has been canceled by {}", request.getId(), request.getRequestingPlayer().getName());
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC METHODS
+     **********************************************************************************************/
+
+    /**
+    *
+    */
+    public void sendRefreshPlayersList() {
+        for (final String playerName : players.getPlayersName()) {
+            try {
+                final Player player = players.get(playerName);
+                final IClientCallback callback = player.getCallback();
+                callback.refreshPlayersList(this.getPlayersList(callback));
+            } catch (RemoteException | PlayerNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public PlayersRegistry getPlayersRegistry() {
+        return players;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public GameSessionsRegistry getSessionsRegistry() {
+        return gameSessions;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public GameRequestsRegistry getRequestsRegistry() {
+        return gameRequests;
+    }
+
+    // @Override
+    // public void startGame(final IClientCallback client, final GameSessionDTO sessionDTO) throws GameSessionNotFoundException {
+    // final GameSession session = gameSessions.get(sessionDTO.getId());
+    // for (final Player player : session.getPlayers()) {
+    // player.setStatus(PlayerStatus.PLAYING);
+    // }
+    // session.startGame();
+    // sendRefreshPlayersList();
+    // }
+    //
+    // @Override
+    // public void leaveGame(final IClientCallback client, final GameSessionDTO sessionDTO) throws GameSessionNotFoundException {
+    // final GameSession session = gameSessions.get(sessionDTO.getId());
+    // try {
+    // final Player leaver = players.get(retrieveClientName(client));
+    // session.leaveGame(leaver);
+    // if (session.getPlayers().size() <= 1) {
+    // removeSession(session.getId());
+    // }
+    // leaver.setGameSessionId(null);
+    // sendRefreshPlayersList();
+    // } catch (final PlayerNotFoundException e) {
+    // log.error(e.getMessage(), e);
+    // }
+    // }
+    //
+    // @Override
+    // public void requestMove(final IClientCallback client, final GameSessionDTO sessionDTO, final MoveDirection direction)
+    // throws PlayerNotFoundException, GameSessionNotFoundException {
+    // final GameSession session = gameSessions.get(sessionDTO.getId());
+    // final Player player = players.get(retrieveClientName(client));
+    //
+    // if (!session.contains(player)) {
+    // throw new PlayerNotFoundException("unauthorized session for this player");
+    // }
+    //
+    // session.movePlayer(player, direction);
+    // }
 
 }
