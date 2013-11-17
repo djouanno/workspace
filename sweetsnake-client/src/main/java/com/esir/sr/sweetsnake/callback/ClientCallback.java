@@ -97,32 +97,42 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionJoined(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionJoined(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void sessionJoined(final GameSessionDTO session) throws RemoteException {
-        client.sessionJoined(session);
+    public void sessionJoined(final int playerNb, final GameSessionDTO session) throws RemoteException {
+        client.sessionJoined(playerNb, session);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionStarted(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionStarted(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void sessionStarted(final GameSessionDTO session) throws RemoteException {
-        client.sessionStarted(session);
+    public void sessionStarted(final int playerNb, final GameSessionDTO session) throws RemoteException {
+        client.sessionStarted(playerNb, session);
     }
 
     /*
      * (non-Javadoc)
      * 
      * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionLeft(com.esir.sr.sweetsnake.dto.GameSessionDTO,
-     * com.esir.sr.sweetsnake.dto.PlayerDTO)
+     * com.esir.sr.sweetsnake.dto.PlayerDTO, boolean)
      */
     @Override
-    public void sessionLeft(final GameSessionDTO session, final PlayerDTO leaver) throws RemoteException {
-        client.sessionLeft(session, leaver);
+    public void sessionLeft(final GameSessionDTO session, final PlayerDTO leaver, final boolean finished) throws RemoteException {
+        client.sessionLeft(session, leaver, finished);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionFinished(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void sessionFinished(final GameSessionDTO session) throws RemoteException {
+        client.sessionFinished(session);
     }
 
     /*

@@ -48,25 +48,35 @@ public interface IClientCallback extends Remote
 
     /**
      * 
+     * @param playerNb
      * @param session
      * @throws RemoteException
      */
-    void sessionJoined(GameSessionDTO session) throws RemoteException;
+    void sessionJoined(int playerNb, GameSessionDTO session) throws RemoteException;
 
     /**
      * 
+     * @param playerNb
      * @param session
      * @throws RemoteException
      */
-    void sessionStarted(GameSessionDTO session) throws RemoteException;
+    void sessionStarted(int playerNb, GameSessionDTO session) throws RemoteException;
 
     /**
      * 
      * @param session
      * @param leaver
+     * @param finished
      * @throws RemoteException
      */
-    void sessionLeft(GameSessionDTO session, PlayerDTO leaver) throws RemoteException;
+    void sessionLeft(GameSessionDTO session, PlayerDTO leaver, boolean finished) throws RemoteException;
+
+    /**
+     * 
+     * @param session
+     * @throws RemoteException
+     */
+    void sessionFinished(GameSessionDTO session) throws RemoteException;
 
     /**
      * 

@@ -156,14 +156,7 @@ public class Server implements IServer
         final Player player = beanProvider.getPrototype(Player.class, client);
         players.add(player);
 
-        // wait for everything to be updated properly before sending refresh
-        final Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                sendRefreshPlayersList();
-            }
-        }, 300);
+        sendRefreshPlayersList();
 
         log.info("New client with username {} has connected", clientName);
     }
@@ -202,14 +195,7 @@ public class Server implements IServer
             // removing player from registry
             players.remove(clientName);
 
-            // wait for everything to be updated properly before sending refresh
-            final Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    sendRefreshPlayersList();
-                }
-            }, 300);
+            sendRefreshPlayersList();
 
             log.info("Player {} has disconnected", clientName);
         } catch (final PlayerNotFoundException | GameRequestNotFoundException | GameSessionNotFoundException e) {
@@ -257,6 +243,8 @@ public class Server implements IServer
             log.error(e.getMessage(), e);
         }
 
+        sendRefreshPlayersList();
+
         log.info("Game request between {} and {} is pending", player1.getName(), player2.getName());
     }
 
@@ -283,6 +271,8 @@ public class Server implements IServer
         final Player requestedPlayer = request.getRequestedPlayer();
         gameSession.addPlayer(requestedPlayer);
 
+        sendRefreshPlayersList();
+
         log.info("Player {} joined the session {}", requestedPlayer.getName(), gameSession.getId());
     }
 
@@ -304,7 +294,7 @@ public class Server implements IServer
 
         boolean allDenied = false;
 
-        // check session status
+        // deny session and check session status
         if (gameSessions.contains(request.getSessionid())) {
             try {
                 final GameSession gameSession = gameSessions.get(request.getSessionid());
@@ -315,10 +305,11 @@ public class Server implements IServer
             }
         }
 
-        // deny and remove the request
+        // deny and remove request
         request.deny(allDenied);
         gameRequests.remove(requestDTO.getId());
 
+        // remove session if everyone denied
         if (allDenied) {
             try {
                 gameSessions.remove(requestDTO.getSessionId());
@@ -326,6 +317,8 @@ public class Server implements IServer
                 log.error(e.getMessage(), e);
             }
         }
+
+        sendRefreshPlayersList();
 
         log.info("Request {} denied by {}", request.getId(), request.getRequestedPlayer().getName());
     }
@@ -344,6 +337,8 @@ public class Server implements IServer
         request.cancel();
         gameRequests.remove(request.getId());
 
+        sendRefreshPlayersList();
+
         log.info("Request {} has been canceled by {}", request.getId(), request.getRequestingPlayer().getName());
     }
 
@@ -355,15 +350,21 @@ public class Server implements IServer
     *
     */
     public void sendRefreshPlayersList() {
-        for (final String playerName : players.getPlayersName()) {
-            try {
-                final Player player = players.get(playerName);
-                final IClientCallback callback = player.getCallback();
-                callback.refreshPlayersList(this.getPlayersList(callback));
-            } catch (RemoteException | PlayerNotFoundException e) {
-                log.error(e.getMessage(), e);
+        // wait for everything to be properly updated
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                for (final String playerName : players.getPlayersName()) {
+                    try {
+                        final Player player = players.get(playerName);
+                        final IClientCallback callback = player.getCallback();
+                        callback.refreshPlayersList(getPlayersList(callback));
+                    } catch (RemoteException | PlayerNotFoundException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                }
             }
-        }
+        }, 200);
     }
 
 }

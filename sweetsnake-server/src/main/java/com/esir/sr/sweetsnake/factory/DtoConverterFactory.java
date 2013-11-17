@@ -56,7 +56,7 @@ public class DtoConverterFactory
      * @return
      */
     public static PlayerDTO convertPlayer(final Player player) {
-        return new PlayerDTO(player.getName(), player.getStatus(), player.getSnakeId(), player.getNumber(), player.getScore());
+        return new PlayerDTO(player.getName(), player.getStatus(), player.getSnakeId(), player.getNumber(), player.getScore(), player.isFictive());
     }
 
     /**

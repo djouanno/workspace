@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,8 +64,14 @@ public class LobbyView extends AbstractView
     /** The quit button */
     private JButton             quitBTN;
 
+    /** The ready button */
+    private JButton             readyBTN;
+
     /** The start button */
     private JButton             startBTN;
+
+    /** The current player's number */
+    private int                 playerNb;
 
     /** The players list */
     private List<PlayerDTO>     players;
@@ -126,7 +133,7 @@ public class LobbyView extends AbstractView
 
         initQuitBTN();
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.weightx = 1;
         gbc.weighty = 1;
@@ -134,32 +141,79 @@ public class LobbyView extends AbstractView
         gbc.insets = new Insets(5, 0, 0, 0);
         bottomPL.add(quitBTN, gbc);
 
-        initStartBTN();
+        initReadyBTN();
         gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        bottomPL.add(startBTN, gbc);
+        bottomPL.add(readyBTN, gbc);
     }
 
     /**
      * 
      */
     public void refreshPlayers() {
-        final GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        centerPL.removeAll();
-        for (final PlayerDTO player : players) {
-            log.debug("Player to add in lobby : {}", player);
-            final JLabel l = new JLabel(player.getNumber() + " ) " + player.getName() + " - " + player.getStatus());
-            l.setForeground(Color.white);
-            l.setFont(new Font("sans-serif", Font.BOLD, 16));
-            centerPL.add(l, gbc);
-            gbc.gridy++;
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                centerPL.removeAll();
+                final GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                for (final PlayerDTO player : players) {
+                    log.debug("Player to add in lobby : {}", player);
+                    final JLabel l = new JLabel(player.getNumber() + " ) " + player.getName() + " - " + player.getStatus());
+                    l.setForeground(Color.white);
+                    l.setFont(new Font("sans-serif", Font.BOLD, 16));
+                    centerPL.add(l, gbc);
+                    gbc.gridy++;
+                }
+                gui.refreshUI();
+            }
+        });
+    }
+
+    /**
+     * 
+     */
+    public void refreshButtons(final boolean allReady) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (allReady) {
+                    bottomPL.remove(readyBTN);
+
+                    final GridBagConstraints gbc = new GridBagConstraints();
+                    gbc.gridx = 1;
+                    gbc.gridy = 0;
+                    gbc.gridwidth = 1;
+                    gbc.weightx = 1;
+                    gbc.weighty = 1;
+                    gbc.fill = GridBagConstraints.NONE;
+                    gbc.insets = new Insets(5, 0, 0, 0);
+
+                    if (players.get(0).getNumber() == playerNb) {
+                        initStartBTN();
+                        bottomPL.add(startBTN, gbc);
+                    } else {
+                        final JLabel label = new JLabel("waiting for " + players.get(0).getName() + " to start the game"); // TODO
+                                                                                                                           // set
+                                                                                                                           // fields
+                                                                                                                           // to
+                                                                                                                           // further
+                                                                                                                           // remove
+                        label.setForeground(Color.white);
+                        label.setFont(new Font("sans-serif", Font.PLAIN, 10));
+                        bottomPL.add(label, gbc);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 
+     * @param _playerNb
+     */
+    public void setPlayerNb(final int _playerNb) {
+        playerNb = _playerNb;
     }
 
     /**
@@ -218,6 +272,14 @@ public class LobbyView extends AbstractView
     /**
      * 
      */
+    private void initReadyBTN() {
+        readyBTN = new JButton("ready !");
+        readyBTN.addActionListener(new ReadyListener());
+    }
+
+    /**
+     * 
+     */
     private void initStartBTN() {
         startBTN = new JButton("start game");
         startBTN.addActionListener(new StartGameListener());
@@ -244,6 +306,33 @@ public class LobbyView extends AbstractView
         @Override
         public void actionPerformed(final ActionEvent e) {
             gui.quitGame();
+        }
+
+    }
+
+    /**
+     * 
+     * @author Herminaël Rougier
+     * @author Damien Jouanno
+     * 
+     */
+    private class ReadyListener implements ActionListener
+    {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            gui.ready();
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    readyBTN.setEnabled(false);
+                }
+            });
         }
 
     }

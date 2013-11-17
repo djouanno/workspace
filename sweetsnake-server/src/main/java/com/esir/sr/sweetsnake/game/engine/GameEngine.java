@@ -35,6 +35,9 @@ public class GameEngine
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
+    /** The game session */
+    private final GameSession             session;
+
     /** The game board */
     private final GameBoard               gameBoard;
 
@@ -50,13 +53,14 @@ public class GameEngine
      * @param _board
      * @param _playersMap
      */
-    public GameEngine(final GameSession session) {
-        log.info("Initializing a new Game Engine between for session {}", session);
+    public GameEngine(final GameSession _session) {
+        log.info("Initializing a new Game Engine between for session {}", _session);
+        session = _session;
         gameBoard = GameBoardGenerator.generateBoard(GameConstants.GRID_SIZE, GameConstants.GRID_SIZE, GameConstants.NUMBER_OF_SWEETS);
         playersMap = new LinkedHashMap<Player, IComponent>();
 
         int i = 1;
-        for (final Player player : session.getPlayers()) {
+        for (final Player player : _session.getPlayers()) {
             final Snake snake = new Snake();
             player.setSnakeId(snake.getId());
             final PlayerPosition position = new PlayerPosition(gameBoard.getWidth(), gameBoard.getHeight(), i);
@@ -102,7 +106,7 @@ public class GameEngine
         }
 
         if (gameBoard.getNbSweets() == 0) {
-
+            session.stopGame();
         }
     }
 

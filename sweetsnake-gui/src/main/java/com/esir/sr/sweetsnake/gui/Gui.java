@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
+import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.view.AbstractView;
 import com.esir.sr.sweetsnake.view.ConnectionView;
 import com.esir.sr.sweetsnake.view.GameView;
@@ -125,22 +127,27 @@ public class Gui extends JFrame implements IGui
      * 
      */
     private void initFrameParameters() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
-        setTitle("SweetSnake");
-        dimension = new Dimension(GuiConstants.GUI_WIDTH, GuiConstants.GUI_HEIGHT);
-        setSize(dimension);
-        setPreferredSize(dimension);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                setResizable(false);
+                setTitle("SweetSnake");
+                dimension = new Dimension(GuiConstants.GUI_WIDTH, GuiConstants.GUI_HEIGHT);
+                setSize(dimension);
+                setPreferredSize(dimension);
 
-        final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        final int X = screen.width / 2 - dimension.width / 2;
-        final int Y = screen.height / 2 - dimension.height / 2;
-        setBounds(X, Y, dimension.width, dimension.height);
-        setContentPane(new ImagePanel(GuiConstants.BG_PATH));
+                final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+                final int X = screen.width / 2 - dimension.width / 2;
+                final int Y = screen.height / 2 - dimension.height / 2;
+                setBounds(X, Y, dimension.width, dimension.height);
+                setContentPane(new ImagePanel(GuiConstants.BG_PATH));
 
-        pack();
+                pack();
 
-        setVisible(true);
+                setVisible(true);
+            }
+        });
     }
 
     /**
@@ -148,12 +155,20 @@ public class Gui extends JFrame implements IGui
      * @param view
      */
     private void switchView(final AbstractView view) {
-        view.build();
-        getContentPane().removeAll();
-        getContentPane().add(view);
-        refreshUI();
-        currentView = view;
-        log.debug("View switched to {}", view.getClass().getName());
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (currentView != null) {
+                    currentView.unbuild();
+                }
+                view.build();
+                getContentPane().removeAll();
+                getContentPane().add(view);
+                refreshUI();
+                currentView = view;
+                log.debug("View switched to {}", view.getClass().getName());
+            }
+        });
     }
 
     /**
@@ -178,13 +193,12 @@ public class Gui extends JFrame implements IGui
     private void displayInfoMessage(final String title, final String message) {
         // showMessageDialog is a blocking method while the user has not closed the dialog so we have to launch it in
         // a new thread
-        final Thread t = new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 JOptionPane.showMessageDialog(Gui.this, message, title, JOptionPane.INFORMATION_MESSAGE);
             }
-        });
-        t.start();
+        }).start();
     }
 
     /**
@@ -272,7 +286,7 @@ public class Gui extends JFrame implements IGui
      * @see com.esir.sr.sweetsnake.api.IGui#gameRequested(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public int gameRequested(final GameRequestDTO request) {
+    public int requestReceived(final GameRequestDTO request) {
         return displayCustomQuestion("Someone wants to play with you", request.getRequestingPlayerDto().getName() + " wants to play with you", new String[] { "accept", "deny" });
     }
 
@@ -306,25 +320,38 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#gameJoined(java.util.List)
+     * @see com.esir.sr.sweetsnake.api.IGui#gameJoined(int, java.util.List)
      */
     @Override
-    public void gameJoined(final List<PlayerDTO> players) {
+    public void sessionJoined(final int playerNb, final List<PlayerDTO> players) {
         if (currentView != lobbyView) {
             switchView(lobbyView);
         }
-        lobbyView.setPlayers(players);
-        lobbyView.refreshPlayers();
-        refreshUI();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                lobbyView.setPlayerNb(playerNb);
+                lobbyView.setPlayers(players);
+                lobbyView.refreshPlayers();
+                boolean allReady = true;
+                for (final PlayerDTO player : players) {
+                    if (player.getStatus() != PlayerStatus.READY) {
+                        allReady = false;
+                    }
+                }
+                lobbyView.refreshButtons(allReady);
+                refreshUI();
+            }
+        });
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#gameStarted(boolean, java.util.Map, com.esir.sr.sweetsnake.dto.GameBoardDTO)
+     * @see com.esir.sr.sweetsnake.api.IGui#sessionStarted(int, java.util.Map, com.esir.sr.sweetsnake.dto.GameBoardDTO)
      */
     @Override
-    public void gameStarted(final int playerNb, final Map<Integer, String> playersSnakes, final GameBoardDTO gameBoard) {
+    public void sessionStarted(final int playerNb, final Map<Integer, String> playersSnakes, final GameBoardDTO gameBoard) {
         gameView.setPlayerNb(playerNb);
         gameView.setPlayersSnakesMap(playersSnakes);
         gameView.setGameboardDto(gameBoard);
@@ -334,10 +361,10 @@ public class Gui extends JFrame implements IGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#gameLeaved(java.lang.String, boolean)
+     * @see com.esir.sr.sweetsnake.api.IGui#sessionLeft(java.util.List, com.esir.sr.sweetsnake.dto.PlayerDTO, boolean)
      */
     @Override
-    public void gameLeft(final PlayerDTO leaver, final boolean finished) {
+    public void sessionLeft(final List<PlayerDTO> players, final PlayerDTO leaver, final boolean finished) {
         if (finished) {
             switchView(playersView);
             if (!leaver.getName().equals(client.getUsername())) {
@@ -347,9 +374,29 @@ public class Gui extends JFrame implements IGui
             displayToast(leaver + " has left the game :(");
             if (currentView == gameView) {
                 gameView.hideScore(leaver.getNumber());
+            } else if (currentView == lobbyView) {
+                lobbyView.setPlayers(players);
+                lobbyView.refreshPlayers();
+                boolean allReady = true;
+                for (final PlayerDTO player : players) {
+                    if (player.getStatus() != PlayerStatus.READY) {
+                        allReady = false;
+                    }
+                }
+                lobbyView.refreshButtons(allReady);
             }
+            refreshUI();
         }
-        refreshUI();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IGui#sessionFinished(java.util.Map)
+     */
+    @Override
+    public void sessionFinished(final List<PlayerDTO> players) {
+        switchView(lobbyView);
     }
 
     /*
@@ -371,9 +418,9 @@ public class Gui extends JFrame implements IGui
      * @see com.esir.sr.sweetsnake.api.IGui#refreshScores(java.util.Map)
      */
     @Override
-    public void refreshScores(final Map<Integer, Integer> playersScores) {
+    public void refreshScores(final List<PlayerDTO> players) {
         if (currentView == gameView) {
-            gameView.refreshScores(playersScores);
+            gameView.refreshScores(players);
         }
     }
 
@@ -410,8 +457,13 @@ public class Gui extends JFrame implements IGui
      * 
      */
     public void refreshUI() {
-        revalidate();
-        repaint();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                revalidate();
+                repaint();
+            }
+        });
     }
 
     /**
@@ -420,6 +472,10 @@ public class Gui extends JFrame implements IGui
      */
     public void requestGame(final PlayerDTO requestedPlayer) {
         client.sendRequest(requestedPlayer);
+    }
+
+    public void ready() {
+        client.readyToPlay();
     }
 
     /**

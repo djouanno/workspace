@@ -82,7 +82,7 @@ public class PlayersList<E> extends JList<E>
                 if (player.getStatus() == PlayerStatus.AVAILABLE) {
                     imageIcon = new ImageIcon(PlayersView.class.getResource(GuiConstants.AVAILABLE_ICON_PATH));
                 }
-                if (player.getStatus() == PlayerStatus.INVITED || player.getStatus() == PlayerStatus.INVITING) {
+                if (player.getStatus() == PlayerStatus.PRESENT || player.getStatus() == PlayerStatus.INVITED) {
                     imageIcon = new ImageIcon(PlayersView.class.getResource(GuiConstants.INVITE_ICON_PATH));
                 }
                 label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0), BorderFactory.createEmptyBorder(3, 10, 3, 10)));

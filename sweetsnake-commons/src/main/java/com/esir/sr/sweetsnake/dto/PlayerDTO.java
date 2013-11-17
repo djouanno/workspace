@@ -40,6 +40,9 @@ public class PlayerDTO implements Serializable
     /** The player score */
     private final String       score;
 
+    /** Is the player fictive */
+    private final boolean      isFictive;
+
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
@@ -48,14 +51,18 @@ public class PlayerDTO implements Serializable
      * 
      * @param _name
      * @param _status
+     * @param _snakeId
+     * @param _number
      * @param _score
+     * @param _isFictive
      */
-    public PlayerDTO(final String _name, final PlayerStatus _status, final String _snakeId, final int _number, final int _score) {
+    public PlayerDTO(final String _name, final PlayerStatus _status, final String _snakeId, final int _number, final int _score, final boolean _isFictive) {
         name = _name;
         status = _status;
         snakeId = _snakeId;
         number = "" + _number;
         score = "" + _score;
+        isFictive = _isFictive;
     }
 
     /**********************************************************************************************
@@ -114,6 +121,14 @@ public class PlayerDTO implements Serializable
      */
     public int getScore() {
         return Integer.parseInt(score);
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public boolean isFictive() {
+        return isFictive;
     }
 
 }

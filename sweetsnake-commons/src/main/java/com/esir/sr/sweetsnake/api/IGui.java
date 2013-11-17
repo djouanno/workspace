@@ -43,15 +43,15 @@ public interface IGui
     /**
      * 
      * @param request
-     * @return
      */
-    int gameRequested(GameRequestDTO request);
+    void requestSent(GameRequestDTO request);
 
     /**
      * 
      * @param request
+     * @return
      */
-    void requestSent(GameRequestDTO request);
+    int requestReceived(GameRequestDTO request);
 
     /**
      * 
@@ -62,9 +62,10 @@ public interface IGui
 
     /**
      * 
+     * @param playerNb
      * @param players
      */
-    void gameJoined(List<PlayerDTO> players);
+    void sessionJoined(int playerNb, List<PlayerDTO> players);
 
     /**
      * 
@@ -72,14 +73,21 @@ public interface IGui
      * @param playersSnakes
      * @param gameBoard
      */
-    void gameStarted(int playerNb, Map<Integer, String> playersSnakes, GameBoardDTO gameBoard);
+    void sessionStarted(int playerNb, Map<Integer, String> playersSnakes, GameBoardDTO gameBoard);
 
     /**
      * 
+     * @param players
      * @param leaver
      * @param finished
      */
-    void gameLeft(PlayerDTO leaver, boolean finished);
+    void sessionLeft(List<PlayerDTO> players, PlayerDTO leaver, boolean finished);
+
+    /**
+     * 
+     * @param playersScores
+     */
+    void sessionFinished(List<PlayerDTO> players);
 
     /**
      * 
@@ -89,9 +97,9 @@ public interface IGui
 
     /**
      * 
-     * @param playersScores
+     * @param players
      */
-    void refreshScores(Map<Integer, Integer> playersScores);
+    void refreshScores(List<PlayerDTO> players);
 
     /**
      * 

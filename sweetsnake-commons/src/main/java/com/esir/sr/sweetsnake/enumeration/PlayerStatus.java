@@ -15,14 +15,14 @@ public enum PlayerStatus
     /** The available status */
     AVAILABLE("available"),
 
-    /** The invinting status */
-    INVITING("inviting"),
-
     /** The invited status */
     INVITED("invited"),
 
     /** The present status */
     PRESENT("present"),
+
+    /** The ready status */
+    READY("ready"),
 
     /** The denied status */
     DENIED("denied"),

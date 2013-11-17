@@ -22,7 +22,6 @@ import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
-import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
 import com.esir.sr.sweetsnake.exception.GameSessionNotFoundException;
 import com.esir.sr.sweetsnake.exception.MaximumNumberOfPlayersException;
@@ -71,14 +70,14 @@ public class Client implements IClient
     /** The username */
     private String               username;
 
-    /** The player status */
-    private PlayerStatus         status;
-
     /** The sent requests DTO */
     private List<GameRequestDTO> requests;
 
     /** The session DTO (only one at a time) */
     private GameSessionDTO       session;
+
+    /** Is the client connected to the server */
+    private boolean              isConnected;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -102,7 +101,6 @@ public class Client implements IClient
         if (server == null) {
             gui.serverNotReachable();
         } else {
-            status = PlayerStatus.DISCONNECTED;
             gui.serverReachable();
         }
     }
@@ -113,19 +111,20 @@ public class Client implements IClient
     @PreDestroy
     protected void destroy() {
         log.info("Destroying SweetSnakeClient");
-        if (status != PlayerStatus.DISCONNECTED) {
+        if (isConnected) {
             disconnect();
         }
     }
 
     /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
+     * [BLOCK] PUBLIC GUI EXPOSED METHODS
      **********************************************************************************************/
 
-    /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
-     **********************************************************************************************/
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#reachServer()
+     */
     @Override
     public void reachServer() {
         if (server == null) {
@@ -139,6 +138,11 @@ public class Client implements IClient
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#connect(java.lang.String)
+     */
     @Override
     public void connect(final String _username) throws UnableToConnectException {
         if (_username == null || _username.isEmpty()) {
@@ -147,22 +151,26 @@ public class Client implements IClient
         log.debug("Connecting with username {}", _username);
         username = new String(_username);
         server.connect(callback);
-        status = PlayerStatus.AVAILABLE;
+        isConnected = true;
         gui.connectedToServer();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#disconnect()
+     */
     @Override
     public void disconnect() {
         log.debug("Disconnecting from username {}", username);
         server.disconnect(callback);
-        status = PlayerStatus.DISCONNECTED;
     }
 
-    @Override
-    public void refreshPlayersList(final List<PlayerDTO> playersList) {
-        gui.refreshPlayersList(playersList);
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#sendRequest(com.esir.sr.sweetsnake.dto.PlayerDTO)
+     */
     @Override
     public void sendRequest(final PlayerDTO playerDto) {
         try {
@@ -172,46 +180,27 @@ public class Client implements IClient
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#readyToPlay()
+     */
     @Override
-    public void requestSent(final GameRequestDTO requestDto) {
-        requests.add(requestDto);
-        status = PlayerStatus.INVITING;
-        gui.requestSent(requestDto);
-    }
-
-    @Override
-    public void requestReceived(final GameRequestDTO requestDTO) {
-        status = PlayerStatus.INVITED;
-        final int answer = gui.gameRequested(requestDTO);
-        if (answer == 0) {
-            try {
-                server.acceptRequest(callback, requestDTO);
-                gui.gameJoined(session.getPlayersDto());
-            } catch (GameRequestNotFoundException | GameSessionNotFoundException | MaximumNumberOfPlayersException e) {
-                gui.displayErrorMessage(e.getMessage());
-            }
-        } else {
-            try {
-                server.denyRequest(callback, requestDTO);
-            } catch (final GameRequestNotFoundException e) {
-                gui.displayErrorMessage(e.getMessage());
-            }
-            status = PlayerStatus.AVAILABLE;
+    public void readyToPlay() {
+        try {
+            session.getCallback().ready(callback);
+        } catch (final NullPointerException e) {
+            gui.displayErrorMessage("you are not currently playing");
+        } catch (final RemoteException e) {
+            gui.displayErrorMessage(e.getMessage());
         }
     }
 
-    @Override
-    public void requestDenied(final boolean allDenied, final GameRequestDTO requestDTO) {
-        status = PlayerStatus.AVAILABLE;
-        gui.requestRefused(allDenied, requestDTO);
-    }
-
-    @Override
-    public void sessionJoined(final GameSessionDTO sessionDto) {
-        session = sessionDto;
-        gui.gameJoined(session.getPlayersDto());
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#startSession()
+     */
     @Override
     public void startSession() {
         try {
@@ -223,21 +212,11 @@ public class Client implements IClient
         }
     }
 
-    @Override
-    public void sessionStarted(final GameSessionDTO _sessionDto) {
-        session = _sessionDto;
-        final Map<Integer, String> playersSnakes = new LinkedHashMap<Integer, String>();
-        int myPlayerNb = 1;
-        for (final PlayerDTO player : session.getPlayersDto()) {
-            playersSnakes.put(player.getNumber(), player.getSnakeId());
-            if (player.getName().equals(username)) {
-                myPlayerNb = player.getNumber();
-            }
-        }
-        gui.gameStarted(myPlayerNb, playersSnakes, session.getGameBoardDto());
-        status = PlayerStatus.PLAYING;
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#leaveSession()
+     */
     @Override
     public void leaveSession() {
         try {
@@ -249,17 +228,11 @@ public class Client implements IClient
         }
     }
 
-    @Override
-    public void sessionLeft(final GameSessionDTO sessionDto, final PlayerDTO leaver) {
-        log.debug("Game left by {}", leaver);
-        final boolean finished = sessionDto.getPlayersDto().size() <= 1 || leaver.getName().equals(username);
-        if (finished) {
-            session = null;
-            status = PlayerStatus.AVAILABLE;
-        }
-        gui.gameLeft(leaver, finished);
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#moveSnake(com.esir.sr.sweetsnake.enumeration.MoveDirection)
+     */
     @Override
     public void moveSnake(final MoveDirection direction) {
         try {
@@ -271,18 +244,128 @@ public class Client implements IClient
         }
     }
 
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC SERVER EXPOSED METHODS
+     **********************************************************************************************/
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#refreshPlayersList(java.util.List)
+     */
+    @Override
+    public void refreshPlayersList(final List<PlayerDTO> playersList) {
+        gui.refreshPlayersList(playersList);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#requestSent(com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     */
+    @Override
+    public void requestSent(final GameRequestDTO requestDto) {
+        requests.add(requestDto);
+        gui.requestSent(requestDto);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#requestReceived(com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     */
+    @Override
+    public void requestReceived(final GameRequestDTO requestDTO) {
+        final int answer = gui.requestReceived(requestDTO);
+        if (answer == 0) {
+            try {
+                server.acceptRequest(callback, requestDTO);
+            } catch (GameRequestNotFoundException | GameSessionNotFoundException | MaximumNumberOfPlayersException e) {
+                gui.displayErrorMessage(e.getMessage());
+            }
+        } else {
+            try {
+                server.denyRequest(callback, requestDTO);
+            } catch (final GameRequestNotFoundException e) {
+                gui.displayErrorMessage(e.getMessage());
+            }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#requestDenied(boolean, com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     */
+    @Override
+    public void requestDenied(final boolean allDenied, final GameRequestDTO requestDTO) {
+        gui.requestRefused(allDenied, requestDTO);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#sessionJoined(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void sessionJoined(final int playerNb, final GameSessionDTO sessionDto) {
+        session = sessionDto;
+        gui.sessionJoined(playerNb, session.getPlayersDto());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#sessionStarted(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void sessionStarted(final int playerNb, final GameSessionDTO _sessionDto) {
+        session = _sessionDto;
+        final Map<Integer, String> playersSnakes = new LinkedHashMap<Integer, String>();
+        for (final PlayerDTO player : session.getPlayersDto()) {
+            playersSnakes.put(player.getNumber(), player.getSnakeId());
+        }
+        gui.sessionStarted(playerNb, playersSnakes, session.getGameBoardDto());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#sessionLeft(com.esir.sr.sweetsnake.dto.GameSessionDTO,
+     * com.esir.sr.sweetsnake.dto.PlayerDTO, finished)
+     */
+    @Override
+    public void sessionLeft(final GameSessionDTO sessionDto, final PlayerDTO leaver, final boolean finished) {
+        log.debug("Game left by {}", leaver);
+        if (finished) {
+            session = null;
+        }
+        gui.sessionLeft(sessionDto.getPlayersDto(), leaver, finished);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#sessionFinished(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void sessionFinished(final GameSessionDTO sessionDto) {
+        gui.sessionFinished(sessionDto.getPlayersDto());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#refreshSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
     @Override
     public void refreshSession(final GameSessionDTO sessionDto) {
         gui.refreshGameboard(sessionDto.getGameBoardDto());
-        final Map<Integer, Integer> playersScores = new LinkedHashMap<Integer, Integer>();
-        for (final PlayerDTO player : sessionDto.getPlayersDto()) {
-            playersScores.put(player.getNumber(), player.getScore());
-        }
-        gui.refreshScores(playersScores);
+        gui.refreshScores(sessionDto.getPlayersDto());
     }
 
     /**********************************************************************************************
-     * [BLOCK] GETTERS
+     * [BLOCK] PUBLIC CLIENT EXPOSED METHODS
      **********************************************************************************************/
 
     /*

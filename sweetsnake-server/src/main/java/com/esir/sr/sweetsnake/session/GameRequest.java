@@ -75,7 +75,6 @@ public class GameRequest extends AbstractSession
 
         requestingPlayer.addSentRequestId(id);
         requestedPlayer.setReceivedRequestId(id);
-        requestingPlayer.setStatus(PlayerStatus.INVITING);
         requestedPlayer.setStatus(PlayerStatus.INVITED);
 
         final GameRequestDTO requestDTO = DtoConverterFactory.convertGameRequest(this);

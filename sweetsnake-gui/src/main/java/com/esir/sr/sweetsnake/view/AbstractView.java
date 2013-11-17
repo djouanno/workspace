@@ -3,6 +3,7 @@ package com.esir.sr.sweetsnake.view;
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -70,15 +71,34 @@ public abstract class AbstractView extends JPanel
      * 
      */
     public void build() {
-        if (!isBuilded) {
-            final Dimension frameDimension = gui.getContentPane().getSize();
-            dimension = new Dimension(frameDimension.width - GuiConstants.GUI_OFFSET, frameDimension.height - GuiConstants.GUI_OFFSET);
-            setSize(dimension);
-            setPreferredSize(dimension);
-            buildImpl();
-            isBuilded = true;
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (!isBuilded) {
+                    final Dimension frameDimension = gui.getContentPane().getSize();
+                    dimension = new Dimension(frameDimension.width - GuiConstants.GUI_OFFSET, frameDimension.height - GuiConstants.GUI_OFFSET);
+                    setSize(dimension);
+                    setPreferredSize(dimension);
+                    buildImpl();
+                    isBuilded = true;
+                }
+            }
+        });
+    }
 
+    /**
+     * 
+     */
+    public void unbuild() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (isBuilded) {
+                    removeAll();
+                    isBuilded = false;
+                }
+            }
+        });
     }
 
     /**

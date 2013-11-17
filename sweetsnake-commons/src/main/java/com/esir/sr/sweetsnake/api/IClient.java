@@ -47,6 +47,11 @@ public interface IClient
     void sendRequest(PlayerDTO player);
 
     /**
+     * 
+     */
+    void readyToPlay();
+
+    /**
      * from the gui
      * 
      */
@@ -101,24 +106,33 @@ public interface IClient
     /**
      * from the server
      * 
+     * @param playerNb
      * @param session
      */
-    void sessionJoined(GameSessionDTO session);
+    void sessionJoined(int playerNb, GameSessionDTO session);
 
     /**
      * from the server
      * 
+     * @param playerNb
      * @param session
      */
-    void sessionStarted(GameSessionDTO session);
+    void sessionStarted(int playerNb, GameSessionDTO session);
 
     /**
      * from the server
      * 
      * @param session
      * @param leaver
+     * @param finished
      */
-    void sessionLeft(GameSessionDTO session, PlayerDTO leaver);
+    void sessionLeft(GameSessionDTO session, PlayerDTO leaver, boolean finished);
+
+    /**
+     * 
+     * @param session
+     */
+    void sessionFinished(GameSessionDTO session);
 
     /**
      * from the server
