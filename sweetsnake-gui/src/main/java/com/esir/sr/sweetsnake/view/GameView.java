@@ -20,7 +20,6 @@ import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import org.slf4j.Logger;
@@ -182,23 +181,13 @@ public class GameView extends AbstractView
      * @param playersScores
      */
     public void refreshScores(final List<PlayerDTO> players) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                for (final PlayerDTO player : players) {
-                    playersScoresLB[player.getNumber() - 1].setText(intToString(player.getScore(), 3));
-                }
-            }
-        });
+        for (final PlayerDTO player : players) {
+            playersScoresLB[player.getNumber() - 1].setText(intToString(player.getScore(), 3));
+        }
     }
 
     public void hideScore(final int _playerNb) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                playersScoresLB[_playerNb - 1].setForeground(findSnakeColor(null, _playerNb));
-            }
-        });
+        playersScoresLB[_playerNb - 1].setForeground(findSnakeColor(null, _playerNb));
     }
 
     /**
@@ -292,42 +281,37 @@ public class GameView extends AbstractView
      * 
      */
     public void drawGameboard() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                final List<GameBoardRefreshDTO> refreshes = gameBoardDto.getComponentsToRefresh();
-                for (final GameBoardRefreshDTO refresh : refreshes) {
-                    final ComponentDTO componentDto = refresh.getComponentDto();
-                    final RefreshAction action = refresh.getAction();
-                    final IComponent component = gameBoardPL.getComponentById(componentDto.getId());
+        final List<GameBoardRefreshDTO> refreshes = gameBoardDto.getComponentsToRefresh();
+        for (final GameBoardRefreshDTO refresh : refreshes) {
+            final ComponentDTO componentDto = refresh.getComponentDto();
+            final RefreshAction action = refresh.getAction();
+            final IComponent component = gameBoardPL.getComponentById(componentDto.getId());
 
-                    switch (action) {
-                        case ADD:
-                            IComponent newComponent = null;
-                            final int x = componentDto.getX(),
-                            y = componentDto.getY();
-                            switch (componentDto.getType()) {
-                                case SNAKE:
-                                    newComponent = new Snake(componentDto.getId(), x, y, findSnakeIconPath(componentDto.getId()));
-                                    break;
-                                case SWEET:
-                                    newComponent = new Sweet(componentDto.getId(), x, y);
-                                    break;
-                            }
-                            gameBoardPL.addComponent(newComponent);
+            switch (action) {
+                case ADD:
+                    IComponent newComponent = null;
+                    final int x = componentDto.getX(),
+                    y = componentDto.getY();
+                    switch (componentDto.getType()) {
+                        case SNAKE:
+                            newComponent = new Snake(componentDto.getId(), x, y, findSnakeIconPath(componentDto.getId()));
                             break;
-                        case MOVE:
-                            component.setXYPos(componentDto.getX(), componentDto.getY());
-                            gameBoardPL.moveComponent(component);
-                            break;
-                        case REMOVE:
-                            gameBoardPL.removeComponent(component);
+                        case SWEET:
+                            newComponent = new Sweet(componentDto.getId(), x, y);
                             break;
                     }
-                }
-                gui.refreshUI();
+                    gameBoardPL.addComponent(newComponent);
+                    break;
+                case MOVE:
+                    component.setXYPos(componentDto.getX(), componentDto.getY());
+                    gameBoardPL.moveComponent(component);
+                    break;
+                case REMOVE:
+                    gameBoardPL.removeComponent(component);
+                    break;
             }
-        });
+        }
+        gui.refreshUI();
     }
 
     /**
@@ -463,7 +447,6 @@ public class GameView extends AbstractView
         @Override
         public void keyPressed(final KeyEvent e) {
             final int keyCode = e.getKeyCode();
-            log.debug("Key pressed with code {}", keyCode);
             if (moveTable.containsKey(keyCode)) {
                 gui.moveSnake(moveTable.get(keyCode));
             }

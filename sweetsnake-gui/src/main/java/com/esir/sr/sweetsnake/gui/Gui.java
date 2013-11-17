@@ -107,8 +107,13 @@ public class Gui extends JFrame implements IGui
      */
     @PostConstruct
     protected void init() {
-        log.info("Initializing a new SweetSnakeIhm");
-        initFrameParameters();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                log.info("Initializing a new SweetSnakeIhm");
+                initFrameParameters();
+            }
+        });
     }
 
     /**
@@ -127,27 +132,22 @@ public class Gui extends JFrame implements IGui
      * 
      */
     private void initFrameParameters() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                setResizable(false);
-                setTitle("SweetSnake");
-                dimension = new Dimension(GuiConstants.GUI_WIDTH, GuiConstants.GUI_HEIGHT);
-                setSize(dimension);
-                setPreferredSize(dimension);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+        setTitle("SweetSnake");
+        dimension = new Dimension(GuiConstants.GUI_WIDTH, GuiConstants.GUI_HEIGHT);
+        setSize(dimension);
+        setPreferredSize(dimension);
 
-                final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-                final int X = screen.width / 2 - dimension.width / 2;
-                final int Y = screen.height / 2 - dimension.height / 2;
-                setBounds(X, Y, dimension.width, dimension.height);
-                setContentPane(new ImagePanel(GuiConstants.BG_PATH));
+        final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        final int X = screen.width / 2 - dimension.width / 2;
+        final int Y = screen.height / 2 - dimension.height / 2;
+        setBounds(X, Y, dimension.width, dimension.height);
+        setContentPane(new ImagePanel(GuiConstants.BG_PATH));
 
-                pack();
+        pack();
 
-                setVisible(true);
-            }
-        });
+        setVisible(true);
     }
 
     /**
@@ -275,8 +275,13 @@ public class Gui extends JFrame implements IGui
     @Override
     public void refreshPlayersList(final List<PlayerDTO> playersList) {
         if (currentView == playersView) {
-            log.debug("Refreshing players list with {} players", playersList.size());
-            playersView.refreshPlayersList(playersList);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    playersView.refreshPlayersList(playersList);
+                    refreshUI();
+                }
+            });
         }
     }
 
@@ -291,14 +296,13 @@ public class Gui extends JFrame implements IGui
     }
 
     /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.IGui#requestSent(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
     public void requestSent(final GameRequestDTO request) {
-        // displayToast("Your request has been sent to " + request.getRequestedPlayerDto().getName());
-        if (currentView == lobbyView) {
-
-        } else {
+        if (currentView != lobbyView) {
             switchView(lobbyView);
         }
     }
@@ -371,21 +375,29 @@ public class Gui extends JFrame implements IGui
                 displayInfoMessage("Game stopped", "everyone has left the game :(");
             }
         } else {
-            displayToast(leaver + " has left the game :(");
-            if (currentView == gameView) {
-                gameView.hideScore(leaver.getNumber());
-            } else if (currentView == lobbyView) {
-                lobbyView.setPlayers(players);
-                lobbyView.refreshPlayers();
-                boolean allReady = true;
-                for (final PlayerDTO player : players) {
-                    if (player.getStatus() != PlayerStatus.READY) {
-                        allReady = false;
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    displayToast(leaver + " has left the game :(");
+                    if (currentView == gameView) {
+                        gameView.hideScore(leaver.getNumber());
+                    } else if (currentView == lobbyView) {
+                        lobbyView.setPlayers(players);
+                        lobbyView.refreshPlayers();
+                        boolean allReady = true;
+                        for (final PlayerDTO player : players) {
+                            if (player.getStatus() != PlayerStatus.READY) {
+                                allReady = false;
+                            }
+                            if (player.getName().equals(client.getUsername())) {
+                                lobbyView.setPlayerNb(player.getNumber());
+                            }
+                        }
+                        lobbyView.refreshButtons(allReady);
                     }
+                    refreshUI();
                 }
-                lobbyView.refreshButtons(allReady);
-            }
-            refreshUI();
+            });
         }
     }
 
@@ -407,8 +419,13 @@ public class Gui extends JFrame implements IGui
     @Override
     public void refreshGameboard(final GameBoardDTO gameBoard) {
         if (currentView == gameView) {
-            gameView.setGameboardDto(gameBoard);
-            gameView.drawGameboard();
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    gameView.setGameboardDto(gameBoard);
+                    gameView.drawGameboard();
+                }
+            });
         }
     }
 
@@ -420,7 +437,12 @@ public class Gui extends JFrame implements IGui
     @Override
     public void refreshScores(final List<PlayerDTO> players) {
         if (currentView == gameView) {
-            gameView.refreshScores(players);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    gameView.refreshScores(players);
+                }
+            });
         }
     }
 
@@ -431,15 +453,12 @@ public class Gui extends JFrame implements IGui
      */
     @Override
     public void displayErrorMessage(final String message) {
-        // showMessageDialog is a blocking method while the user has not closed the dialog so we have to launch it in
-        // a new thread
-        final Thread t = new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 JOptionPane.showMessageDialog(Gui.this, message, "Error", JOptionPane.ERROR_MESSAGE);
             }
-        });
-        t.start();
+        }).start();
     }
 
     /**********************************************************************************************
@@ -457,13 +476,8 @@ public class Gui extends JFrame implements IGui
      * 
      */
     public void refreshUI() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                revalidate();
-                repaint();
-            }
-        });
+        revalidate();
+        repaint();
     }
 
     /**

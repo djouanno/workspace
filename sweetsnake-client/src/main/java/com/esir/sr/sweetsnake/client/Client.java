@@ -187,6 +187,7 @@ public class Client implements IClient
      */
     @Override
     public void readyToPlay() {
+        log.debug("session : {}", session);
         try {
             session.getCallback().ready(callback);
         } catch (final NullPointerException e) {
@@ -319,8 +320,8 @@ public class Client implements IClient
      * @see com.esir.sr.sweetsnake.api.IClient#sessionStarted(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void sessionStarted(final int playerNb, final GameSessionDTO _sessionDto) {
-        session = _sessionDto;
+    public void sessionStarted(final int playerNb, final GameSessionDTO sessionDto) {
+        session = sessionDto;
         final Map<Integer, String> playersSnakes = new LinkedHashMap<Integer, String>();
         for (final PlayerDTO player : session.getPlayersDto()) {
             playersSnakes.put(player.getNumber(), player.getSnakeId());
@@ -360,6 +361,7 @@ public class Client implements IClient
      */
     @Override
     public void refreshSession(final GameSessionDTO sessionDto) {
+        session = sessionDto;
         gui.refreshGameboard(sessionDto.getGameBoardDto());
         gui.refreshScores(sessionDto.getPlayersDto());
     }

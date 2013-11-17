@@ -96,6 +96,23 @@ public class GameSession extends AbstractSession
     }
 
     /**********************************************************************************************
+     * [BLOCK] PRIVATE METHODS
+     **********************************************************************************************/
+
+    /**
+     * 
+     * @param startIndex
+     */
+    private void updatePlayersNumbers(final int startIndex) {
+        final ListIterator<Player> it = players.listIterator(startIndex);
+        while (it.hasNext()) {
+            final Player player = it.next();
+            log.debug("Decreasing player number {} to {}", player.getNumber(), player.getNumber() - 1);
+            player.setNumber(player.getNumber() - 1);
+        }
+    }
+
+    /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
 
@@ -105,11 +122,15 @@ public class GameSession extends AbstractSession
      */
     public void denied(final Player player) {
         final Player fictivePlayer = fictivePlayers.get(player.getName());
-        fictivePlayer.setStatus(PlayerStatus.DENIED);
+        players.remove(fictivePlayer);
+        fictivePlayers.remove(player.getName());
+        updatePlayersNumbers(fictivePlayer.getNumber() - 1);
+
+        final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
         for (final Player _player : getPlayers()) {
             if (!_player.isFictive()) {
                 try {
-                    _player.getCallback().sessionJoined(_player.getNumber(), DtoConverterFactory.convertGameSession(this));
+                    _player.getCallback().sessionJoined(_player.getNumber(), sessionDto);
                 } catch (final RemoteException e) {
                     log.error(e.getMessage(), e);
                 }
@@ -204,12 +225,7 @@ public class GameSession extends AbstractSession
      */
     public void removePlayer(final Player player) {
         players.remove(player);
-        final ListIterator<Player> it = players.listIterator(player.getNumber() - 1);
-        while (it.hasNext()) {
-            final Player _player = it.next();
-            log.debug("Decreasing player number {} to {}", _player.getNumber(), _player.getNumber() - 1);
-            _player.setNumber(_player.getNumber() - 1);
-        }
+        updatePlayersNumbers(player.getNumber() - 1);
         player.setStatus(PlayerStatus.AVAILABLE);
         player.setGameSessionId(null);
         player.setNumber(0);
@@ -342,9 +358,11 @@ public class GameSession extends AbstractSession
             final boolean finished = players.size() <= 1;
 
             for (final Player player : players) {
-                log.debug("Telling {} that {} has left the session", player.getName(), leaver.getName());
-                player.getCallback().sessionLeft(sessionDto, leaverDto, finished);
-                player.getCallback().refreshSession(sessionDto);
+                if (!player.isFictive()) {
+                    log.debug("Telling {} that {} has left the session", player.getName(), leaver.getName());
+                    player.getCallback().sessionLeft(sessionDto, leaverDto, finished);
+                    player.getCallback().refreshSession(sessionDto);
+                }
             }
 
             if (finished) {

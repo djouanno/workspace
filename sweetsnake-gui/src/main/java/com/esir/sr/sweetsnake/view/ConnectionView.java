@@ -16,7 +16,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
 import org.slf4j.Logger;
@@ -194,14 +193,9 @@ public class ConnectionView extends AbstractView
          */
         @Override
         public void focusGained(final FocusEvent arg0) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (usernameTF.getText().equals(USERNAME_TF_TEXT)) {
-                        usernameTF.setText("");
-                    }
-                }
-            });
+            if (usernameTF.getText().equals(USERNAME_TF_TEXT)) {
+                usernameTF.setText("");
+            }
         }
 
         /*
@@ -211,14 +205,9 @@ public class ConnectionView extends AbstractView
          */
         @Override
         public void focusLost(final FocusEvent arg0) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (usernameTF.getText().isEmpty()) {
-                        usernameTF.setText(USERNAME_TF_TEXT);
-                    }
-                }
-            });
+            if (usernameTF.getText().isEmpty()) {
+                usernameTF.setText(USERNAME_TF_TEXT);
+            }
         }
 
     }

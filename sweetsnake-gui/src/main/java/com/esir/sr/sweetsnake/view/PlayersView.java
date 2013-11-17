@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,16 +136,11 @@ public class PlayersView extends AbstractView
      */
     public void refreshPlayersList(final List<PlayerDTO> playersList) {
         if (isBuilded) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    playersLST.removeAllElements();
-                    final List<PlayerDTO> players = new LinkedList<PlayerDTO>(playersList);
-                    for (final PlayerDTO player : players) {
-                        playersLST.addElement(player);
-                    }
-                }
-            });
+            playersLST.removeAllElements();
+            final List<PlayerDTO> players = new LinkedList<PlayerDTO>(playersList);
+            for (final PlayerDTO player : players) {
+                playersLST.addElement(player);
+            }
         }
     }
 

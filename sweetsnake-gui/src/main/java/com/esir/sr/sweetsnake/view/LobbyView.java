@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +68,9 @@ public class LobbyView extends AbstractView
 
     /** The start button */
     private JButton             startBTN;
+
+    /** The waiting label */
+    private JLabel              waitLB;
 
     /** The current player's number */
     private int                 playerNb;
@@ -150,62 +152,49 @@ public class LobbyView extends AbstractView
      * 
      */
     public void refreshPlayers() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                centerPL.removeAll();
-                final GridBagConstraints gbc = new GridBagConstraints();
-                gbc.gridx = 0;
-                gbc.gridy = 0;
-                for (final PlayerDTO player : players) {
-                    log.debug("Player to add in lobby : {}", player);
-                    final JLabel l = new JLabel(player.getNumber() + " ) " + player.getName() + " - " + player.getStatus());
-                    l.setForeground(Color.white);
-                    l.setFont(new Font("sans-serif", Font.BOLD, 16));
-                    centerPL.add(l, gbc);
-                    gbc.gridy++;
-                }
-                gui.refreshUI();
-            }
-        });
+        centerPL.removeAll();
+        final GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        for (final PlayerDTO player : players) {
+            log.debug("Player to add in lobby : {}", player);
+            final JLabel l = new JLabel(player.getNumber() + " ) " + player.getName() + " - " + player.getStatus());
+            l.setForeground(Color.white);
+            l.setFont(new Font("sans-serif", Font.BOLD, 16));
+            centerPL.add(l, gbc);
+            gbc.gridy++;
+        }
+        gui.refreshUI();
     }
 
     /**
      * 
      */
     public void refreshButtons(final boolean allReady) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (allReady) {
-                    bottomPL.remove(readyBTN);
+        if (allReady) {
+            bottomPL.remove(readyBTN);
 
-                    final GridBagConstraints gbc = new GridBagConstraints();
-                    gbc.gridx = 1;
-                    gbc.gridy = 0;
-                    gbc.gridwidth = 1;
-                    gbc.weightx = 1;
-                    gbc.weighty = 1;
-                    gbc.fill = GridBagConstraints.NONE;
-                    gbc.insets = new Insets(5, 0, 0, 0);
-
-                    if (players.get(0).getNumber() == playerNb) {
-                        initStartBTN();
-                        bottomPL.add(startBTN, gbc);
-                    } else {
-                        final JLabel label = new JLabel("waiting for " + players.get(0).getName() + " to start the game"); // TODO
-                                                                                                                           // set
-                                                                                                                           // fields
-                                                                                                                           // to
-                                                                                                                           // further
-                                                                                                                           // remove
-                        label.setForeground(Color.white);
-                        label.setFont(new Font("sans-serif", Font.PLAIN, 10));
-                        bottomPL.add(label, gbc);
-                    }
-                }
+            if (waitLB != null) {
+                bottomPL.remove(waitLB);
             }
-        });
+
+            final GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            gbc.gridwidth = 1;
+            gbc.weightx = 1;
+            gbc.weighty = 1;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.insets = new Insets(5, 0, 0, 0);
+
+            if (players.get(0).getNumber() == playerNb) {
+                initStartBTN();
+                bottomPL.add(startBTN, gbc);
+            } else {
+                initWaitLB(players.get(0).getName());
+                bottomPL.add(waitLB, gbc);
+            }
+        }
     }
 
     /**
@@ -285,6 +274,15 @@ public class LobbyView extends AbstractView
         startBTN.addActionListener(new StartGameListener());
     }
 
+    /**
+     * 
+     */
+    private void initWaitLB(final String playerName) {
+        waitLB = new JLabel("waiting for " + playerName + " to start the game");
+        waitLB.setForeground(Color.white);
+        waitLB.setFont(new Font("sans-serif", Font.PLAIN, 10));
+    }
+
     /**********************************************************************************************
      * [BLOCK] INTERNAL LISTENERS
      **********************************************************************************************/
@@ -327,12 +325,7 @@ public class LobbyView extends AbstractView
         @Override
         public void actionPerformed(final ActionEvent e) {
             gui.ready();
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    readyBTN.setEnabled(false);
-                }
-            });
+            readyBTN.setEnabled(false);
         }
 
     }
