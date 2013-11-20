@@ -1,5 +1,6 @@
 package com.esir.sr.sweetsnake.gui;
 
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IServerGui;
+import com.esir.sr.sweetsnake.constants.ServerGuiConstants;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
@@ -122,6 +124,11 @@ public class ServerGui extends JFrame implements IServerGui
     private void initFrameParameters() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("SweetSnake Server");
+
+        final Dimension dimension = new Dimension(ServerGuiConstants.GUI_WIDTH, ServerGuiConstants.GUI_HEIGHT);
+        setSize(dimension);
+        setPreferredSize(dimension);
+
         setExtendedState(Frame.MAXIMIZED_BOTH);
 
         pack();

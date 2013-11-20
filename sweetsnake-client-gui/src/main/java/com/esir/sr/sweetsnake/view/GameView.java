@@ -110,7 +110,7 @@ public class GameView extends AbstractView
     @Override
     protected void init() {
         super.init();
-        log.info("Initializing a new Game View");
+        log.info("Initializing the Game View");
         playersSnakes = new LinkedHashMap<Integer, String>();
     }
 

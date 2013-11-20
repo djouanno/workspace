@@ -72,7 +72,7 @@ public class UnreachableServerView extends AbstractView
     @Override
     protected void init() {
         super.init();
-        log.info("Initializing a new Unreachable Server View");
+        log.info("Initializing the Unreachable Server View");
     }
 
     /**********************************************************************************************

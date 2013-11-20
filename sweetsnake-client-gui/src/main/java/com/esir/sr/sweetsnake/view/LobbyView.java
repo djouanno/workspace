@@ -103,7 +103,7 @@ public class LobbyView extends AbstractView
     @PostConstruct
     protected void init() {
         super.init();
-        log.info("Initializing a new Lobby View");
+        log.info("Initializing the Lobby View");
     }
 
     /**********************************************************************************************

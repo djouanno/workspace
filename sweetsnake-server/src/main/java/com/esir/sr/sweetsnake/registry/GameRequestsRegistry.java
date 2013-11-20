@@ -54,7 +54,7 @@ public class GameRequestsRegistry
      */
     @PostConstruct
     protected void init() {
-        log.info("Initializing game requests registry");
+        log.info("Initializing the game requests registry");
         requests = new LinkedHashMap<String, GameRequest>();
     }
 
@@ -88,8 +88,10 @@ public class GameRequestsRegistry
      */
     public GameRequest get(final String id) throws GameRequestNotFoundException {
         if (!contains(id)) {
+            log.warn("Request with id {} is no more available", id);
             throw new GameRequestNotFoundException("request no more available");
         }
+
         return requests.get(id);
     }
 
@@ -100,8 +102,10 @@ public class GameRequestsRegistry
      */
     public void remove(final String id) throws GameRequestNotFoundException {
         if (!contains(id)) {
+            log.warn("Request with id {} is no more available", id);
             throw new GameRequestNotFoundException("request no more available");
         }
+
         final GameRequest request = requests.get(id);
         request.destroy();
         requests.remove(id);

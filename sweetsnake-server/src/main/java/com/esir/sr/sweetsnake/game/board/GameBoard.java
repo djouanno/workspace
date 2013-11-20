@@ -72,7 +72,7 @@ public class GameBoard
      * @param component
      */
     public void addComponent(final IComponent component) {
-        log.debug("Adding component {} on the map", component);
+        log.debug("Adding component {} to the map", component);
         if (component.getType() == ComponentType.SWEET) {
             nbSweets++;
         }
@@ -87,12 +87,9 @@ public class GameBoard
      */
     public void moveComponent(final IComponent component, final MoveDirection direction) {
         final IComponent oldComponent = getComponentById(component.getId());
-        log.debug("old component : {}", oldComponent);
         if (oldComponent != null) {
-            log.debug("Setting old component matrix to null for x = {} and y = {}", oldComponent.getXPos(), oldComponent.getYPos());
             gameMap[oldComponent.getXPos()][oldComponent.getYPos()] = null;
             component.move(direction);
-            log.debug("Moving component {} on the map", component);
             gameMap[component.getXPos()][component.getYPos()] = component;
             refreshes.add(new GameBoardRefresh(component, RefreshAction.MOVE));
         }
@@ -152,7 +149,6 @@ public class GameBoard
      * 
      */
     public void clearRefreshes() {
-        log.debug("Clearing the game board refreshes");
         refreshes.clear();
     }
 

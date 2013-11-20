@@ -85,7 +85,7 @@ public class PlayersView extends AbstractView
     @PostConstruct
     protected void init() {
         super.init();
-        log.info("Initializing a new Players View");
+        log.info("Initializing the Players View");
     }
 
     /**********************************************************************************************

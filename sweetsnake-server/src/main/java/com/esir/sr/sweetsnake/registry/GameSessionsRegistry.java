@@ -54,7 +54,7 @@ public class GameSessionsRegistry
      */
     @PostConstruct
     protected void init() {
-        log.info("Initializing game sessions registry");
+        log.info("Initializing the game sessions registry");
         sessions = new LinkedHashMap<String, GameSession>();
     }
 
@@ -88,8 +88,10 @@ public class GameSessionsRegistry
      */
     public GameSession get(final String id) throws GameSessionNotFoundException {
         if (!contains(id)) {
+            log.warn("Session with id {} was not found", id);
             throw new GameSessionNotFoundException("session not found");
         }
+
         return sessions.get(id);
     }
 
@@ -100,8 +102,10 @@ public class GameSessionsRegistry
      */
     public void remove(final String id) throws GameSessionNotFoundException {
         if (!contains(id)) {
+            log.warn("Session with id {} was not found", id);
             throw new GameSessionNotFoundException("session not found");
         }
+
         final GameSession session = sessions.get(id);
         session.destroy();
         sessions.remove(id);

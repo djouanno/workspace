@@ -44,7 +44,7 @@ public class Snake extends AbstractComponent
      */
     @Override
     public void move(final MoveDirection direction) {
-        log.debug("Moving snake to the {}", direction);
+        log.debug("Moving snake with id {} to the {}", id, direction);
         x = (x + direction.getValue()[0] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
         y = (y + direction.getValue()[1] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
     }

@@ -7,10 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.io.StringReader;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,6 +19,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.component.JTextAreaOS;
@@ -65,7 +63,11 @@ public class LogsView extends AbstractView
     private JButton             clearBTN;
 
     /** The logs text area */
-    private JTextArea           logTAR;
+    private JTextArea           logsTAR;
+
+    /** The logs taxt area output stream */
+    @Autowired
+    private JTextAreaOS         logsOS;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -116,10 +118,10 @@ public class LogsView extends AbstractView
         add(centerPL, BorderLayout.CENTER);
 
         initLogTAR();
-        centerPL.add(new JScrollPane(logTAR, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+        centerPL.add(new JScrollPane(logsTAR, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
-        final JTextAreaOS out = new JTextAreaOS(logTAR);
-        System.setOut(new PrintStream(out));
+        System.setOut(new PrintStream(logsOS));
+        System.setErr(new PrintStream(logsOS));
     }
 
     /**********************************************************************************************
@@ -149,7 +151,7 @@ public class LogsView extends AbstractView
      * 
      */
     private void initLevelsCB() {
-        final String[] levels = { "ALL", "INFO", "DEBUG" };
+        final String[] levels = { "ALL", "INFO", "DEBUG", "WARN", "ERROR" };
         levelsCB = new JComboBox<String>(levels);
         levelsCB.addActionListener(new LevelListener());
     }
@@ -175,8 +177,8 @@ public class LogsView extends AbstractView
      * 
      */
     private void initLogTAR() {
-        logTAR = new JTextArea();
-        logTAR.setEditable(false);
+        logsTAR = logsOS.getTextArea();
+        logsTAR.setEditable(false);
     }
 
     /**********************************************************************************************
@@ -200,24 +202,8 @@ public class LogsView extends AbstractView
         @Override
         public void actionPerformed(final ActionEvent e) {
             final String level = (String) levelsCB.getSelectedItem();
-
-            if (level.equals("ALL")) {
-            } else {
-                final BufferedReader br = new BufferedReader(new StringReader(logTAR.getText()));
-                final StringBuilder sb = new StringBuilder();
-                String line = null;
-
-                try {
-                    while ((line = br.readLine()) != null) {
-                        if (line.contains("[" + level + "]")) {
-                            sb.append(line);
-                        }
-                    }
-                    logTAR.setText(sb.toString());
-                } catch (final IOException e1) {
-                    log.error(e1.getMessage(), e1);
-                }
-            }
+            logsOS.setLevel(level);
+            logsTAR.setText(logsOS.getLogs());
         }
     }
 
@@ -237,7 +223,8 @@ public class LogsView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
-            logTAR.setText("");
+            logsOS.clearLogs();
+            logsTAR.setText("");
         }
 
     }

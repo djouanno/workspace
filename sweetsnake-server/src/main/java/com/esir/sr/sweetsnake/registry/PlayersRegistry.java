@@ -54,7 +54,7 @@ public class PlayersRegistry
      */
     @PostConstruct
     protected void init() {
-        log.info("Initializing players registry");
+        log.info("Initializing the players registry");
         players = new LinkedHashMap<String, Player>();
     }
 
@@ -87,8 +87,10 @@ public class PlayersRegistry
      */
     public Player get(final String name) throws PlayerNotFoundException {
         if (!contains(name)) {
+            log.warn("Player with name {} was not found", name);
             throw new PlayerNotFoundException("player not found");
         }
+
         return players.get(name);
     }
 
@@ -99,9 +101,13 @@ public class PlayersRegistry
      */
     public void remove(final String name) throws PlayerNotFoundException {
         if (!contains(name)) {
+            log.warn("Player with name {} was not found", name);
             throw new PlayerNotFoundException("player not found");
         }
+
+        final Player player = players.get(name);
         players.remove(name);
+        log.debug("Player {} has been removed from registry", player.getName());
     }
 
     /**

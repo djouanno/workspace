@@ -79,7 +79,7 @@ public class Player
         try {
             name = callback.getName();
         } catch (final RemoteException e) {
-            log.error("unable to retrieve client name : {}", e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         status = PlayerStatus.AVAILABLE;
     }

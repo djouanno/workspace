@@ -21,13 +21,13 @@ public abstract class AbstractComponent implements IComponent
      **********************************************************************************************/
 
     /** The element id */
-    protected String            id;
+    protected String              id;
 
     /** The element x position on the game map */
-    protected int               x;
+    protected int                 x;
 
     /** The element y position on the game map */
-    protected int               y;
+    protected int                 y;
 
     /** The element type */
     protected final ComponentType type;

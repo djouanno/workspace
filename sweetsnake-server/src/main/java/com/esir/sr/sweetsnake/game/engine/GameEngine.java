@@ -54,7 +54,7 @@ public class GameEngine
      * @param _playersMap
      */
     public GameEngine(final GameSession _session) {
-        log.info("Initializing a new Game Engine between for session {}", _session);
+        log.info("Initializing a new Game Engine for session {}", _session.getId());
         session = _session;
         gameBoard = GameBoardGenerator.generateBoard(GameConstants.GRID_SIZE, GameConstants.GRID_SIZE, GameConstants.NUMBER_OF_SWEETS);
         playersMap = new LinkedHashMap<Player, IComponent>();
@@ -87,10 +87,8 @@ public class GameEngine
         final IComponent currentComponent = gameBoard.getComponent(x, y);
 
         if (currentComponent == null) {
-            log.debug("Current component is null");
             gameBoard.moveComponent(snake, direction);
         } else {
-            log.debug("Current component is not null");
             switch (currentComponent.getType()) {
             // other player snake cell
                 case SNAKE:

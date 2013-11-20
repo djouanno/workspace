@@ -71,7 +71,7 @@ public class GameRequest extends AbstractSession
      */
     @PostConstruct
     protected void init() {
-        log.info("Initializing new game request between {} and {}", requestingPlayer.getName(), requestedPlayer.getName());
+        log.debug("Initializing a new game request between {} and {}", requestingPlayer.getName(), requestedPlayer.getName());
 
         requestingPlayer.addSentRequestId(id);
         requestedPlayer.setReceivedRequestId(id);

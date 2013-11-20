@@ -43,7 +43,7 @@ public class Sweet extends AbstractComponent
      */
     @Override
     public void move(final MoveDirection direction) {
-        log.info("Moving sweet to the {}", direction);
+        log.debug("Moving sweet with id {} to the {}", id, direction);
     }
 
 }

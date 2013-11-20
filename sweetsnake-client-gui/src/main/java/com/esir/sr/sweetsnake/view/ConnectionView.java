@@ -86,7 +86,7 @@ public class ConnectionView extends AbstractView
     @Override
     protected void init() {
         super.init();
-        log.info("Initializing a new Connection View");
+        log.info("Initializing the Connection View");
     }
 
     /**********************************************************************************************
@@ -160,9 +160,10 @@ public class ConnectionView extends AbstractView
     private void initUsernameTF() {
         usernameTF = new JTextField(new String(USERNAME_TF_TEXT));
         usernameTF.setBorder(new LineBorder(Color.black));
-        usernameTF.addFocusListener(new FocusClearListener());
         usernameTF.setSize(new Dimension(200, 28));
         usernameTF.setPreferredSize(new Dimension(200, 28));
+        usernameTF.addFocusListener(new FocusClearListener());
+        usernameTF.addActionListener(new ConnectListener());
     }
 
     /**

@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,6 +20,9 @@ import javax.swing.border.EmptyBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.esir.sr.sweetsnake.component.RequestsList;
+import com.esir.sr.sweetsnake.constants.ServerGuiConstants;
 
 /**
  * 
@@ -56,7 +60,7 @@ public class StatusView extends AbstractView
     private JLabel              runningTimeLB;
 
     /** The running time values */
-    private int                 hours, minutes, seconds;
+    private int                 days, hours, minutes, seconds;
 
     /** The running time timer */
     private Timer               timer;
@@ -97,18 +101,32 @@ public class StatusView extends AbstractView
         initCenterPL();
         add(centerPL, BorderLayout.CENTER);
 
-        initStatusLB();
+        final ImageIcon imageIcon = new ImageIcon(RequestsList.class.getResource(ServerGuiConstants.LOGO_PATH));
+        final JLabel label = new JLabel(imageIcon);
+
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.weighty = 0.1;
+        gbc.insets = new Insets(0, 0, 20, 0);
+        centerPL.add(label, gbc);
+
+        initStatusLB();
+        gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         gbc.weighty = 0.1;
+        gbc.insets = new Insets(0, 0, 0, 0);
         centerPL.add(statusLB, gbc);
 
         initRunningTimeLB();
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.weighty = 10;
         centerPL.add(runningTimeLB, gbc);
 
@@ -214,7 +232,7 @@ public class StatusView extends AbstractView
      * 
      */
     private void initRunningTimeLB() {
-        runningTimeLB = new JLabel("Running time : " + intToString(hours, 2) + ":" + intToString(minutes, 2) + ":" + intToString(seconds, 2));
+        runningTimeLB = new JLabel("Running time : " + days + " day(s) " + intToString(hours, 2) + " hour(s) " + intToString(minutes, 2) + " minute(s) " + intToString(seconds, 2) + " second(s)");
         runningTimeLB.setFont(new Font("sans-serif", Font.BOLD, 13));
         timer = new Timer(1000, new TimerListener());
     }
@@ -327,7 +345,11 @@ public class StatusView extends AbstractView
                 minutes = 0;
                 hours++;
             }
-            runningTimeLB.setText("Running time : " + intToString(hours, 2) + ":" + intToString(minutes, 2) + ":" + intToString(seconds, 2));
+            if (hours == 24) {
+                hours = 0;
+                days++;
+            }
+            runningTimeLB.setText("Running time : " + days + " day(s) " + intToString(hours, 2) + " hour(s) " + intToString(minutes, 2) + " minute(s) " + intToString(seconds, 2) + " second(s)");
         }
 
     }

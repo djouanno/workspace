@@ -115,7 +115,6 @@ public class GameSession extends AbstractSession
         final ListIterator<Player> it = players.listIterator(startIndex);
         while (it.hasNext()) {
             final Player player = it.next();
-            log.debug("Decreasing player number {} to {}", player.getNumber(), player.getNumber() - 1);
             player.setNumber(player.getNumber() - 1);
         }
     }
@@ -160,6 +159,7 @@ public class GameSession extends AbstractSession
         }
 
         if (players.size() >= GameConstants.MAX_NUMBER_OF_PLAYERS) {
+            log.warn("Player {} tried to join a full session", player.getName());
             throw new MaximumNumberOfPlayersException("session is full");
         }
 
@@ -176,7 +176,6 @@ public class GameSession extends AbstractSession
         for (final Player _player : players) {
             if (!_player.isFictive()) {
                 try {
-                    log.debug("Telling player {} that player {} has joined the game", _player.getNumber(), player.getNumber());
                     _player.getCallback().sessionJoined(_player.getNumber(), sessionDto);
                 } catch (final RemoteException e) {
                     log.error(e.getMessage(), e);
@@ -246,13 +245,15 @@ public class GameSession extends AbstractSession
         try {
             isGameStarted = false;
             final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
+
             for (final Player player : players) {
                 player.getCallback().sessionFinished(sessionDto);
             }
+
+            log.info("Game session {} has been finished", id);
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }
-        log.info("Game session {} has been finished", id);
     }
 
     /**
@@ -292,7 +293,7 @@ public class GameSession extends AbstractSession
                 _player.getCallback().sessionJoined(_player.getNumber(), sessionDto);
             }
 
-            log.info("Player {} is ready to play", player.getName());
+            log.debug("Player {} is ready to play", player.getName());
         } catch (final PlayerNotFoundException | RemoteException e) {
             log.error(e.getMessage(), e);
         }
@@ -308,6 +309,7 @@ public class GameSession extends AbstractSession
             final Player starter = playersRegistry.get(starterClient.getName());
 
             if (starter.getNumber() != 1) {
+                log.warn("Player {} tried to start session {} but was not authorized to", starter.getName(), id);
                 throw new UnauthorizedActionException("unauthorized start");
             }
 
@@ -358,7 +360,6 @@ public class GameSession extends AbstractSession
 
             for (final Player player : players) {
                 if (!player.isFictive()) {
-                    log.debug("Telling {} that {} has left the session", player.getName(), leaver.getName());
                     player.getCallback().sessionLeft(sessionDto, leaverDto, stopped, finished);
                     player.getCallback().refreshSession(sessionDto);
                 }
@@ -394,13 +395,15 @@ public class GameSession extends AbstractSession
         if (isGameStarted) {
             try {
                 final Player player = playersRegistry.get(client.getName());
+
                 if (System.currentTimeMillis() - timeout.get(player) > GameConstants.TIME_BETWEEN_2_MOVES) {
                     engine.moveSnake(direction, player);
+
                     final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
                     for (final Player _player : players) {
-                        log.debug("Telling {} to refresh the session", _player.getName());
                         _player.getCallback().refreshSession(sessionDto);
                     }
+
                     engine.getGameBoard().clearRefreshes();
                     timeout.put(player, System.currentTimeMillis());
                 }

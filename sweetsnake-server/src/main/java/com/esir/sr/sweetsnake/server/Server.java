@@ -209,12 +209,14 @@ public class Server implements IServer, IServerAdmin
 
         // bad username
         if (clientName == null || !validClientName(clientName)) {
+            log.warn("Invalid username {}, must be alphanumeric only", clientName);
             throw new UnableToConnectException("invalid username, must be alphanumeric only");
         }
 
         // username already taken
         if (playersRegistry.contains(clientName)) {
-            throw new UnableToConnectException("username " + clientName + " already taken");
+            log.warn("Username {} is already taken", clientName);
+            throw new UnableToConnectException("username " + clientName + " is already taken");
         }
 
         // creating player
@@ -278,8 +280,8 @@ public class Server implements IServer, IServerAdmin
      * com.esir.sr.sweetsnake.dto.PlayerDTO)
      */
     @Override
-    public void sendRequest(final IClientCallback client, final PlayerDTO otherPlayer) throws PlayerNotFoundException, PlayerNotAvailableException, GameSessionNotFoundException {
-        final Player player1 = playersRegistry.get(retrieveClientName(client)), player2 = playersRegistry.get(otherPlayer.getName());
+    public void sendRequest(final IClientCallback client, final PlayerDTO playerDto) throws PlayerNotFoundException, PlayerNotAvailableException, GameSessionNotFoundException {
+        final Player player1 = playersRegistry.get(retrieveClientName(client)), player2 = playersRegistry.get(playerDto.getName());
 
         // player is not available to play
         if (player2.getStatus() != PlayerStatus.AVAILABLE) {
@@ -307,19 +309,20 @@ public class Server implements IServer, IServerAdmin
      * com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public void acceptRequest(final IClientCallback client, final GameRequestDTO requestDTO) throws GameRequestNotFoundException, GameSessionNotFoundException, MaximumNumberOfPlayersException {
-        final GameRequest request = requestsRegistry.get(requestDTO.getId());
+    public void acceptRequest(final IClientCallback client, final GameRequestDTO requestDto) throws GameRequestNotFoundException, GameSessionNotFoundException, MaximumNumberOfPlayersException {
+        final GameRequest request = requestsRegistry.get(requestDto.getId());
 
         // request no more available
         if (!request.getRequestedPlayer().getName().equals(retrieveClientName(client))) {
+            log.warn("No matching request with id {}", request.getId());
             throw new GameRequestNotFoundException("no matching request");
         }
 
         // removing request
-        requestsRegistry.remove(requestDTO.getId());
+        requestsRegistry.remove(requestDto.getId());
 
         // retrieving session & player
-        final GameSession gameSession = sessionsRegistry.get(requestDTO.getSessionId());
+        final GameSession gameSession = sessionsRegistry.get(requestDto.getSessionId());
         final Player requestedPlayer = request.getRequestedPlayer();
         gameSession.addPlayer(requestedPlayer);
 
@@ -337,12 +340,13 @@ public class Server implements IServer, IServerAdmin
      * com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public void denyRequest(final IClientCallback client, final GameRequestDTO requestDTO) throws GameRequestNotFoundException {
-        final GameRequest request = requestsRegistry.get(requestDTO.getId());
+    public void denyRequest(final IClientCallback client, final GameRequestDTO requestDto) throws GameRequestNotFoundException {
+        final GameRequest request = requestsRegistry.get(requestDto.getId());
         final Player requestedPlayer = request.getRequestedPlayer();
 
         // request no more available
         if (!requestedPlayer.getName().equals(retrieveClientName(client))) {
+            log.warn("No matching request with id {}", request.getId());
             throw new GameRequestNotFoundException("no matching request");
         }
 
@@ -358,7 +362,7 @@ public class Server implements IServer, IServerAdmin
 
         // deny and remove request
         request.deny();
-        requestsRegistry.remove(requestDTO.getId());
+        requestsRegistry.remove(requestDto.getId());
 
         sendRefreshPlayersList();
         sendRefreshSessionsList();
@@ -399,6 +403,7 @@ public class Server implements IServer, IServerAdmin
             final Player player = playersRegistry.get(retrieveClientName(client));
 
             if (player.getGameSessionId() != null) {
+                log.warn("Player {} tried to create a game session while already in another one", player.getName());
                 throw new UnauthorizedActionException("you already are in a game session");
             }
 
