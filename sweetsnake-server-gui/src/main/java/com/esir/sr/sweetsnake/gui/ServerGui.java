@@ -2,6 +2,9 @@ package com.esir.sr.sweetsnake.gui;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.api.IServerGui;
+import com.esir.sr.sweetsnake.api.IGuiForServer;
 import com.esir.sr.sweetsnake.constants.ServerGuiConstants;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
@@ -33,7 +36,7 @@ import com.esir.sr.sweetsnake.view.StatusView;
  * 
  */
 @Component
-public class ServerGui extends JFrame implements IServerGui
+public class ServerGui extends JFrame implements IGuiForServer
 {
 
     // public static void main(final String[] args) {
@@ -125,6 +128,9 @@ public class ServerGui extends JFrame implements IServerGui
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("SweetSnake Server");
 
+        final Image icon = Toolkit.getDefaultToolkit().getImage(ServerGui.class.getResource(ServerGuiConstants.ICON_PATH));
+        setIconImage(icon);
+
         final Dimension dimension = new Dimension(ServerGuiConstants.GUI_WIDTH, ServerGuiConstants.GUI_HEIGHT);
         setSize(dimension);
         setPreferredSize(dimension);
@@ -175,6 +181,9 @@ public class ServerGui extends JFrame implements IServerGui
                 statusView.disableStartBTN();
                 statusView.enableStopBTN();
                 statusView.startTimer();
+                playersView.refreshPlayers(new LinkedList<PlayerDTO>());
+                sessionsView.refreshSessions(new LinkedList<GameSessionDTO>());
+                requestsView.refreshRequests(new LinkedList<GameRequestDTO>());
             }
         });
     }

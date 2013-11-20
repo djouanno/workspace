@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.esir.sr.sweetsnake.api.IClient;
+import com.esir.sr.sweetsnake.api.IClientForServer;
 import com.esir.sr.sweetsnake.api.IServer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -20,7 +20,7 @@ public class ClientTest
     private IServer server;
 
     @Autowired
-    private IClient client;
+    private IClientForServer client;
 
     @Test
     public void rmiServiceTest() {

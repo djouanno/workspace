@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,9 +19,6 @@ import javax.swing.border.EmptyBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.esir.sr.sweetsnake.component.RequestsList;
-import com.esir.sr.sweetsnake.constants.ServerGuiConstants;
 
 /**
  * 
@@ -101,33 +97,20 @@ public class StatusView extends AbstractView
         initCenterPL();
         add(centerPL, BorderLayout.CENTER);
 
-        final ImageIcon imageIcon = new ImageIcon(RequestsList.class.getResource(ServerGuiConstants.LOGO_PATH));
-        final JLabel label = new JLabel(imageIcon);
-
         GridBagConstraints gbc = new GridBagConstraints();
+
+        initStatusLB();
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         gbc.weighty = 0.1;
-        gbc.insets = new Insets(0, 0, 20, 0);
-        centerPL.add(label, gbc);
-
-        initStatusLB();
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        gbc.weighty = 0.1;
-        gbc.insets = new Insets(0, 0, 0, 0);
         centerPL.add(statusLB, gbc);
 
         initRunningTimeLB();
-        gbc.gridy = 2;
-        gbc.weighty = 10;
+        gbc.gridy = 1;
+        gbc.weighty = 1000;
         centerPL.add(runningTimeLB, gbc);
 
         initBottomPL();

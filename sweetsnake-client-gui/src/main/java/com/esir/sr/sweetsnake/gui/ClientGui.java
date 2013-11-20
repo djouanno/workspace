@@ -1,6 +1,7 @@
 package com.esir.sr.sweetsnake.gui;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.api.IClient;
-import com.esir.sr.sweetsnake.api.IClientGui;
+import com.esir.sr.sweetsnake.api.IClientForGui;
+import com.esir.sr.sweetsnake.api.IGuiForClient;
 import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.component.Toast;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
@@ -29,7 +30,6 @@ import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
-import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.view.AbstractView;
 import com.esir.sr.sweetsnake.view.ConnectionView;
@@ -46,8 +46,15 @@ import com.esir.sr.sweetsnake.view.UnreachableServerView;
  * 
  */
 @Component
-public class ClientGui extends JFrame implements IClientGui
+public class ClientGui extends JFrame implements IGuiForClient
 {
+
+    // public static void main(final String[] args) {
+    // @SuppressWarnings("resource")
+    // final ClassPathXmlApplicationContext context = new
+    // ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-client-gui-context.xml");
+    // context.registerShutdownHook();
+    // }
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
@@ -65,11 +72,11 @@ public class ClientGui extends JFrame implements IClientGui
 
     /** The client */
     @Autowired
-    private IClient               client;
+    private IClientForGui         client;
 
     /** The unreachable server view */
     @Autowired
-    private UnreachableServerView UnreachableServerView;
+    private UnreachableServerView unreachableServerView;
 
     /** The connection view */
     @Autowired
@@ -141,6 +148,10 @@ public class ClientGui extends JFrame implements IClientGui
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setTitle("SweetSnake");
+
+        final Image icon = Toolkit.getDefaultToolkit().getImage(ClientGui.class.getResource(ClientGuiConstants.ICON_PATH));
+        setIconImage(icon);
+
         dimension = new Dimension(ClientGuiConstants.GUI_WIDTH, ClientGuiConstants.GUI_HEIGHT);
         setSize(dimension);
         setPreferredSize(dimension);
@@ -264,7 +275,9 @@ public class ClientGui extends JFrame implements IClientGui
      */
     @Override
     public void serverReachable() {
-        switchView(connectionView, true);
+        if (currentView != connectionView) {
+            switchView(connectionView, true);
+        }
     }
 
     /*
@@ -274,7 +287,21 @@ public class ClientGui extends JFrame implements IClientGui
      */
     @Override
     public void serverNotReachable() {
-        switchView(UnreachableServerView, true);
+        if (currentView != unreachableServerView) {
+            switchView(unreachableServerView, true);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClientGui#disconnectedFromServer()
+     */
+    @Override
+    public void disconnectedFromServer() {
+        if (currentView != connectionView) {
+            switchView(connectionView, true);
+        }
     }
 
     /*
@@ -394,6 +421,12 @@ public class ClientGui extends JFrame implements IClientGui
         gameView.setPlayersSnakesMap(playersSnakes);
         gameView.setGameboardDto(gameBoard);
         switchView(gameView, true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                gameView.requestFocusInWindow();
+            }
+        });
     }
 
     /*
@@ -495,65 +528,9 @@ public class ClientGui extends JFrame implements IClientGui
     /**
      * 
      */
-    public void reachServer() {
-        client.reachServer();
-    }
-
-    /**
-     * 
-     */
     public void refreshUI() {
         revalidate();
         repaint();
-    }
-
-    /**
-     * 
-     */
-    public void createSession() {
-        client.createSession();
-    }
-
-    /**
-     * 
-     * @param session
-     */
-    public void joinSession(final GameSessionDTO session) {
-        client.joinSession(session);
-    }
-
-    /**
-     * 
-     * @param requestedPlayer
-     */
-    public void sendRequest(final PlayerDTO requestedPlayer) {
-        client.sendRequest(requestedPlayer);
-    }
-
-    public void readyToPlay() {
-        client.readyToPlay();
-    }
-
-    /**
-     * 
-     */
-    public void startGame() {
-        client.startSession();
-    }
-
-    /**
-     * 
-     */
-    public void quitGame() {
-        client.leaveSession();
-    }
-
-    /**
-     * 
-     * @param direction
-     */
-    public void moveSnake(final MoveDirection direction) {
-        client.moveSnake(direction);
     }
 
     /**********************************************************************************************

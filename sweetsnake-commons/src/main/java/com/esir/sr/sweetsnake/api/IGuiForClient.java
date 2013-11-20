@@ -17,7 +17,7 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
  * @author Damien Jouanno
  * 
  */
-public interface IClientGui
+public interface IGuiForClient
 {
 
     /**
@@ -34,6 +34,11 @@ public interface IClientGui
      * 
      */
     void connectedToServer();
+
+    /**
+     * 
+     */
+    void disconnectedFromServer();
 
     /**
      * 

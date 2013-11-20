@@ -158,7 +158,7 @@ public class UnreachableServerView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
-            gui.reachServer();
+            client.reachServer();
         }
 
     }

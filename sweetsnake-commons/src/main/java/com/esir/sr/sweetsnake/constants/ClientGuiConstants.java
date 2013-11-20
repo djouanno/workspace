@@ -38,10 +38,16 @@ public class ClientGuiConstants
     public static final String  IMG_PATH              = "/img/";
 
     /** */
+    public static final String  ICON_PATH             = IMG_PATH + "icon.png";
+
+    /** */
     public static final String  BG_PATH               = IMG_PATH + "bg.png";
 
     /** */
     public static final String  LOGO_PATH             = IMG_PATH + "logo.png";
+
+    /** */
+    public static final String  GAMES_LIST_PATH       = IMG_PATH + "games_list.png";
 
     /** */
     public static final String  PLAYERS_LIST_PATH     = IMG_PATH + "players_list.png";

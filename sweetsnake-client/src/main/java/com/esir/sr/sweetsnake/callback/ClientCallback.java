@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.api.IClient;
 import com.esir.sr.sweetsnake.api.IClientCallback;
+import com.esir.sr.sweetsnake.api.IClientForServer;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
@@ -36,7 +36,7 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
 
     /** The client */
     @Autowired
-    private IClient           client;
+    private IClientForServer  client;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -53,6 +53,26 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHODS
      **********************************************************************************************/
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#connected()
+     */
+    @Override
+    public void connected() throws RemoteException {
+        client.connected();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#disconnected()
+     */
+    @Override
+    public void disconnected() throws RemoteException {
+        client.disconnected();
+    }
 
     /*
      * (non-Javadoc)

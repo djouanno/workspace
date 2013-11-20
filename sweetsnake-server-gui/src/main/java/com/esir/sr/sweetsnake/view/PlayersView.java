@@ -115,9 +115,17 @@ public class PlayersView extends AbstractView
     public void refreshPlayers(final List<PlayerDTO> _players) {
         playersLST.removeAllElements();
         final List<PlayerDTO> players = new LinkedList<PlayerDTO>(_players);
-        for (final PlayerDTO player : players) {
-            playersLST.addElement(player);
+
+        if (players.isEmpty()) {
+            playersLST.disableSelection();
+            playersLST.addElement(new PlayerDTO("No available player for the moment", null, null, 0, 0, false));
+        } else {
+            playersLST.enableSelection();
+            for (final PlayerDTO player : players) {
+                playersLST.addElement(player);
+            }
         }
+
         titleLB.setText("Connected players (" + players.size() + ")");
     }
 

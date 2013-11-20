@@ -14,9 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.api.IClient;
 import com.esir.sr.sweetsnake.api.IClientCallback;
-import com.esir.sr.sweetsnake.api.IClientGui;
+import com.esir.sr.sweetsnake.api.IClientForGui;
+import com.esir.sr.sweetsnake.api.IClientForServer;
+import com.esir.sr.sweetsnake.api.IGuiForClient;
 import com.esir.sr.sweetsnake.api.IServer;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
@@ -38,7 +39,7 @@ import com.esir.sr.sweetsnake.provider.RmiProvider;
  * 
  */
 @Component
-public class Client implements IClient
+public class Client implements IClientForServer, IClientForGui
 {
 
     /**********************************************************************************************
@@ -62,7 +63,7 @@ public class Client implements IClient
 
     /** The GUI */
     @Autowired
-    private IClientGui           gui;
+    private IGuiForClient        gui;
 
     /** The server */
     private IServer              server;
@@ -123,7 +124,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#reachServer()
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#reachServer()
      */
     @Override
     public void reachServer() {
@@ -141,7 +142,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#connect(java.lang.String)
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#connect(java.lang.String)
      */
     @Override
     public void connect(final String _username) throws UnableToConnectException {
@@ -151,14 +152,12 @@ public class Client implements IClient
         log.debug("Connecting with username {}", _username);
         username = new String(_username).trim();
         server.connect(callback);
-        isConnected = true;
-        gui.connectedToServer();
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#disconnect()
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#disconnect()
      */
     @Override
     public void disconnect() {
@@ -169,7 +168,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#sendRequest(com.esir.sr.sweetsnake.dto.PlayerDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#sendRequest(com.esir.sr.sweetsnake.dto.PlayerDTO)
      */
     @Override
     public void sendRequest(final PlayerDTO playerDto) {
@@ -183,7 +182,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#createSession()
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#createSession()
      */
     @Override
     public void createSession() {
@@ -197,7 +196,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#joinSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#joinSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
     public void joinSession(final GameSessionDTO sessionDto) {
@@ -211,7 +210,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#readyToPlay()
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#readyToPlay()
      */
     @Override
     public void readyToPlay() {
@@ -228,7 +227,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#startSession()
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#startSession()
      */
     @Override
     public void startSession() {
@@ -244,7 +243,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#leaveSession()
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#leaveSession()
      */
     @Override
     public void leaveSession() {
@@ -260,7 +259,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#moveSnake(com.esir.sr.sweetsnake.enumeration.MoveDirection)
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#moveSnake(com.esir.sr.sweetsnake.enumeration.MoveDirection)
      */
     @Override
     public void moveSnake(final MoveDirection direction) {
@@ -280,7 +279,31 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#refreshPlayersList(java.util.List)
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#connected()
+     */
+    @Override
+    public void connected() {
+        isConnected = true;
+        gui.connectedToServer();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#disconnected()
+     */
+    @Override
+    public void disconnected() {
+        isConnected = false;
+        gui.disconnectedFromServer();
+        server = null;
+        reachServer();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#refreshPlayersList(java.util.List)
      */
     @Override
     public void refreshPlayersList(final List<PlayerDTO> playersList) {
@@ -290,7 +313,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#refreshSessionsList(java.util.List)
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#refreshSessionsList(java.util.List)
      */
     @Override
     public void refreshSessionsList(final List<GameSessionDTO> sessionsList) {
@@ -300,7 +323,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#requestSent(com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#requestSent(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
     public void requestSent(final GameRequestDTO requestDto) {
@@ -311,7 +334,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#requestReceived(com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#requestReceived(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
     public void requestReceived(final GameRequestDTO requestDTO) {
@@ -334,7 +357,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#requestDenied(com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#requestDenied(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
     public void requestDenied(final GameRequestDTO requestDTO) {
@@ -344,7 +367,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#sessionJoined(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#sessionJoined(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
     public void sessionJoined(final int playerNb, final GameSessionDTO sessionDto) {
@@ -355,7 +378,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#sessionStarted(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#sessionStarted(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
     public void sessionStarted(final int playerNb, final GameSessionDTO sessionDto) {
@@ -370,7 +393,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#sessionLeft(com.esir.sr.sweetsnake.dto.GameSessionDTO,
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#sessionLeft(com.esir.sr.sweetsnake.dto.GameSessionDTO,
      * com.esir.sr.sweetsnake.dto.PlayerDTO, boolean, boolean)
      */
     @Override
@@ -385,7 +408,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#sessionFinished(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#sessionFinished(com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
     public void sessionFinished(final GameSessionDTO sessionDto) {
@@ -395,7 +418,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#refreshSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#refreshSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
     public void refreshSession(final GameSessionDTO sessionDto) {
@@ -411,7 +434,7 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.ISweetSnakeClient#getName()
+     * @see com.esir.sr.sweetsnake.api.IClient#getUsername()
      */
     @Override
     public String getUsername() {

@@ -233,7 +233,6 @@ public class ConnectionView extends AbstractView
             log.debug("Trying to connect to server with username {}", username);
             try {
                 client.connect(username);
-                gui.connectedToServer();
             } catch (final UnableToConnectException e1) {
                 JOptionPane.showMessageDialog(gui, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

@@ -70,6 +70,7 @@ public class RmiProvider
      * 
      */
     public void retryReach() {
+        server = null;
         init();
     }
 

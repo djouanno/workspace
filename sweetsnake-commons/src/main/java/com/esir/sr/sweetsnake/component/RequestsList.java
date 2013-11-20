@@ -38,7 +38,15 @@ public class RequestsList extends AbstractList<GameRequestDTO>
      */
     public RequestsList() {
         super();
+    }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.component.AbstractList#enableSelection()
+     */
+    @Override
+    public void enableSelection() {
         setCellRenderer(new DefaultListCellRenderer() {
 
             /** The serial version UID */
@@ -50,9 +58,8 @@ public class RequestsList extends AbstractList<GameRequestDTO>
              * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int,
              * boolean, boolean)
              */
-            @SuppressWarnings("rawtypes")
             @Override
-            public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+            public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
                 final JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 final ImageIcon imageIcon = new ImageIcon(RequestsList.class.getResource(ClientGuiConstants.AVAILABLE_ICON_PATH));
                 label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0), BorderFactory.createEmptyBorder(3, 10, 3, 10)));

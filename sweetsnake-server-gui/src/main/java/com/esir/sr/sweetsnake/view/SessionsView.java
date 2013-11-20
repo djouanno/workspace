@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.component.SessionsList;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
+import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
  * 
@@ -125,9 +126,17 @@ public class SessionsView extends AbstractView
     public void refreshSessions(final List<GameSessionDTO> _sessions) {
         sessionsLST.removeAllElements();
         final List<GameSessionDTO> sessions = new LinkedList<GameSessionDTO>(_sessions);
-        for (final GameSessionDTO session : sessions) {
-            sessionsLST.addElement(session);
+
+        if (sessions.isEmpty()) {
+            sessionsLST.disableSelection();
+            sessionsLST.addElement(new GameSessionDTO("No available game for the moment", new LinkedList<PlayerDTO>(), null, null));
+        } else {
+            sessionsLST.enableSelection();
+            for (final GameSessionDTO session : sessions) {
+                sessionsLST.addElement(session);
+            }
         }
+
         titleLB.setText("Running sessions (" + sessions.size() + ")");
     }
 

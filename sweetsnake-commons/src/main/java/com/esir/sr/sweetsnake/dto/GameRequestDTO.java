@@ -52,6 +52,20 @@ public class GameRequestDTO implements Serializable
         requestedPlayerDto = _requestedPlayerDto;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        String s = id;
+        if (requestingPlayerDto != null && requestedPlayerDto != null) {
+            s += " [" + requestingPlayerDto.getName() + "/" + requestedPlayerDto.getName() + "]";
+        }
+        return s;
+    }
+
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/

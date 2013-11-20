@@ -108,4 +108,16 @@ public class ClientCallbackMock implements IClientCallback, Serializable
 
     }
 
+    @Override
+    public void connected() throws RemoteException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void disconnected() throws RemoteException {
+        // TODO Auto-generated method stub
+
+    }
+
 }

@@ -28,6 +28,6 @@ public class GameConstants
     public static final int SWEET_SCORE_VALUE     = 10;
 
     /** */
-    public static final int TIME_BETWEEN_2_MOVES  = 100;
+    public static final int TIME_BETWEEN_2_MOVES  = 50;
 
 }

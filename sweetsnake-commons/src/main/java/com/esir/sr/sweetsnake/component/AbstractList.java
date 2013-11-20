@@ -1,6 +1,12 @@
 package com.esir.sr.sweetsnake.component;
 
+import java.awt.Component;
+import java.awt.Font;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JList;
 
 /**
@@ -65,6 +71,36 @@ public abstract class AbstractList<E> extends JList<E>
      */
     public void removeAllElements() {
         model.removeAllElements();
+    }
+
+    /**
+     * 
+     */
+    public abstract void enableSelection();
+
+    /**
+     * 
+     */
+    public void disableSelection() {
+        setCellRenderer(new DefaultListCellRenderer() {
+
+            /** The serial version UID */
+            private static final long serialVersionUID = 4903155214602658319L;
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int,
+             * boolean, boolean)
+             */
+            @Override
+            public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+                final JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, false, false);
+                label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0), BorderFactory.createEmptyBorder(3, 10, 3, 10)));
+                label.setFont(new Font("sans-serif", Font.PLAIN, 16));
+                return this;
+            }
+        });
     }
 
 }

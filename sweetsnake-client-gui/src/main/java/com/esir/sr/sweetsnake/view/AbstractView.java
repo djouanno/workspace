@@ -6,7 +6,7 @@ import javax.swing.JPanel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.esir.sr.sweetsnake.api.IClient;
+import com.esir.sr.sweetsnake.api.IClientForGui;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.gui.ClientGui;
 
@@ -32,7 +32,7 @@ public abstract class AbstractView extends JPanel
 
     /** The client */
     @Autowired
-    protected IClient         client;
+    protected IClientForGui   client;
 
     /** The GUI */
     @Autowired

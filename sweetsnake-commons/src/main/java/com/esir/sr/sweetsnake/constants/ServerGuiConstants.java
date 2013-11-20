@@ -29,7 +29,7 @@ public class ServerGuiConstants
     public static final String IMG_PATH              = "/img/";
 
     /** */
-    public static final String LOGO_PATH             = IMG_PATH + "logo.png";
+    public static final String ICON_PATH             = IMG_PATH + "icon.png";
 
     /** */
     public static final String AVAILABLE_ICON_PATH   = IMG_PATH + "available_icon.png";

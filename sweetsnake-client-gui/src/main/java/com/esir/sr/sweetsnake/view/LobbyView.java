@@ -321,7 +321,7 @@ public class LobbyView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
-            gui.quitGame();
+            client.leaveSession();
         }
 
     }
@@ -342,7 +342,7 @@ public class LobbyView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
-            gui.readyToPlay();
+            client.readyToPlay();
             readyBTN.setEnabled(false);
         }
 
@@ -364,7 +364,7 @@ public class LobbyView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
-            gui.startGame();
+            client.startSession();
         }
 
     }

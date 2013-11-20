@@ -6,7 +6,7 @@ import javax.swing.JPanel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.esir.sr.sweetsnake.api.IServerAdmin;
+import com.esir.sr.sweetsnake.api.IServerForAdmin;
 import com.esir.sr.sweetsnake.gui.ServerGui;
 
 /**
@@ -31,7 +31,7 @@ public abstract class AbstractView extends JPanel
 
     /** The server */
     @Autowired
-    protected IServerAdmin    server;
+    protected IServerForAdmin    server;
 
     /** The GUI */
     @Autowired

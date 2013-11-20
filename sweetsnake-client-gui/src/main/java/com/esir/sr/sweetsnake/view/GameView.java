@@ -81,8 +81,8 @@ public class GameView extends AbstractView
     /** The players' scores label */
     private JLabel[]             playersScoresLB;
 
-    /** The leave button */
-    private JButton              leaveBTN;
+    /** The quit button */
+    private JButton              quitBTN;
 
     /** The current player's number */
     private int                  playerNb;
@@ -162,18 +162,16 @@ public class GameView extends AbstractView
         gbc.insets = new Insets(5, 0, 0, 120);
         bottomPL.add(playersScoresLB[positions[playerNb - 1][2]], gbc);
 
-        initLeaveBTN();
+        initQuitBTN();
         gbc.gridx = 1;
         gbc.insets = new Insets(5, 0, 0, 0);
-        bottomPL.add(leaveBTN, gbc);
+        bottomPL.add(quitBTN, gbc);
 
         gbc.gridx = 2;
         gbc.insets = new Insets(5, 120, 0, 0);
         bottomPL.add(playersScoresLB[positions[playerNb - 1][3]], gbc);
 
         addKeyListener(new KeyboardListener());
-        setFocusable(true);
-        requestFocusInWindow();
     }
 
     /**
@@ -272,9 +270,9 @@ public class GameView extends AbstractView
     /**
      * 
      */
-    private void initLeaveBTN() {
-        leaveBTN = new JButton("leave game");
-        leaveBTN.addActionListener(new LeaveGameListener());
+    private void initQuitBTN() {
+        quitBTN = new JButton("quit game");
+        quitBTN.addActionListener(new QuitGameListener());
     }
 
     /**
@@ -383,7 +381,7 @@ public class GameView extends AbstractView
      * @author Damien Jouanno
      * 
      */
-    private class LeaveGameListener implements ActionListener
+    private class QuitGameListener implements ActionListener
     {
 
         /*
@@ -452,7 +450,7 @@ public class GameView extends AbstractView
         public void keyPressed(final KeyEvent e) {
             final int keyCode = e.getKeyCode();
             if (moveTable.containsKey(keyCode)) {
-                gui.moveSnake(moveTable.get(keyCode));
+                client.moveSnake(moveTable.get(keyCode));
             }
         }
 

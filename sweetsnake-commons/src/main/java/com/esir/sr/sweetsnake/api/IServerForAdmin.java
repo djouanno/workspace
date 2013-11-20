@@ -10,7 +10,7 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
  * @author Damien Jouanno
  * 
  */
-public interface IServerAdmin
+public interface IServerForAdmin
 {
 
     /**

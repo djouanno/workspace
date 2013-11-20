@@ -138,8 +138,15 @@ public class PlayersView extends AbstractView
         if (isBuilded) {
             playersLST.removeAllElements();
             final List<PlayerDTO> players = new LinkedList<PlayerDTO>(playersList);
-            for (final PlayerDTO player : players) {
-                playersLST.addElement(player);
+
+            if (players.isEmpty()) {
+                playersLST.disableSelection();
+                playersLST.addElement(new PlayerDTO("No available player for the moment", null, null, 0, 0, false));
+            } else {
+                playersLST.enableSelection();
+                for (final PlayerDTO player : players) {
+                    playersLST.addElement(player);
+                }
             }
         }
     }
@@ -225,7 +232,7 @@ public class PlayersView extends AbstractView
                 gui.displayErrorMessage("Please select an opponent first");
             } else {
                 for (final PlayerDTO player : selectedPlayers) {
-                    gui.sendRequest(player);
+                    client.sendRequest(player);
                 }
             }
         }

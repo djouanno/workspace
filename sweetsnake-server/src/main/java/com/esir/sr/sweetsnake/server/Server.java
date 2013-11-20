@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.api.IServer;
-import com.esir.sr.sweetsnake.api.IServerAdmin;
-import com.esir.sr.sweetsnake.api.IServerGui;
+import com.esir.sr.sweetsnake.api.IServerForAdmin;
+import com.esir.sr.sweetsnake.api.IGuiForServer;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
@@ -45,7 +45,7 @@ import com.esir.sr.sweetsnake.session.Player;
  * 
  */
 @Component
-public class Server implements IServer, IServerAdmin
+public class Server implements IServer, IServerForAdmin
 {
 
     /**********************************************************************************************
@@ -77,7 +77,7 @@ public class Server implements IServer, IServerAdmin
 
     /** The server GUI */
     @Autowired
-    private IServerGui           gui;
+    private IGuiForServer           gui;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -110,6 +110,13 @@ public class Server implements IServer, IServerAdmin
     @PreDestroy
     protected void destroy() {
         log.info("Destroying the Server");
+        for (final String playerId : playersRegistry.getPlayersName()) {
+            try {
+                disconnect(playersRegistry.get(playerId).getCallback());
+            } catch (final PlayerNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
     }
 
     /**********************************************************************************************
@@ -223,6 +230,12 @@ public class Server implements IServer, IServerAdmin
         final Player player = beanProvider.getPrototype(Player.class, client);
         playersRegistry.add(player);
 
+        try {
+            client.connected();
+        } catch (final RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
+
         sendRefreshPlayersList();
         sendRefreshSessionsList();
 
@@ -262,12 +275,14 @@ public class Server implements IServer, IServerAdmin
             // removing player from registry
             playersRegistry.remove(clientName);
 
+            client.disconnected();
+
             sendRefreshPlayersList();
             sendRefreshSessionsList();
             sendRefreshRequestsList();
 
             log.info("Player {} has disconnected", clientName);
-        } catch (final PlayerNotFoundException | GameRequestNotFoundException | GameSessionNotFoundException e) {
+        } catch (final PlayerNotFoundException | GameRequestNotFoundException | GameSessionNotFoundException | RemoteException e) {
             log.error(e.getMessage(), e);
         }
 

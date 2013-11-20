@@ -115,9 +115,17 @@ public class RequestsView extends AbstractView
     public void refreshRequests(final List<GameRequestDTO> _requests) {
         requestsLST.removeAllElements();
         final List<GameRequestDTO> requests = new LinkedList<GameRequestDTO>(_requests);
-        for (final GameRequestDTO request : requests) {
-            requestsLST.addElement(request);
+
+        if (requests.isEmpty()) {
+            requestsLST.disableSelection();
+            requestsLST.addElement(new GameRequestDTO("No available request for the moment", null, null, null));
+        } else {
+            requestsLST.enableSelection();
+            for (final GameRequestDTO request : requests) {
+                requestsLST.addElement(request);
+            }
         }
+
         titleLB.setText("Pending requests (" + requests.size() + ")");
     }
 

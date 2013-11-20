@@ -18,6 +18,18 @@ public interface IClientCallback extends Remote
 {
 
     /**
+     * @throws RemoteException
+     * 
+     */
+    void connected() throws RemoteException;
+
+    /**
+     * @throws RemoteException
+     * 
+     */
+    void disconnected() throws RemoteException;
+
+    /**
      * 
      * @param players
      * @throws RemoteException

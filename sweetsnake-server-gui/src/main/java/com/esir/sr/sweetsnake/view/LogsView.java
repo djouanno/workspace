@@ -7,6 +7,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.io.PrintStream;
 
 import javax.swing.JButton;
@@ -118,7 +120,14 @@ public class LogsView extends AbstractView
         add(centerPL, BorderLayout.CENTER);
 
         initLogTAR();
-        centerPL.add(new JScrollPane(logsTAR, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+        final JScrollPane scrollPane = new JScrollPane(logsTAR, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(final AdjustmentEvent e) {
+                e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+            }
+        });
+        centerPL.add(scrollPane);
 
         System.setOut(new PrintStream(logsOS));
         System.setErr(new PrintStream(logsOS));

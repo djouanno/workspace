@@ -22,6 +22,7 @@ import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.component.SessionsList;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
+import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
  * 
@@ -61,6 +62,9 @@ public class SessionsView extends AbstractView
 
     /** The sessions list */
     private SessionsList        sessionsLST;
+
+    /** The disconnect button */
+    private JButton             disconnectBTN;
 
     /** The create button */
     private JButton             createBTN;
@@ -126,14 +130,24 @@ public class SessionsView extends AbstractView
 
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        initCreateBTN();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        initDisconnectBTN();
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.weightx = 1000;
+        gbc.weighty = 1;
         gbc.insets = new Insets(5, 0, 0, 0);
+        bottomPL.add(disconnectBTN, gbc);
+
+        initCreateBTN();
+        gbc.gridx = 1;
+        gbc.weightx = 0.1;
         bottomPL.add(createBTN, gbc);
 
         initRequestBTN();
-        gbc.gridx = 1;
+        gbc.gridx = 2;
+        gbc.insets = new Insets(5, 5, 0, 0);
         bottomPL.add(joinBTN, gbc);
     }
 
@@ -145,8 +159,15 @@ public class SessionsView extends AbstractView
         if (isBuilded) {
             sessionsLST.removeAllElements();
             final List<GameSessionDTO> sessions = new LinkedList<GameSessionDTO>(sessionsList);
-            for (final GameSessionDTO session : sessions) {
-                sessionsLST.addElement(session);
+
+            if (sessions.isEmpty()) {
+                sessionsLST.disableSelection();
+                sessionsLST.addElement(new GameSessionDTO("No available game for the moment", new LinkedList<PlayerDTO>(), null, null));
+            } else {
+                sessionsLST.enableSelection();
+                for (final GameSessionDTO session : sessions) {
+                    sessionsLST.addElement(session);
+                }
             }
         }
     }
@@ -167,7 +188,7 @@ public class SessionsView extends AbstractView
      * 
      */
     private void initSessionsListIPL() {
-        sessionsListIPL = new ImagePanel(ClientGuiConstants.PLAYERS_LIST_PATH);
+        sessionsListIPL = new ImagePanel(ClientGuiConstants.GAMES_LIST_PATH);
     }
 
     /**
@@ -202,6 +223,14 @@ public class SessionsView extends AbstractView
     /**
      * 
      */
+    private void initDisconnectBTN() {
+        disconnectBTN = new JButton("disconnect");
+        disconnectBTN.addActionListener(new DisconnectListener());
+    }
+
+    /**
+     * 
+     */
     private void initCreateBTN() {
         createBTN = new JButton("create game");
         createBTN.addActionListener(new CreateGameListener());
@@ -225,6 +254,27 @@ public class SessionsView extends AbstractView
      * @author Damien Jouanno
      * 
      */
+    private class DisconnectListener implements ActionListener
+    {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            client.disconnect();
+        }
+
+    }
+
+    /**
+     * 
+     * @author Herminaël Rougier
+     * @author Damien Jouanno
+     * 
+     */
     private class CreateGameListener implements ActionListener
     {
 
@@ -235,7 +285,7 @@ public class SessionsView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
-            gui.createSession();
+            client.createSession();
         }
 
     }
@@ -260,7 +310,7 @@ public class SessionsView extends AbstractView
             if (session == null) {
                 gui.displayErrorMessage("Please select a game session first");
             } else {
-                gui.joinSession(session);
+                client.joinSession(session);
             }
         }
 

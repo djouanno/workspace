@@ -59,7 +59,15 @@ public class PlayersList extends AbstractList<PlayerDTO>
                 }
             }
         });
+    }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.component.AbstractList#enableSelection()
+     */
+    @Override
+    public void enableSelection() {
         setCellRenderer(new DefaultListCellRenderer() {
 
             /** The serial version UID */
@@ -71,9 +79,8 @@ public class PlayersList extends AbstractList<PlayerDTO>
              * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int,
              * boolean, boolean)
              */
-            @SuppressWarnings("rawtypes")
             @Override
-            public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+            public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
                 final JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 final PlayerDTO player = (PlayerDTO) value;
                 ImageIcon imageIcon = new ImageIcon(PlayersList.class.getResource(ClientGuiConstants.UNAVAILABLE_ICON_PATH));
