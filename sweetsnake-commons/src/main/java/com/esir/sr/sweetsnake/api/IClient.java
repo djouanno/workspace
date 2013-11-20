@@ -49,6 +49,17 @@ public interface IClient
     /**
      * 
      */
+    void createSession();
+
+    /**
+     * 
+     * @param session
+     */
+    void joinSession(GameSessionDTO session);
+
+    /**
+     * 
+     */
     void readyToPlay();
 
     /**
@@ -82,6 +93,12 @@ public interface IClient
     void refreshPlayersList(List<PlayerDTO> playersList);
 
     /**
+     * 
+     * @param sessionsList
+     */
+    void refreshSessionsList(List<GameSessionDTO> sessionsList);
+
+    /**
      * from the server
      * 
      * @param request
@@ -98,10 +115,9 @@ public interface IClient
     /**
      * from the server
      * 
-     * @param allDenied
      * @param request
      */
-    void requestDenied(boolean allDenied, GameRequestDTO request);
+    void requestDenied(GameRequestDTO request);
 
     /**
      * from the server
@@ -124,9 +140,10 @@ public interface IClient
      * 
      * @param session
      * @param leaver
+     * @param stopped
      * @param finished
      */
-    void sessionLeft(GameSessionDTO session, PlayerDTO leaver, boolean finished);
+    void sessionLeft(GameSessionDTO session, PlayerDTO leaver, boolean stopped, boolean finished);
 
     /**
      * 

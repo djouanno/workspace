@@ -67,6 +67,16 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
     /*
      * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#refreshSessionsList(java.util.List)
+     */
+    @Override
+    public void refreshSessionsList(final List<GameSessionDTO> sessionsList) throws RemoteException {
+        client.refreshSessionsList(sessionsList);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.esir.sr.sweetsnake.api.IClientCallback#requestSent(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
@@ -90,8 +100,8 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
      * @see com.esir.sr.sweetsnake.api.IClientCallback#requestDenied(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public void requestDenied(final boolean allDenied, final GameRequestDTO request) throws RemoteException {
-        client.requestDenied(allDenied, request);
+    public void requestDenied(final GameRequestDTO request) throws RemoteException {
+        client.requestDenied(request);
     }
 
     /*
@@ -118,11 +128,11 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
      * (non-Javadoc)
      * 
      * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionLeft(com.esir.sr.sweetsnake.dto.GameSessionDTO,
-     * com.esir.sr.sweetsnake.dto.PlayerDTO, boolean)
+     * com.esir.sr.sweetsnake.dto.PlayerDTO, boolean, boolean)
      */
     @Override
-    public void sessionLeft(final GameSessionDTO session, final PlayerDTO leaver, final boolean finished) throws RemoteException {
-        client.sessionLeft(session, leaver, finished);
+    public void sessionLeft(final GameSessionDTO session, final PlayerDTO leaver, final boolean stopped, final boolean finished) throws RemoteException {
+        client.sessionLeft(session, leaver, stopped, finished);
     }
 
     /*

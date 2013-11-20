@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClient;
 import com.esir.sr.sweetsnake.api.IClientCallback;
-import com.esir.sr.sweetsnake.api.IGui;
+import com.esir.sr.sweetsnake.api.IClientGui;
 import com.esir.sr.sweetsnake.api.IServer;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
@@ -62,7 +62,7 @@ public class Client implements IClient
 
     /** The GUI */
     @Autowired
-    private IGui                 gui;
+    private IClientGui           gui;
 
     /** The server */
     private IServer              server;
@@ -95,7 +95,7 @@ public class Client implements IClient
      */
     @PostConstruct
     protected void init() {
-        log.info("Initialiazing a new SweetSnakeClient");
+        log.info("Initialiazing the Client");
         requests = new LinkedList<GameRequestDTO>();
         server = rmiProvider.getRmiService();
         if (server == null) {
@@ -110,7 +110,7 @@ public class Client implements IClient
      */
     @PreDestroy
     protected void destroy() {
-        log.info("Destroying SweetSnakeClient");
+        log.info("Destroying the Client");
         if (isConnected) {
             disconnect();
         }
@@ -149,7 +149,7 @@ public class Client implements IClient
             throw new UnableToConnectException("invalid username");
         }
         log.debug("Connecting with username {}", _username);
-        username = new String(_username);
+        username = new String(_username).trim();
         server.connect(callback);
         isConnected = true;
         gui.connectedToServer();
@@ -175,7 +175,35 @@ public class Client implements IClient
     public void sendRequest(final PlayerDTO playerDto) {
         try {
             server.sendRequest(callback, playerDto);
-        } catch (PlayerNotFoundException | PlayerNotAvailableException e) {
+        } catch (PlayerNotFoundException | PlayerNotAvailableException | GameSessionNotFoundException e) {
+            gui.displayErrorMessage(e.getMessage());
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#createSession()
+     */
+    @Override
+    public void createSession() {
+        try {
+            server.createSession(callback);
+        } catch (final UnauthorizedActionException e) {
+            gui.displayErrorMessage(e.getMessage());
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IClient#joinSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void joinSession(final GameSessionDTO sessionDto) {
+        try {
+            server.joinSession(callback, sessionDto);
+        } catch (GameSessionNotFoundException | MaximumNumberOfPlayersException e) {
             gui.displayErrorMessage(e.getMessage());
         }
     }
@@ -262,6 +290,16 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.IClient#refreshSessionsList(java.util.List)
+     */
+    @Override
+    public void refreshSessionsList(final List<GameSessionDTO> sessionsList) {
+        gui.refreshSessionsList(sessionsList);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.esir.sr.sweetsnake.api.IClient#requestSent(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
@@ -296,11 +334,11 @@ public class Client implements IClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClient#requestDenied(boolean, com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     * @see com.esir.sr.sweetsnake.api.IClient#requestDenied(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public void requestDenied(final boolean allDenied, final GameRequestDTO requestDTO) {
-        gui.requestRefused(allDenied, requestDTO);
+    public void requestDenied(final GameRequestDTO requestDTO) {
+        gui.requestDenied(requestDTO);
     }
 
     /*
@@ -333,15 +371,15 @@ public class Client implements IClient
      * (non-Javadoc)
      * 
      * @see com.esir.sr.sweetsnake.api.IClient#sessionLeft(com.esir.sr.sweetsnake.dto.GameSessionDTO,
-     * com.esir.sr.sweetsnake.dto.PlayerDTO, finished)
+     * com.esir.sr.sweetsnake.dto.PlayerDTO, boolean, boolean)
      */
     @Override
-    public void sessionLeft(final GameSessionDTO sessionDto, final PlayerDTO leaver, final boolean finished) {
+    public void sessionLeft(final GameSessionDTO sessionDto, final PlayerDTO leaver, final boolean stopped, final boolean finished) {
         log.debug("Game left by {}", leaver);
         if (finished) {
             session = null;
         }
-        gui.sessionLeft(sessionDto.getPlayersDto(), leaver, finished);
+        gui.sessionLeft(sessionDto.getPlayersDto(), leaver, stopped, finished);
     }
 
     /*

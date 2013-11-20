@@ -98,7 +98,7 @@
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
-      <artifactId>sweetsnake-gui</artifactId>
+      <artifactId>sweetsnake-client-gui</artifactId>
       <groupId>com.esir.sr</groupId>
       <version>${project.parent.version}</version>
     </dependency>

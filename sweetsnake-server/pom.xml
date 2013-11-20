@@ -21,27 +21,70 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
-          <finalName>${project.artifactId}-${project.version}</finalName>
-          <outputDirectory>${basedir}\\export</outputDirectory>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <archive>
-            <manifest>
-              <mainClass>com.esir.sr.sweetsnake.server.ServerLauncher</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.4</version>
         <executions>
           <execution>
-            <id>package-jar-with-dependencies</id>
             <phase>package</phase>
             <goals>
-              <goal>single</goal>
+              <goal>shade</goal>
             </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.esir.sr.sweetsnake.server.ServerLauncher</mainClass>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.handlers</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.schemas</resource>
+                </transformer>
+              </transformers>
+              <finalName>${project.artifactId}-${project.version}</finalName>
+              <outputDirectory>${basedir}\\export</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+        <artifactId>launch4j-plugin</artifactId>
+        <version>1.5.0.0</version>
+        <executions>
+          <execution>
+            <id>l4j-gui</id>
+            <phase>package</phase>
+            <goals>
+              <goal>launch4j</goal>
+            </goals>
+            <configuration>
+              <headerType>gui</headerType>
+              <outfile>export/sweetsnake-server.exe</outfile>
+              <jar>export/${artifactId}-${version}-shaded.jar</jar>
+              <errTitle>App Err</errTitle>
+              <classPath>
+                <mainClass>com.esir.sr.sweetsnake.server.ServerLauncher</mainClass>
+              </classPath>
+              <icon>src/main/resources/icons/icon.ico</icon>
+              <jre>
+                <minVersion>1.7.0</minVersion>
+                <initialHeapSize>128</initialHeapSize>
+                <maxHeapSize>1024</maxHeapSize>
+              </jre>
+              <versionInfo>
+                <fileVersion>1.0.0.0</fileVersion>
+                <txtFileVersion>1.0.0.0</txtFileVersion>
+                <fileDescription>Desc</fileDescription>
+                <copyright>C</copyright>
+                <productVersion>1.0.0.0</productVersion>
+                <txtProductVersion>1.0.0.0</txtProductVersion>
+                <productName>Product</productName>
+                <internalName>Product</internalName>
+                <originalFilename>App.exe</originalFilename>
+              </versionInfo>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -51,6 +94,11 @@
   <dependencies>
     <dependency>
       <artifactId>sweetsnake-commons</artifactId>
+      <groupId>com.esir.sr</groupId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>sweetsnake-server-gui</artifactId>
       <groupId>com.esir.sr</groupId>
       <version>${project.parent.version}</version>
     </dependency>

@@ -48,12 +48,6 @@ public class ClientCallbackMock implements IClientCallback, Serializable
     }
 
     @Override
-    public void sessionLeft(final GameSessionDTO session, final PlayerDTO leaver, final boolean finished) throws RemoteException {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void refreshSession(final GameSessionDTO session) throws RemoteException {
         // TODO Auto-generated method stub
 
@@ -79,12 +73,6 @@ public class ClientCallbackMock implements IClientCallback, Serializable
     }
 
     @Override
-    public void requestDenied(final boolean allDenied, final GameRequestDTO request) throws RemoteException {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void sessionFinished(final GameSessionDTO session) throws RemoteException {
         // TODO Auto-generated method stub
 
@@ -98,6 +86,24 @@ public class ClientCallbackMock implements IClientCallback, Serializable
 
     @Override
     public void sessionStarted(final int playerNb, final GameSessionDTO session) throws RemoteException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void requestDenied(final GameRequestDTO request) throws RemoteException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void refreshSessionsList(final List<GameSessionDTO> sessions) throws RemoteException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void sessionLeft(final GameSessionDTO session, final PlayerDTO leaver, final boolean stopped, final boolean finished) throws RemoteException {
         // TODO Auto-generated method stub
 
     }

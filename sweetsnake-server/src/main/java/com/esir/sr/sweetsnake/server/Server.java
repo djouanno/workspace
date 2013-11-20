@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,10 @@ import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.api.IServer;
+import com.esir.sr.sweetsnake.api.IServerAdmin;
+import com.esir.sr.sweetsnake.api.IServerGui;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
+import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
@@ -24,6 +28,7 @@ import com.esir.sr.sweetsnake.exception.MaximumNumberOfPlayersException;
 import com.esir.sr.sweetsnake.exception.PlayerNotAvailableException;
 import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
+import com.esir.sr.sweetsnake.exception.UnauthorizedActionException;
 import com.esir.sr.sweetsnake.factory.DtoConverterFactory;
 import com.esir.sr.sweetsnake.provider.BeanProvider;
 import com.esir.sr.sweetsnake.registry.GameRequestsRegistry;
@@ -40,7 +45,7 @@ import com.esir.sr.sweetsnake.session.Player;
  * 
  */
 @Component
-public class Server implements IServer
+public class Server implements IServer, IServerAdmin
 {
 
     /**********************************************************************************************
@@ -60,15 +65,19 @@ public class Server implements IServer
 
     /** The players registry */
     @Autowired
-    private PlayersRegistry      players;
+    private PlayersRegistry      playersRegistry;
 
     /** The requests registry */
     @Autowired
-    private GameRequestsRegistry gameRequests;
+    private GameRequestsRegistry requestsRegistry;
 
     /** The sessions registry */
     @Autowired
-    private GameSessionsRegistry gameSessions;
+    private GameSessionsRegistry sessionsRegistry;
+
+    /** The server GUI */
+    @Autowired
+    private IServerGui           gui;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -86,7 +95,21 @@ public class Server implements IServer
      */
     @PostConstruct
     protected void init() {
-        log.info("Initialization of the SweetSnakeServer");
+        log.info("Initializating the Server");
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                gui.serverStarted();
+            }
+        }, 200);
+    }
+
+    /**
+     * 
+     */
+    @PreDestroy
+    protected void destroy() {
+        log.info("Destroying the Server");
     }
 
     /**********************************************************************************************
@@ -100,13 +123,21 @@ public class Server implements IServer
      */
     private String retrieveClientName(final IClientCallback client) {
         try {
-            return client.getName();
+            return client.getName().trim();
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }
         return new String();
     }
 
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    private boolean validClientName(final String name) {
+        return name.matches("^\\w+$");
+    }
 
     /**
      * 
@@ -114,12 +145,12 @@ public class Server implements IServer
      * @return
      */
     private List<PlayerDTO> getPlayersList(final IClientCallback client) {
-        final String clientName = retrieveClientName(client);
+        final String clientName = client == null ? "" : retrieveClientName(client);
         final List<PlayerDTO> playersList = new LinkedList<PlayerDTO>();
-        for (final String player : players.getPlayersName()) {
+        for (final String player : playersRegistry.getPlayersName()) {
             if (!clientName.equals(player)) {
                 try {
-                    final PlayerDTO playerDTO = DtoConverterFactory.convertPlayer(players.get(player));
+                    final PlayerDTO playerDTO = DtoConverterFactory.convertPlayer(playersRegistry.get(player));
                     playersList.add(playerDTO);
                 } catch (final PlayerNotFoundException e) {
                     log.error(e.getMessage(), e);
@@ -129,8 +160,42 @@ public class Server implements IServer
         return playersList;
     }
 
+    /**
+     * 
+     * @return
+     */
+    private List<GameRequestDTO> getRequestsList() {
+        final List<GameRequestDTO> requestsList = new LinkedList<GameRequestDTO>();
+        for (final String id : requestsRegistry.getRequestsId()) {
+            try {
+                final GameRequestDTO requestDto = DtoConverterFactory.convertGameRequest(requestsRegistry.get(id));
+                requestsList.add(requestDto);
+            } catch (final GameRequestNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        return requestsList;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    private List<GameSessionDTO> getSessionsList() {
+        final List<GameSessionDTO> sessionsList = new LinkedList<GameSessionDTO>();
+        for (final String id : sessionsRegistry.getSessionsId()) {
+            try {
+                final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(sessionsRegistry.get(id));
+                sessionsList.add(sessionDto);
+            } catch (final GameSessionNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        return sessionsList;
+    }
+
     /**********************************************************************************************
-     * [BLOCK] PUBLIC IMPLEMENTED METHODS
+     * [BLOCK] PUBLIC SERVER IMPLEMENTED METHODS
      **********************************************************************************************/
 
     /*
@@ -143,20 +208,21 @@ public class Server implements IServer
         final String clientName = retrieveClientName(client);
 
         // bad username
-        if (clientName == null) {
-            throw new UnableToConnectException("username cannot be null");
+        if (clientName == null || !validClientName(clientName)) {
+            throw new UnableToConnectException("invalid username, must be alphanumeric only");
         }
 
         // username already taken
-        if (players.contains(clientName)) {
+        if (playersRegistry.contains(clientName)) {
             throw new UnableToConnectException("username " + clientName + " already taken");
         }
 
         // creating player
         final Player player = beanProvider.getPrototype(Player.class, client);
-        players.add(player);
+        playersRegistry.add(player);
 
         sendRefreshPlayersList();
+        sendRefreshSessionsList();
 
         log.info("New client with username {} has connected", clientName);
     }
@@ -170,32 +236,33 @@ public class Server implements IServer
     public void disconnect(final IClientCallback client) {
         try {
             final String clientName = retrieveClientName(client);
-            final Player player = players.get(clientName);
+            final Player player = playersRegistry.get(clientName);
 
             // cancel sent requests
             for (final String requestId : player.getSentRequestsIds()) {
-                final GameRequest request = gameRequests.get(requestId);
+                final GameRequest request = requestsRegistry.get(requestId);
                 request.cancel();
-                gameRequests.remove(requestId);
+                requestsRegistry.remove(requestId);
             }
 
             // deny received requests
             if (player.getReceivedRequestId() != null) {
-                final GameRequest request = gameRequests.get(player.getReceivedRequestId());
-                final GameSession gameSession = gameSessions.get(request.getSessionid());
-                request.deny(gameSession.allDenied());
-                gameRequests.remove(request.getId());
+                final GameRequest request = requestsRegistry.get(player.getReceivedRequestId());
+                request.deny();
+                requestsRegistry.remove(request.getId());
             }
 
             // leave current session
             if (player.getGameSessionId() != null) {
-                gameSessions.get(player.getGameSessionId()).leaveGame(client, true);
+                sessionsRegistry.get(player.getGameSessionId()).leaveGame(client, true);
             }
 
             // removing player from registry
-            players.remove(clientName);
+            playersRegistry.remove(clientName);
 
             sendRefreshPlayersList();
+            sendRefreshSessionsList();
+            sendRefreshRequestsList();
 
             log.info("Player {} has disconnected", clientName);
         } catch (final PlayerNotFoundException | GameRequestNotFoundException | GameSessionNotFoundException e) {
@@ -211,39 +278,24 @@ public class Server implements IServer
      * com.esir.sr.sweetsnake.dto.PlayerDTO)
      */
     @Override
-    public void sendRequest(final IClientCallback client, final PlayerDTO otherPlayer) throws PlayerNotFoundException, PlayerNotAvailableException {
-        final Player player1 = players.get(retrieveClientName(client)), player2 = players.get(otherPlayer.getName());
+    public void sendRequest(final IClientCallback client, final PlayerDTO otherPlayer) throws PlayerNotFoundException, PlayerNotAvailableException, GameSessionNotFoundException {
+        final Player player1 = playersRegistry.get(retrieveClientName(client)), player2 = playersRegistry.get(otherPlayer.getName());
 
         // player is not available to play
         if (player2.getStatus() != PlayerStatus.AVAILABLE) {
             throw new PlayerNotAvailableException("player is not available");
         }
 
-        GameSession gameSession;
-        try {
-            // session does not exist
-            if (player1.getGameSessionId() == null) {
-                log.debug("Game session is null, creating new one");
-                gameSession = beanProvider.getPrototype(GameSession.class);
-                gameSession.addPlayer(player1);
-                gameSession.addFictivePlayer(player2);
-                gameSessions.add(gameSession);
-            }
-            // session already exists
-            else {
-                log.debug("Game session already exists, adding fictive player {}", player2.getName());
-                gameSession = gameSessions.get(player1.getGameSessionId());
-                gameSession.addFictivePlayer(player2);
-            }
+        final GameSession gameSession = sessionsRegistry.get(player1.getGameSessionId());
+        gameSession.addFictivePlayer(player2);
 
-            // creating request
-            final GameRequest request = beanProvider.getPrototype(GameRequest.class, gameSession.getId(), player1, player2);
-            gameRequests.add(request);
-        } catch (final MaximumNumberOfPlayersException | GameSessionNotFoundException e) {
-            log.error(e.getMessage(), e);
-        }
+        // creating request
+        final GameRequest request = beanProvider.getPrototype(GameRequest.class, gameSession.getId(), player1, player2);
+        requestsRegistry.add(request);
 
         sendRefreshPlayersList();
+        sendRefreshSessionsList();
+        sendRefreshRequestsList();
 
         log.info("Game request between {} and {} is pending", player1.getName(), player2.getName());
     }
@@ -256,7 +308,7 @@ public class Server implements IServer
      */
     @Override
     public void acceptRequest(final IClientCallback client, final GameRequestDTO requestDTO) throws GameRequestNotFoundException, GameSessionNotFoundException, MaximumNumberOfPlayersException {
-        final GameRequest request = gameRequests.get(requestDTO.getId());
+        final GameRequest request = requestsRegistry.get(requestDTO.getId());
 
         // request no more available
         if (!request.getRequestedPlayer().getName().equals(retrieveClientName(client))) {
@@ -264,14 +316,16 @@ public class Server implements IServer
         }
 
         // removing request
-        gameRequests.remove(requestDTO.getId());
+        requestsRegistry.remove(requestDTO.getId());
 
         // retrieving session & player
-        final GameSession gameSession = gameSessions.get(requestDTO.getSessionId());
+        final GameSession gameSession = sessionsRegistry.get(requestDTO.getSessionId());
         final Player requestedPlayer = request.getRequestedPlayer();
         gameSession.addPlayer(requestedPlayer);
 
         sendRefreshPlayersList();
+        sendRefreshSessionsList();
+        sendRefreshRequestsList();
 
         log.info("Player {} joined the session {}", requestedPlayer.getName(), gameSession.getId());
     }
@@ -284,7 +338,7 @@ public class Server implements IServer
      */
     @Override
     public void denyRequest(final IClientCallback client, final GameRequestDTO requestDTO) throws GameRequestNotFoundException {
-        final GameRequest request = gameRequests.get(requestDTO.getId());
+        final GameRequest request = requestsRegistry.get(requestDTO.getId());
         final Player requestedPlayer = request.getRequestedPlayer();
 
         // request no more available
@@ -292,33 +346,23 @@ public class Server implements IServer
             throw new GameRequestNotFoundException("no matching request");
         }
 
-        boolean allDenied = false;
-
         // deny session and check session status
-        if (gameSessions.contains(request.getSessionid())) {
+        if (sessionsRegistry.contains(request.getSessionid())) {
             try {
-                final GameSession gameSession = gameSessions.get(request.getSessionid());
+                final GameSession gameSession = sessionsRegistry.get(request.getSessionid());
                 gameSession.denied(requestedPlayer);
-                allDenied = gameSession.allDenied();
             } catch (final GameSessionNotFoundException e) {
                 log.error(e.getMessage(), e);
             }
         }
 
         // deny and remove request
-        request.deny(allDenied);
-        gameRequests.remove(requestDTO.getId());
-
-        // remove session if everyone denied
-        if (allDenied) {
-            try {
-                gameSessions.remove(requestDTO.getSessionId());
-            } catch (final GameSessionNotFoundException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
+        request.deny();
+        requestsRegistry.remove(requestDTO.getId());
 
         sendRefreshPlayersList();
+        sendRefreshSessionsList();
+        sendRefreshRequestsList();
 
         log.info("Request {} denied by {}", request.getId(), request.getRequestedPlayer().getName());
     }
@@ -331,15 +375,136 @@ public class Server implements IServer
      */
     @Override
     public void cancelRequest(final IClientCallback client, final GameRequestDTO requestDTO) throws GameRequestNotFoundException {
-        final GameRequest request = gameRequests.get(requestDTO.getId());
+        final GameRequest request = requestsRegistry.get(requestDTO.getId());
 
         // cancel and remove the request
         request.cancel();
-        gameRequests.remove(request.getId());
+        requestsRegistry.remove(request.getId());
 
         sendRefreshPlayersList();
+        sendRefreshSessionsList();
+        sendRefreshRequestsList();
 
         log.info("Request {} has been canceled by {}", request.getId(), request.getRequestingPlayer().getName());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServer#createSession(com.esir.sr.sweetsnake.api.IClientCallback)
+     */
+    @Override
+    public void createSession(final IClientCallback client) throws UnauthorizedActionException {
+        try {
+            final Player player = playersRegistry.get(retrieveClientName(client));
+
+            if (player.getGameSessionId() != null) {
+                throw new UnauthorizedActionException("you already are in a game session");
+            }
+
+            final GameSession gameSession = beanProvider.getPrototype(GameSession.class);
+
+            try {
+                gameSession.addPlayer(player);
+            } catch (final MaximumNumberOfPlayersException e) {
+                log.error(e.getMessage(), e);
+            }
+
+            sessionsRegistry.add(gameSession);
+
+            sendRefreshPlayersList();
+            sendRefreshSessionsList();
+
+            log.info("Game session {} has been created by {}", gameSession.getId(), player.getName());
+        } catch (final PlayerNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServer#joinSession(com.esir.sr.sweetsnake.api.IClientCallback,
+     * com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void joinSession(final IClientCallback client, final GameSessionDTO sessionDTO) throws GameSessionNotFoundException, MaximumNumberOfPlayersException {
+        final GameSession session = sessionsRegistry.get(sessionDTO.getId());
+        try {
+            final Player player = playersRegistry.get(retrieveClientName(client));
+            session.addPlayer(player);
+
+            sendRefreshPlayersList();
+            sendRefreshSessionsList();
+
+            log.info("Session {} has been joined by {}", session.getId(), player.getName());
+        } catch (final PlayerNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC SERVER ADMIN IMPLEMENTED METHODS
+     **********************************************************************************************/
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServerAdmin#startServer()
+     */
+    @Override
+    public void startServer() {
+        // TODO Auto-generated method stub
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServerAdmin#stopServer()
+     */
+    @Override
+    public void stopServer() {
+        // TODO Auto-generated method stub
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServerAdmin#kickPlayer(com.esir.sr.sweetsnake.dto.PlayerDTO)
+     */
+    @Override
+    public void kickPlayer(final PlayerDTO player) {
+        // TODO Auto-generated method stub
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServerAdmin#stopSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void stopSession(final GameSessionDTO session) {
+        // TODO Auto-generated method stub
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServerAdmin#removeSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     */
+    @Override
+    public void removeSession(final GameSessionDTO session) {
+        // TODO Auto-generated method stub
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.api.IServerAdmin#removeRequest(com.esir.sr.sweetsnake.dto.GameRequestDTO)
+     */
+    @Override
+    public void removeRequest(final GameRequestDTO request) {
+        // TODO Auto-generated method stub
     }
 
     /**********************************************************************************************
@@ -350,21 +515,55 @@ public class Server implements IServer
     *
     */
     public void sendRefreshPlayersList() {
-        // wait for everything to be properly updated
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                for (final String playerName : players.getPlayersName()) {
+                for (final String playerName : playersRegistry.getPlayersName()) {
                     try {
-                        final Player player = players.get(playerName);
+                        final Player player = playersRegistry.get(playerName);
                         final IClientCallback callback = player.getCallback();
                         callback.refreshPlayersList(getPlayersList(callback));
                     } catch (RemoteException | PlayerNotFoundException e) {
                         log.error(e.getMessage(), e);
                     }
                 }
+                gui.refreshPlayers(getPlayersList(null));
             }
-        }, 200);
+        }, 100);
+    }
+
+    /**
+     * 
+     */
+    public void sendRefreshSessionsList() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                final List<GameSessionDTO> sessionsList = getSessionsList();
+                for (final String playerName : playersRegistry.getPlayersName()) {
+                    try {
+                        final Player player = playersRegistry.get(playerName);
+                        player.getCallback().refreshSessionsList(sessionsList);
+                    } catch (RemoteException | PlayerNotFoundException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                }
+                gui.refreshSessions(sessionsList);
+            }
+        }, 100);
+    }
+
+    /**
+     * 
+     */
+    public void sendRefreshRequestsList() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                final List<GameRequestDTO> requestsList = getRequestsList();
+                gui.refreshRequests(requestsList);
+            }
+        }, 100);
     }
 
 }

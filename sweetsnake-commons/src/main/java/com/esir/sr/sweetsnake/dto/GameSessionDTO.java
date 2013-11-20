@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esir.sr.sweetsnake.api.IGameSessionCallback;
+import com.esir.sr.sweetsnake.constants.GameConstants;
 
 /**
  * 
@@ -55,6 +56,15 @@ public class GameSessionDTO implements Serializable
         playersDto = new LinkedList<PlayerDTO>(_playersDto);
         gameBoardDto = _gameBoardDto;
         callback = _callback;
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC METHODS
+     **********************************************************************************************/
+
+    @Override
+    public String toString() {
+        return id + " [" + playersDto.size() + "/" + GameConstants.MAX_NUMBER_OF_PLAYERS + "]";
     }
 
     /**********************************************************************************************

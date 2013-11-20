@@ -112,15 +112,11 @@ public class GameRequest extends AbstractSession
 
     /**
      * 
-     * @param allDenied
      */
-    public void deny(final boolean allDenied) {
+    public void deny() {
         try {
             requestedPlayer.setStatus(PlayerStatus.AVAILABLE);
-            if (allDenied) {
-                requestingPlayer.setStatus(PlayerStatus.AVAILABLE);
-            }
-            requestingPlayer.getCallback().requestDenied(allDenied, DtoConverterFactory.convertGameRequest(this));
+            requestingPlayer.getCallback().requestDenied(DtoConverterFactory.convertGameRequest(this));
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }

@@ -4,8 +4,9 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-  <bean id="sweetSnakeService" class="com.esir.sr.sweetsnake.server.Server">
-  </bean>
+  <import resource="classpath*:sweetsnake-server-gui-context.xml" />
+
+  <bean id="sweetSnakeService" class="com.esir.sr.sweetsnake.server.Server" />
 
   <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
     <property name="serviceName" value="SweetSnakeServer" />

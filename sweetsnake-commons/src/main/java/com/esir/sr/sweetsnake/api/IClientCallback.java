@@ -26,6 +26,13 @@ public interface IClientCallback extends Remote
 
     /**
      * 
+     * @param sessions
+     * @throws RemoteException
+     */
+    void refreshSessionsList(List<GameSessionDTO> sessions) throws RemoteException;
+
+    /**
+     * 
      * @param request
      * @throws RemoteException
      */
@@ -40,11 +47,10 @@ public interface IClientCallback extends Remote
 
     /**
      * 
-     * @param allDenied
      * @param request
      * @throws RemoteException
      */
-    void requestDenied(boolean allDenied, GameRequestDTO request) throws RemoteException;
+    void requestDenied(GameRequestDTO request) throws RemoteException;
 
     /**
      * 
@@ -66,10 +72,11 @@ public interface IClientCallback extends Remote
      * 
      * @param session
      * @param leaver
+     * @param stopped
      * @param finished
      * @throws RemoteException
      */
-    void sessionLeft(GameSessionDTO session, PlayerDTO leaver, boolean finished) throws RemoteException;
+    void sessionLeft(GameSessionDTO session, PlayerDTO leaver, boolean stopped, boolean finished) throws RemoteException;
 
     /**
      * 

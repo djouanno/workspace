@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
+import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
@@ -16,7 +17,7 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
  * @author Damien Jouanno
  * 
  */
-public interface IGui
+public interface IClientGui
 {
 
     /**
@@ -42,6 +43,12 @@ public interface IGui
 
     /**
      * 
+     * @param sessionsList
+     */
+    void refreshSessionsList(List<GameSessionDTO> sessionsList);
+
+    /**
+     * 
      * @param request
      */
     void requestSent(GameRequestDTO request);
@@ -55,10 +62,9 @@ public interface IGui
 
     /**
      * 
-     * @param allDenied
      * @param request
      */
-    void requestRefused(boolean allDenied, GameRequestDTO request);
+    void requestDenied(GameRequestDTO request);
 
     /**
      * 
@@ -79,9 +85,10 @@ public interface IGui
      * 
      * @param players
      * @param leaver
+     * @param stopped
      * @param finished
      */
-    void sessionLeft(List<PlayerDTO> players, PlayerDTO leaver, boolean finished);
+    void sessionLeft(List<PlayerDTO> players, PlayerDTO leaver, boolean stopped, boolean finished);
 
     /**
      * 
