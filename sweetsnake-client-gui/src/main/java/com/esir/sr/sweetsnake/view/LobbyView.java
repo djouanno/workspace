@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -60,7 +61,7 @@ public class LobbyView extends AbstractView
     private JPanel              centerPL;
 
     /** The players panels */
-    private JPanel[]            playersPL;
+    private PlayerPanel[]       playersPL;
 
     /** The bottom panel */
     private JPanel              bottomPL;
@@ -144,8 +145,6 @@ public class LobbyView extends AbstractView
         final GridBagConstraints gbc = new GridBagConstraints();
 
         initQuitBTN();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.weightx = 1;
         gbc.weighty = 1;
@@ -162,37 +161,37 @@ public class LobbyView extends AbstractView
      * 
      */
     public void refreshPlayers() {
-        centerPL.removeAll();
-        final GridBagConstraints gbc = new GridBagConstraints();
-        for (final PlayerDTO player : players) {
-            final JLabel l = new JLabel(player.getNumber() + " ) " + player.getName() + " - " + player.getStatus());
-            l.setForeground(Color.white);
-            l.setFont(new Font("sans-serif", Font.BOLD, 16));
-            playersPL[player.getNumber() - 1].add(l, gbc);
+        for (final PlayerPanel panel : playersPL) {
+            panel.removePlayer();
         }
-        gui.refreshUI();
+        for (final PlayerDTO player : players) {
+            final PlayerPanel playerPL = playersPL[player.getNumber() - 1];
+            playerPL.refreshPlayer(player);
+        }
     }
 
     /**
      * 
+     * @param allReady
+     * @param isStarted
      */
-    public void refreshButtons(final boolean allReady) {
-        if (allReady) {
+    // FIXME readyBTN can bug
+    public void refreshButtons(final boolean allReady, final boolean isStarted) {
+        final GridBagConstraints gbc = new GridBagConstraints();
+        if (isStarted) {
+            readyBTN.setEnabled(false);
+        } else if (allReady) {
             bottomPL.remove(readyBTN);
-
             if (waitLB != null) {
                 bottomPL.remove(waitLB);
+                waitLB = null;
             }
-
-            final GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 1;
-            gbc.gridy = 0;
             gbc.gridwidth = 1;
             gbc.weightx = 1;
             gbc.weighty = 1;
             gbc.fill = GridBagConstraints.NONE;
             gbc.insets = new Insets(5, 0, 0, 0);
-
             if (players.get(0).getNumber() == playerNb) {
                 initStartBTN();
                 bottomPL.add(startBTN, gbc);
@@ -200,6 +199,17 @@ public class LobbyView extends AbstractView
                 initWaitLB(players.get(0).getName());
                 bottomPL.add(waitLB, gbc);
             }
+        } else if (startBTN != null) {
+            bottomPL.remove(startBTN);
+            startBTN = null;
+            gbc.gridx = 1;
+            gbc.gridwidth = 1;
+            gbc.weightx = 1;
+            gbc.weighty = 1;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.insets = new Insets(5, 0, 0, 0);
+            bottomPL.add(readyBTN, gbc);
+            readyBTN.setEnabled(false);
         }
     }
 
@@ -244,18 +254,16 @@ public class LobbyView extends AbstractView
     private void initCenterPL() {
         centerPL = new JPanel();
         centerPL.setOpaque(false);
-        centerPL.setLayout(new GridLayout(2, 2));
+        centerPL.setLayout(new GridLayout(GameConstants.MAX_NUMBER_OF_PLAYERS / 2, GameConstants.MAX_NUMBER_OF_PLAYERS / 2));
     }
 
     /**
      * 
      */
     private void initPlayersPL() {
-        playersPL = new JPanel[GameConstants.MAX_NUMBER_OF_PLAYERS];
+        playersPL = new PlayerPanel[GameConstants.MAX_NUMBER_OF_PLAYERS];
         for (int i = 0; i < playersPL.length; i++) {
-            playersPL[i] = new JPanel();
-            playersPL[i].setLayout(new GridBagLayout());
-            playersPL[i].setOpaque(false);
+            playersPL[i] = new PlayerPanel(i + 1);
         }
     }
 
@@ -304,6 +312,140 @@ public class LobbyView extends AbstractView
     /**********************************************************************************************
      * [BLOCK] INTERNAL LISTENERS
      **********************************************************************************************/
+
+    private class PlayerPanel extends JPanel
+    {
+
+        /** The serial version UID */
+        private static final long serialVersionUID = -5926630505331840276L;
+
+        /** The player label */
+        private final JLabel      playerLB;
+
+        /** The icon label */
+        private final JLabel      iconLB;
+
+        /** The status label */
+        private final JLabel      statusLB;
+
+        /** The score label */
+        private final JLabel      scoreLB;
+
+        /**
+         * 
+         * @param nb
+         */
+        public PlayerPanel(final int nb) {
+            final GridBagConstraints gbc = new GridBagConstraints();
+            setLayout(new GridBagLayout());
+            setOpaque(true);
+            setBackground(findSnakeColor(nb));
+
+            playerLB = generateLabel("Available", 15, Color.gray, Font.ITALIC);
+            gbc.gridwidth = 1;
+            gbc.gridheight = 1;
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.weightx = 1;
+            gbc.weighty = 0.1;
+            gbc.insets = new Insets(25, 0, 0, 0);
+            add(playerLB, gbc);
+
+            iconLB = generateLabel("", 15, Color.white, Font.PLAIN);
+            gbc.gridy = 1;
+            gbc.weighty = 500;
+            gbc.insets = new Insets(10, 0, 0, 0);
+            add(iconLB, gbc);
+
+            statusLB = generateLabel("", 15, Color.white, Font.ITALIC);
+            gbc.gridy = 2;
+            gbc.weighty = 500;
+            gbc.anchor = GridBagConstraints.NORTH;
+            add(statusLB, gbc);
+
+            scoreLB = generateLabel("", 15, Color.white, Font.BOLD);
+            gbc.gridy = 3;
+            gbc.weighty = 1000;
+            add(scoreLB, gbc);
+        }
+
+        /**
+         * 
+         * @param player
+         */
+        public void refreshPlayer(final PlayerDTO player) {
+            playerLB.setText(player.getName());
+            playerLB.setFont(new Font("sans-serif", Font.BOLD, 25));
+            playerLB.setForeground(Color.white);
+            statusLB.setText("" + player.getStatus());
+            iconLB.setIcon(new ImageIcon(LobbyView.class.getResource(findSnakeIconPath(player.getNumber()))));
+            scoreLB.setText("Score : " + player.getScore());
+        }
+
+        /**
+         * 
+         */
+        public void removePlayer() {
+            playerLB.setText("Available");
+            playerLB.setFont(new Font("sans-serif", Font.ITALIC, 15));
+            playerLB.setForeground(Color.gray);
+            statusLB.setText("");
+            iconLB.setIcon(null);
+            scoreLB.setText("");
+        }
+
+        /**
+         * 
+         * @param text
+         * @param fontSize
+         * @param fontColor
+         * @param fontWeight
+         * @return
+         */
+        private JLabel generateLabel(final String text, final int fontSize, final Color color, final int fontWeight) {
+            final JLabel label = new JLabel(text);
+            label.setForeground(color);
+            label.setFont(new Font("sans-serif", fontWeight, fontSize));
+            return label;
+        }
+
+        /**
+         * 
+         * @param i
+         * @return
+         */
+        private Color findSnakeColor(final int i) { // TODO duplicated
+            switch (i) {
+                case 2:
+                    return new Color(255, 0, 0, 50);
+                case 3:
+                    return new Color(12, 12, 235, 50);
+                case 4:
+                    return new Color(0, 0, 0, 50);
+                default:
+                    return new Color(39, 109, 31, 50);
+            }
+        }
+
+        /**
+         * 
+         * @param nb
+         * @return
+         */
+        private String findSnakeIconPath(final int nb) { // TODO duplicated
+            switch (nb) {
+                case 2:
+                    return ClientGuiConstants.RED_SNAKE_ICON_PATH;
+                case 3:
+                    return ClientGuiConstants.BLUE_SNAKE_ICON_PATH;
+                case 4:
+                    return ClientGuiConstants.BLACK_SNAKE_ICON_PATH;
+                default:
+                    return ClientGuiConstants.GREEN_SNAKE_ICON_PATH;
+            }
+        }
+
+    }
 
     /**
      * 

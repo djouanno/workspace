@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +50,6 @@ import com.esir.sr.sweetsnake.view.UnreachableServerView;
 public class ClientGui extends JFrame implements IGuiForClient
 {
 
-    // public static void main(final String[] args) {
-    // @SuppressWarnings("resource")
-    // final ClassPathXmlApplicationContext context = new
-    // ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-client-gui-context.xml");
-    // context.registerShutdownHook();
-    // }
-
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
@@ -71,7 +65,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      **********************************************************************************************/
 
     /** The client */
-    @Autowired
+    @Autowired(required = false)
     private IClientForGui         client;
 
     /** The unreachable server view */
@@ -191,6 +185,14 @@ public class ClientGui extends JFrame implements IGuiForClient
 
     /**
      * 
+     */
+    private void refreshUI() {
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * 
      * @param parent
      * @return
      */
@@ -248,8 +250,9 @@ public class ClientGui extends JFrame implements IGuiForClient
     /**
      * 
      * @param players
+     * @param isStarted
      */
-    private void refreshLobbyView(final List<PlayerDTO> players) {
+    private void refreshLobbyView(final List<PlayerDTO> players, final boolean isStarted) {
         lobbyView.setPlayers(players);
         lobbyView.refreshPlayers();
         boolean allReady = true;
@@ -261,7 +264,7 @@ public class ClientGui extends JFrame implements IGuiForClient
                 lobbyView.setPlayerNb(player.getNumber());
             }
         }
-        lobbyView.refreshButtons(allReady);
+        lobbyView.refreshButtons(allReady, isStarted);
     }
 
     /**********************************************************************************************
@@ -385,26 +388,20 @@ public class ClientGui extends JFrame implements IGuiForClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#gameJoined(int, java.util.List)
+     * @see com.esir.sr.sweetsnake.api.IGuiForClient#sessionJoined(com.esir.sr.sweetsnake.dto.GameSessionDTO, int)
      */
     @Override
-    public void sessionJoined(final int playerNb, final List<PlayerDTO> players) {
-        if (currentView != lobbyView) {
+    public void sessionJoined(final GameSessionDTO session, final int playerNb) {
+        if (currentView != lobbyView && currentView != gameView) {
             switchView(lobbyView, true);
         }
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 lobbyView.setPlayerNb(playerNb);
-                lobbyView.setPlayers(players);
+                lobbyView.setPlayers(session.getPlayersDto());
                 lobbyView.refreshPlayers();
-                boolean allReady = true;
-                for (final PlayerDTO player : players) {
-                    if (player.getStatus() != PlayerStatus.READY) {
-                        allReady = false;
-                    }
-                }
-                lobbyView.refreshButtons(allReady);
+                lobbyView.refreshButtons(session.allReady(), session.isStarted());
                 refreshUI();
             }
         });
@@ -413,13 +410,20 @@ public class ClientGui extends JFrame implements IGuiForClient
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#sessionStarted(int, java.util.Map, com.esir.sr.sweetsnake.dto.GameBoardDTO)
+     * @see com.esir.sr.sweetsnake.api.IGuiForClient#sessionStarted(com.esir.sr.sweetsnake.dto.GameSessionDTO, int)
      */
     @Override
-    public void sessionStarted(final int playerNb, final Map<Integer, String> playersSnakes, final GameBoardDTO gameBoard) {
+    public void sessionStarted(final GameSessionDTO session, final int playerNb) {
         gameView.setPlayerNb(playerNb);
+
+        // TODO move to dto
+        final Map<Integer, String> playersSnakes = new LinkedHashMap<Integer, String>();
+        for (final PlayerDTO player : session.getPlayersDto()) {
+            playersSnakes.put(player.getNumber(), player.getSnakeId());
+        }
         gameView.setPlayersSnakesMap(playersSnakes);
-        gameView.setGameboardDto(gameBoard);
+        gameView.setGameboardDto(session.getGameBoardDto());
+
         switchView(gameView, true);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -430,18 +434,23 @@ public class ClientGui extends JFrame implements IGuiForClient
     }
 
     /*
-     * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IGui#sessionLeft(java.util.List, com.esir.sr.sweetsnake.dto.PlayerDTO, boolean, boolean)
      */
     @Override
-    public void sessionLeft(final List<PlayerDTO> players, final PlayerDTO leaver, final boolean stopped, final boolean finished) {
+    // TODO move other parameters to sessiondto
+    public void sessionLeft(final GameSessionDTO session, final PlayerDTO leaver, final boolean stopped, final boolean finished) {
         if (stopped && !finished) {
             if (leaver.getName().equals(client.getUsername())) {
                 switchView(sessionsView, true);
             } else {
                 switchView(lobbyView, false);
-                refreshLobbyView(players);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLobbyView(session.getPlayersDto(), session.isStarted());
+                        refreshUI();
+                    }
+                });
             }
         } else if (finished) {
             switchView(sessionsView, true);
@@ -453,7 +462,7 @@ public class ClientGui extends JFrame implements IGuiForClient
                     if (currentView == gameView) {
                         gameView.hideScore(leaver.getNumber());
                     } else if (currentView == lobbyView) {
-                        refreshLobbyView(players);
+                        refreshLobbyView(session.getPlayersDto(), session.isStarted());
                     }
                     refreshUI();
                 }
@@ -461,14 +470,18 @@ public class ClientGui extends JFrame implements IGuiForClient
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IGui#sessionFinished(java.util.Map)
-     */
+    // TODO
     @Override
-    public void sessionFinished(final List<PlayerDTO> players) {
+    public void sessionFinished(final GameSessionDTO session) {
         switchView(lobbyView, true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                lobbyView.setPlayers(session.getPlayersDto());
+                lobbyView.refreshPlayers();
+                refreshUI();
+            }
+        });
     }
 
     /*
@@ -484,6 +497,7 @@ public class ClientGui extends JFrame implements IGuiForClient
                 public void run() {
                     gameView.setGameboardDto(gameBoard);
                     gameView.drawGameboard();
+                    refreshUI();
                 }
             });
         }
@@ -501,6 +515,7 @@ public class ClientGui extends JFrame implements IGuiForClient
                 @Override
                 public void run() {
                     gameView.refreshScores(players);
+                    refreshUI();
                 }
             });
         }
@@ -519,18 +534,6 @@ public class ClientGui extends JFrame implements IGuiForClient
                 JOptionPane.showMessageDialog(ClientGui.this, message, "Error", JOptionPane.ERROR_MESSAGE);
             }
         }).start();
-    }
-
-    /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
-     **********************************************************************************************/
-
-    /**
-     * 
-     */
-    public void refreshUI() {
-        revalidate();
-        repaint();
     }
 
     /**********************************************************************************************

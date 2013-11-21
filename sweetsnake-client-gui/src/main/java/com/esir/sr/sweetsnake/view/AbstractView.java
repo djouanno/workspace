@@ -31,7 +31,7 @@ public abstract class AbstractView extends JPanel
      **********************************************************************************************/
 
     /** The client */
-    @Autowired
+    @Autowired(required = false)
     protected IClientForGui   client;
 
     /** The GUI */

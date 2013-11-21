@@ -1,7 +1,6 @@
 package com.esir.sr.sweetsnake.api;
 
 import java.util.List;
-import java.util.Map;
 
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
@@ -73,33 +72,32 @@ public interface IGuiForClient
 
     /**
      * 
+     * @param session
      * @param playerNb
-     * @param players
      */
-    void sessionJoined(int playerNb, List<PlayerDTO> players);
+    void sessionJoined(GameSessionDTO session, int playerNb); // TODO remove other parameters
 
     /**
      * 
+     * @param session
      * @param playerNb
-     * @param playersSnakes
-     * @param gameBoard
      */
-    void sessionStarted(int playerNb, Map<Integer, String> playersSnakes, GameBoardDTO gameBoard);
+    void sessionStarted(GameSessionDTO session, int playerNb);
 
     /**
      * 
-     * @param players
+     * @param session
      * @param leaver
      * @param stopped
      * @param finished
      */
-    void sessionLeft(List<PlayerDTO> players, PlayerDTO leaver, boolean stopped, boolean finished);
+    void sessionLeft(GameSessionDTO session, PlayerDTO leaver, boolean stopped, boolean finished);
 
     /**
      * 
-     * @param playersScores
+     * @param session
      */
-    void sessionFinished(List<PlayerDTO> players);
+    void sessionFinished(GameSessionDTO session);
 
     /**
      * 

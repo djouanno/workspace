@@ -30,8 +30,8 @@ public abstract class AbstractView extends JPanel
      **********************************************************************************************/
 
     /** The server */
-    @Autowired
-    protected IServerForAdmin    server;
+    @Autowired(required = false)
+    protected IServerForAdmin server;
 
     /** The GUI */
     @Autowired

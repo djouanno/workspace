@@ -6,6 +6,8 @@
 
   <import resource="classpath*:sweetsnake-server-gui-context.xml" />
 
+  <context:annotation-config />
+
   <bean id="sweetSnakeService" class="com.esir.sr.sweetsnake.server.Server" />
 
   <bean class="org.springframework.remoting.rmi.RmiServiceExporter">

@@ -1,10 +1,8 @@
 package com.esir.sr.sweetsnake.client;
 
 import java.rmi.RemoteException;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -372,7 +370,7 @@ public class Client implements IClientForServer, IClientForGui
     @Override
     public void sessionJoined(final int playerNb, final GameSessionDTO sessionDto) {
         session = sessionDto;
-        gui.sessionJoined(playerNb, session.getPlayersDto());
+        gui.sessionJoined(session, playerNb);
     }
 
     /*
@@ -383,11 +381,7 @@ public class Client implements IClientForServer, IClientForGui
     @Override
     public void sessionStarted(final int playerNb, final GameSessionDTO sessionDto) {
         session = sessionDto;
-        final Map<Integer, String> playersSnakes = new LinkedHashMap<Integer, String>();
-        for (final PlayerDTO player : session.getPlayersDto()) {
-            playersSnakes.put(player.getNumber(), player.getSnakeId());
-        }
-        gui.sessionStarted(playerNb, playersSnakes, session.getGameBoardDto());
+        gui.sessionStarted(session, playerNb);
     }
 
     /*
@@ -398,11 +392,11 @@ public class Client implements IClientForServer, IClientForGui
      */
     @Override
     public void sessionLeft(final GameSessionDTO sessionDto, final PlayerDTO leaver, final boolean stopped, final boolean finished) {
-        log.debug("Game left by {}", leaver);
+        session = sessionDto;
+        gui.sessionLeft(session, leaver, stopped, finished);
         if (finished) {
             session = null;
         }
-        gui.sessionLeft(sessionDto.getPlayersDto(), leaver, stopped, finished);
     }
 
     /*
@@ -412,7 +406,8 @@ public class Client implements IClientForServer, IClientForGui
      */
     @Override
     public void sessionFinished(final GameSessionDTO sessionDto) {
-        gui.sessionFinished(sessionDto.getPlayersDto());
+        session = sessionDto;
+        gui.sessionFinished(session);
     }
 
     /*
@@ -423,8 +418,8 @@ public class Client implements IClientForServer, IClientForGui
     @Override
     public void refreshSession(final GameSessionDTO sessionDto) {
         session = sessionDto;
-        gui.refreshGameboard(sessionDto.getGameBoardDto());
-        gui.refreshScores(sessionDto.getPlayersDto());
+        gui.refreshGameboard(session.getGameBoardDto());
+        gui.refreshScores(session.getPlayersDto());
     }
 
     /**********************************************************************************************

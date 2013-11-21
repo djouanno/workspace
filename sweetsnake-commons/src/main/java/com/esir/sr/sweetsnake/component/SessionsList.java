@@ -64,6 +64,9 @@ public class SessionsList extends AbstractList<GameSessionDTO>
                 final JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 final GameSessionDTO session = (GameSessionDTO) value;
                 ImageIcon imageIcon = new ImageIcon(SessionsList.class.getResource(ClientGuiConstants.AVAILABLE_ICON_PATH));
+                if (session.isStarted()) {
+                    imageIcon = new ImageIcon(SessionsList.class.getResource(ClientGuiConstants.INVITE_ICON_PATH));
+                }
                 if (session.getPlayersDto().size() >= GameConstants.MAX_NUMBER_OF_PLAYERS) {
                     imageIcon = new ImageIcon(SessionsList.class.getResource(ClientGuiConstants.UNAVAILABLE_ICON_PATH));
                 }

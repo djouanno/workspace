@@ -45,9 +45,9 @@ public class DtoConverterFactory
      */
     public static GameSessionDTO convertGameSession(final GameSession session) {
         if (session.getGameEngine() == null) {
-            return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), null, session.getCallback());
+            return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), null, session.getCallback(), session.allReady(), session.isStarted());
         }
-        return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), convertGameBoard(session.getGameEngine().getGameBoard()), session.getCallback());
+        return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), convertGameBoard(session.getGameEngine().getGameBoard()), session.getCallback(), session.allReady(), session.isStarted());
     }
 
     /**

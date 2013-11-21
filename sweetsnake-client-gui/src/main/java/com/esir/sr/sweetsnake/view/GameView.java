@@ -309,7 +309,6 @@ public class GameView extends AbstractView
                     break;
             }
         }
-        gui.refreshUI();
     }
 
     /**
@@ -318,11 +317,8 @@ public class GameView extends AbstractView
      * @return
      */
     private String findSnakeIconPath(final String snakeId) {
-        log.debug("Looking for snake {}", snakeId);
         for (final int player : playersSnakes.keySet()) {
-            log.debug("Found snake with id {}", playersSnakes.get(player));
             if (playersSnakes.get(player).equals(snakeId)) {
-                log.debug("{} equals {}", playersSnakes.get(player), snakeId);
                 switch (player) {
                     case 2:
                         return ClientGuiConstants.RED_SNAKE_ICON_PATH;

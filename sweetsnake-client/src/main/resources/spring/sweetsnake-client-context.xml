@@ -6,6 +6,8 @@
 
   <import resource="classpath*:sweetsnake-client-gui-context.xml" />
 
+  <context:annotation-config />
+
   <context:component-scan base-package="com.esir.sr.sweetsnake" />
 
 </beans>
