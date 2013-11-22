@@ -1,0 +1,24 @@
+<mapping>
+<class name="fr.esir.xml.question6.Personne">
+  <field name="nom">
+    <bind-xml node="element"/>
+  </field>
+  <field name="age">
+    <bind-xml node="element"/>
+  </field>
+  <field name="taille">
+    <bind-xml node="element"/>
+  </field>
+  <field name="ville">
+    <bind-xml node="element"/>
+  </field>
+</class>
+<class name="fr.esir.xml.question6.Ville">
+  <field name="codePostal">
+    <bind-xml node="attribute"/>
+  </field>
+  <field name="nom">
+    <bind-xml node="text"/>
+  </field>
+</class>
+</mapping>

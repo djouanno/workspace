@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/Q1" xmlns:tns="http://www.example.org/Q1">
+    <xs:simpleType name="typeVoie">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="rue" />
+            <xs:enumeration value="avenue" />
+            <xs:enumeration value="impasse" />
+            <xs:enumeration value="cours" />
+            <xs:enumeration value="square" />
+            <xs:enumeration value="boulevard" />
+            <xs:enumeration value="chemin" />
+            <xs:enumeration value="allee" />
+            <xs:enumeration value="quai" />
+            <xs:enumeration value="route" />
+            <xs:enumeration value="passage" />
+            <xs:enumeration value="place" />
+            <xs:enumeration value="rondPoint" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="carnetDAdrresse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="carteDeVisite">
+                    <xs:complexType>
+                        
+                        <xs:sequence>
+                            <xs:element name="prenom" type="xs:string" />
+                            <xs:element name="nom" type="xs:string" />
+                            <xs:element name="organisme" type="xs:string" />
+                            <xs:element name="adresse">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="numero" type="xs:integer" />
+                                        <xs:element name="voie">
+                                            <xs:complexType>
+                                                <xs:attribute name="type" use="required" type="typeVoie" default="rue" />
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="ville" type="xs:string">
+                                            <xs:complexType>
+                                                <xs:attribute name="codePostal" use="optional" type="xs:integer" />
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="note">
+                                <xs:complexType mixed="true">
+                                    <xs:choice>
+                                        <xs:element name="cle" type="xs:string" />
+                                    </xs:choice>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="id" type="xs:ID" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

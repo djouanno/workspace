@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?nom1 param1 param2?>
+
+<!-- Mon carnet d'adresses -->
+<carnetDAdresse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="S:\2005-2006\m2infopro\mitic\doc2\tp3-programmation-xml\carnetDAdresse.xsd">  
+  <carteDeVisite id="i1"> 
+    <prénom>Yves</prénom>  
+    <nom>Bekkers</nom>  
+    <organisme>IFSIC</organisme>  <?nom2 param1 param2 param3?>
+  
+    <!-- Une adresse -->  
+    <adresse> 
+      <numéro>42</numéro>  
+      <voie type="avenue">général Leclerc</voie>  
+      <ville codepostal="35042" codePostal="35000">Rennes</ville> 
+    </adresse>  
+    <note>Enseigne 
+      <clé>XML</clé> au SEP de Rennes 1
+    </note> 
+  </carteDeVisite>  
+  <carteDeVisite id="i2"> 
+    <prénom>Roland</prénom>  
+    <nom>Bartold</nom>  
+    <organisme>Net Center</organisme>  
+    <adresse> 
+      <numéro>256</numéro>  
+      <voie type="boulevard">Martenot</voie>  
+      <ville codepostal="35000" codePostal="35000">Rennes</ville> 
+    </adresse> 
+  </carteDeVisite>  
+  <carteDeVisite id="i6"> 
+    <prénom>Ronan</prénom>  
+    <nom>Grosjean</nom>  
+    <organisme>Lavie</organisme>  
+    <adresse> 
+      <numéro>256</numéro>  
+      <voie>Martenot</voie>  
+      <ville codepostal="35000" codePostal="35000">Rennes</ville> 
+    </adresse>  
+    <note>Commercial 
+      <clé>réseau</clé> 
+    </note> 
+  </carteDeVisite>  
+  <carteDeVisite id="i3"> 
+    <prénom>Pierre</prénom>  
+    <nom>Letertre</nom>  
+    <organisme>Dcom</organisme>  
+    <adresse> 
+      <numéro>1 bis</numéro>  
+      <voie>Cetavelon</voie>  
+      <ville codepostal="56000">Vannes</ville> 
+    </adresse> 
+  </carteDeVisite>  
+  <carteDeVisite id="i4"> 
+    <prénom>Pierre</prénom>  
+    <nom>Apollon</nom>  
+    <organisme>Renove</organisme>  
+    <adresse> 
+      <numéro>56</numéro>  
+      <voie type="impasse">Moreau</voie>  
+      <ville codepostal="56400">Redon</ville> 
+    </adresse>  
+    <note>Pense qu'il est sorti de la cuisse de 
+      <clé>Jupiter</clé> 
+    </note> 
+  </carteDeVisite>  
+  <carteDeVisite id="i5"> 
+    <prénom>Jean</prénom>  
+    <nom>Bartold</nom>  
+    <organisme>Dcom</organisme>  
+    <adresse> 
+      <numéro>56</numéro>  
+      <voie type="boulevard">Leclerc</voie>  
+      <ville codepostal="29000">Brest</ville> 
+    </adresse> 
+  </carteDeVisite> 
+</carnetDAdresse>

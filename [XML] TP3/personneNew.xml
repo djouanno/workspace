@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<personne> 
+  <nom>Durant</nom>  
+  <age>28</age>  
+  <taille>1.80</taille>  
+  <adresse> 
+    <ville codePostal="35000">Vern sur seiche</ville>  
+    <voie type="rue">de l'Alma</voie> 
+  </adresse> 
+</personne>
