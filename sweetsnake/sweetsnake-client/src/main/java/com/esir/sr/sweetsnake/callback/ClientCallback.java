@@ -137,11 +137,11 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionStarted(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#sessionStarted(com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void sessionStarted(final int playerNb, final GameSessionDTO session) throws RemoteException {
-        client.sessionStarted(playerNb, session);
+    public void sessionStarted(final GameSessionDTO session) throws RemoteException {
+        client.sessionStarted(session);
     }
 
     /*

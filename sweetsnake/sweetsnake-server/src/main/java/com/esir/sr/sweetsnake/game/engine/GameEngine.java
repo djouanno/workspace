@@ -104,7 +104,7 @@ public class GameEngine
         }
 
         if (gameBoard.getNbSweets() == 0) {
-            session.stopGame();
+            session.stopGame(false);
         }
     }
 

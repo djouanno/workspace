@@ -22,6 +22,11 @@ public interface IGuiForClient
     /**
      * 
      */
+    void reachingServer();
+
+    /**
+     * 
+     */
     void serverReachable();
 
     /**
@@ -75,14 +80,13 @@ public interface IGuiForClient
      * @param session
      * @param playerNb
      */
-    void sessionJoined(GameSessionDTO session, int playerNb); // TODO remove other parameters
+    void sessionJoined(GameSessionDTO session, int playerNb);
 
     /**
      * 
      * @param session
-     * @param playerNb
      */
-    void sessionStarted(GameSessionDTO session, int playerNb);
+    void sessionStarted(GameSessionDTO session);
 
     /**
      * 

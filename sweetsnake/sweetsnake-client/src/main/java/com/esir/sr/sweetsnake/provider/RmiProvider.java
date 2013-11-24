@@ -1,7 +1,5 @@
 package com.esir.sr.sweetsnake.provider;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.remoting.rmi.RmiProxyFactoryBean;
@@ -27,12 +25,6 @@ public class RmiProvider
     /** The logger */
     private static final Logger log = LoggerFactory.getLogger(RmiProvider.class);
 
-    /**********************************************************************************************
-     * [BLOCK] FIELDS
-     **********************************************************************************************/
-
-    /** The server */
-    private IServer             server;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -45,35 +37,6 @@ public class RmiProvider
         super();
     }
 
-    /**
-     * 
-     */
-    @PostConstruct
-    protected void init() {
-        try {
-            log.debug("Trying to reach server at URL : {}", PropertiesConstants.SERVER_URL);
-            final RmiProxyFactoryBean factory = new RmiProxyFactoryBean();
-            factory.setServiceInterface(IServer.class);
-            factory.setServiceUrl(PropertiesConstants.SERVER_URL);
-            factory.afterPropertiesSet();
-            server = (IServer) factory.getObject();
-        } catch (final Exception e) {
-            // do nothing, let server be null
-        }
-    }
-
-    /**********************************************************************************************
-     * [BLOCK] PUBLIC METHOD
-     **********************************************************************************************/
-
-    /**
-     * 
-     */
-    public void retryReach() {
-        server = null;
-        init();
-    }
-
     /**********************************************************************************************
      * [BLOCK] GETTERS
      **********************************************************************************************/
@@ -83,7 +46,16 @@ public class RmiProvider
      * @return
      */
     public IServer getRmiService() {
-        return server;
+        try {
+            log.debug("Trying to reach server at URL : {}", PropertiesConstants.SERVER_URL);
+            final RmiProxyFactoryBean factory = new RmiProxyFactoryBean();
+            factory.setServiceInterface(IServer.class);
+            factory.setServiceUrl(PropertiesConstants.SERVER_URL);
+            factory.afterPropertiesSet();
+            return (IServer) factory.getObject();
+        } catch (final Exception e) {
+            return null;
+        }
     }
 
 }

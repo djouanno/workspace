@@ -62,9 +62,6 @@ public class Player
     /** The current game player's score */
     private int                 score;
 
-    /** Is the player a fictive one */
-    private boolean             fictive;
-
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
@@ -91,7 +88,6 @@ public class Player
      */
     protected Player(final String _name) {
         name = _name;
-        fictive = true;
     }
 
     /**********************************************************************************************
@@ -198,14 +194,6 @@ public class Player
      */
     public int getScore() {
         return score;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public boolean isFictive() {
-        return fictive;
     }
 
     /**********************************************************************************************

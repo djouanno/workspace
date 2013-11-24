@@ -43,9 +43,6 @@ public class GameSessionDTO implements Serializable
     /** Is the session started */
     private final boolean              isStarted;
 
-    /** Are all players ready to play */
-    private final boolean              allReady;
-
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
@@ -56,15 +53,13 @@ public class GameSessionDTO implements Serializable
      * @param _playersDto
      * @param _gameBoardDto
      * @param _callback
-     * @param _allReady
      * @param _isStarted
      */
-    public GameSessionDTO(final String _id, final List<PlayerDTO> _playersDto, final GameBoardDTO _gameBoardDto, final IGameSessionCallback _callback, final boolean _allReady, final boolean _isStarted) {
+    public GameSessionDTO(final String _id, final List<PlayerDTO> _playersDto, final GameBoardDTO _gameBoardDto, final IGameSessionCallback _callback, final boolean _isStarted) {
         id = _id;
         playersDto = new LinkedList<PlayerDTO>(_playersDto);
         gameBoardDto = _gameBoardDto;
         callback = _callback;
-        allReady = _allReady;
         isStarted = _isStarted;
     }
 
@@ -107,14 +102,6 @@ public class GameSessionDTO implements Serializable
      */
     public GameBoardDTO getGameBoardDto() {
         return gameBoardDto;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public boolean allReady() {
-        return allReady;
     }
 
     /**

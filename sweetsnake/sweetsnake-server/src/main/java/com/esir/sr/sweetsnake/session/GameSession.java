@@ -59,20 +59,11 @@ public class GameSession extends AbstractSession
     /** The players list */
     private List<Player>        players;
 
-    /** The current player nb */
-    private int                 currentPlayerNb;
-
     /** The timelimit players mapping */
     private Map<Player, Long>   timeout;
 
-    /** The fictive players mapping */
-    private Map<String, Player> fictivePlayers;
-
     /** The game engine */
     private GameEngine          engine;
-
-    /** Are all players ready to play */
-    private boolean             allReady;
 
     /** Is the game started */
     private boolean             isStarted;
@@ -100,9 +91,7 @@ public class GameSession extends AbstractSession
         log.info("Initializing a new game session");
         id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
         players = new LinkedList<Player>();
-        currentPlayerNb = 1;
         timeout = new LinkedHashMap<Player, Long>();
-        fictivePlayers = new LinkedHashMap<String, Player>();
         callback = beanProvider.getPrototype(GameSessionCallback.class, this);
     }
 
@@ -128,34 +117,6 @@ public class GameSession extends AbstractSession
 
     /**
      * 
-     * @param playerClient
-     */
-    public void ready(final IClientCallback playerClient) {
-        try {
-            final Player player = playersRegistry.get(playerClient.getName());
-            player.setStatus(PlayerStatus.READY);
-
-            allReady = true;
-            for (final Player _player : players) {
-                // TODO block if fictives ?
-                if (_player.getStatus() != PlayerStatus.READY) {
-                    allReady = false;
-                }
-            }
-
-            final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
-            for (final Player _player : players) {
-                _player.getCallback().sessionJoined(_player.getNumber(), sessionDto);
-            }
-
-            log.debug("Player {} is ready to play", player.getName());
-        } catch (final PlayerNotFoundException | RemoteException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * 
      * @param starterClient
      * @throws UnauthorizedActionException
      */
@@ -168,13 +129,17 @@ public class GameSession extends AbstractSession
                 throw new UnauthorizedActionException("unauthorized start");
             }
 
-            removeAllFictivePlayers();
+            for (final Player player : players) {
+                player.setScore(0);
+            }
 
             engine = new GameEngine(this);
+
             final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
+
             for (final Player player : players) {
                 player.setStatus(PlayerStatus.PLAYING);
-                player.getCallback().sessionStarted(player.getNumber(), sessionDto);
+                player.getCallback().sessionStarted(sessionDto);
             }
 
             isStarted = true;
@@ -214,14 +179,12 @@ public class GameSession extends AbstractSession
             final boolean stopped = players.size() <= 1, finished = players.size() <= 0;
 
             for (final Player player : players) {
-                if (!player.isFictive()) {
-                    player.getCallback().sessionLeft(sessionDto, leaverDto, stopped, finished);
-                    player.getCallback().refreshSession(sessionDto);
-                }
+                player.getCallback().sessionLeft(sessionDto, leaverDto, stopped, finished);
+                player.getCallback().refreshSession(sessionDto);
             }
 
             if (stopped) {
-                isStarted = false;
+                stopGame(false);
             }
 
             if (finished) {
@@ -275,104 +238,38 @@ public class GameSession extends AbstractSession
     /**
      * 
      * @param player
+     * @throws MaximumNumberOfPlayersException
      */
-    public void denied(final Player player) {
-        final Player fictivePlayer = fictivePlayers.get(player.getName());
-        players.remove(fictivePlayer);
-        fictivePlayers.remove(player.getName());
-        updatePlayersNumber(fictivePlayer.getNumber() - 1);
+    public void addPlayer(final Player player) throws MaximumNumberOfPlayersException {
+        if (players.size() >= GameConstants.MAX_NUMBER_OF_PLAYERS) {
+            log.warn("Player {} tried to join a full session", player.getName());
+            throw new MaximumNumberOfPlayersException("session is full");
+        }
+
+        players.add(player);
+        player.setNumber(players.size());
+        player.setGameSessionId(id);
+        player.setStatus(PlayerStatus.READY);
+
+        timeout.put(player, 0L);
 
         final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
-        for (final Player _player : getPlayers()) {
-            if (!_player.isFictive()) {
+
+        if (!isStarted) {
+            for (final Player _player : players) {
                 try {
                     _player.getCallback().sessionJoined(_player.getNumber(), sessionDto);
                 } catch (final RemoteException e) {
                     log.error(e.getMessage(), e);
                 }
             }
-        }
-    }
-
-    /**
-     * 
-     * @param player
-     * @throws MaximumNumberOfPlayersException
-     */
-    public void addPlayer(final Player player) throws MaximumNumberOfPlayersException {
-        Player fictivePlayer = null;
-        if (fictivePlayers.containsKey(player.getName())) {
-            fictivePlayer = fictivePlayers.get(player.getName());
-            players.remove(fictivePlayer);
-            fictivePlayers.remove(player.getName());
-        }
-
-        if (players.size() >= GameConstants.MAX_NUMBER_OF_PLAYERS) {
-            log.warn("Player {} tried to join a full session", player.getName());
-            throw new MaximumNumberOfPlayersException("session is full");
-        }
-
-        player.setNumber(fictivePlayer == null ? currentPlayerNb : fictivePlayer.getNumber());
-        players.add(player.getNumber() - 1, player);
-        player.setGameSessionId(id);
-        player.setStatus(PlayerStatus.PRESENT);
-        allReady = false;
-
-        timeout.put(player, 0L);
-        currentPlayerNb++;
-
-        final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
-
-        if (!isStarted) {
-            for (final Player _player : players) {
-                if (!_player.isFictive()) {
-                    try {
-                        _player.getCallback().sessionJoined(_player.getNumber(), sessionDto);
-                    } catch (final RemoteException e) {
-                        log.error(e.getMessage(), e);
-                    }
-                }
-            }
         } else {
-            if (!player.isFictive()) {
-                try {
-                    player.getCallback().sessionJoined(player.getNumber(), sessionDto);
-                } catch (final RemoteException e) {
-                    log.error(e.getMessage(), e);
-                }
+            try {
+                player.getCallback().sessionJoined(player.getNumber(), sessionDto);
+            } catch (final RemoteException e) {
+                log.error(e.getMessage(), e);
             }
         }
-    }
-
-    /**
-     * 
-     * @param player
-     */
-    public void addFictivePlayer(final Player player) {
-        final Player fictivePlayer = beanProvider.getPrototype(Player.class, player.getName());
-        fictivePlayers.put(fictivePlayer.getName(), fictivePlayer);
-
-        players.add(fictivePlayer);
-        fictivePlayer.setStatus(PlayerStatus.INVITED);
-        fictivePlayer.setNumber(players.size());
-
-        try {
-            final Player _player = players.get(0);
-            _player.getCallback().sessionJoined(_player.getNumber(), DtoConverterFactory.convertGameSession(this));
-        } catch (final RemoteException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * 
-     */
-    public void removeAllFictivePlayers() {
-        for (final String playerName : fictivePlayers.keySet()) {
-            players.remove(fictivePlayers.get(playerName));
-            currentPlayerNb--;
-        }
-        fictivePlayers.clear();
     }
 
     /**
@@ -382,7 +279,6 @@ public class GameSession extends AbstractSession
     public void removePlayer(final Player player) {
         timeout.remove(player);
         players.remove(player);
-        currentPlayerNb--;
         updatePlayersNumber(player.getNumber() - 1);
         player.setStatus(PlayerStatus.AVAILABLE);
         player.setGameSessionId(null);
@@ -401,13 +297,29 @@ public class GameSession extends AbstractSession
 
     /**
      * 
+     * @param fromAdmin
      */
-    public void stopGame() {
+    public void stopGame(final boolean fromAdmin) {
         try {
             isStarted = false;
 
-            for (final Player player : players) {
-                player.setStatus(PlayerStatus.PRESENT);
+            if (!fromAdmin) {
+                int maxScore = 0;
+                final List<Player> winners = new LinkedList<Player>();
+                for (final Player player : players) {
+                    if (player.getScore() >= maxScore) {
+                        maxScore = player.getScore();
+                        winners.add(player);
+                    }
+                    player.setStatus(PlayerStatus.LOSER);
+                }
+                for (final Player player : winners) {
+                    player.setStatus(PlayerStatus.WINNER);
+                }
+            } else {
+                for (final Player player : players) {
+                    player.setStatus(PlayerStatus.READY);
+                }
             }
 
             final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
@@ -415,6 +327,10 @@ public class GameSession extends AbstractSession
             for (final Player player : players) {
                 player.getCallback().sessionFinished(sessionDto);
             }
+
+            server.sendRefreshPlayersList();
+            server.sendRefreshSessionsList();
+            server.sendRefreshRequestsList();
 
             log.info("Game session {} has been finished", id);
         } catch (final RemoteException e) {
@@ -467,14 +383,6 @@ public class GameSession extends AbstractSession
      */
     public GameEngine getGameEngine() {
         return engine;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public boolean allReady() {
-        return allReady;
     }
 
     /**

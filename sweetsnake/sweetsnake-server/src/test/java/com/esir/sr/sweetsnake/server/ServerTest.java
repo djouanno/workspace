@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.api.IServer;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
-import com.esir.sr.sweetsnake.utils.ClientCallbackMock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:spring/sweetsnake-server-context-test.xml" })
@@ -26,7 +25,7 @@ public class ServerTest
 {
 
     private static final Logger                   log                   = LoggerFactory.getLogger(ServerTest.class);
-    private static final String                   player1               = "player1", player2 = "player2";
+    // private static final String player1 = "player1", player2 = "player2";
     private static ClassPathXmlApplicationContext context;
     private static IClientCallback                client1, client2;
     private static boolean                        runDataInitialization = true;
@@ -51,8 +50,8 @@ public class ServerTest
     public void before() throws UnableToConnectException {
         if (runDataInitialization) {
             log.info("Initializing test fields");
-            client1 = new ClientCallbackMock(player1);
-            client2 = new ClientCallbackMock(player2);
+            // client1 = new ClientCallbackMock(player1);
+            // client2 = new ClientCallbackMock(player2);
             server.connect(client1);
             server.connect(client2);
             runDataInitialization = false;

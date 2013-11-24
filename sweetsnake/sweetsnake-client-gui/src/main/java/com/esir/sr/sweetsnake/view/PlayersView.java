@@ -1,16 +1,15 @@
 package com.esir.sr.sweetsnake.view;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -18,9 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.component.PlayersList;
-import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
@@ -47,23 +44,14 @@ public class PlayersView extends AbstractView
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The view title panel */
-    private ImagePanel          playersListIPL;
-
-    /** The top panel */
-    private JPanel              topPL;
-
     /** The center panel */
     private JPanel              centerPL;
-
-    /** The bottom panel */
-    private JPanel              bottomPL;
 
     /** The players list */
     private PlayersList         playersLST;
 
-    /** The request button */
-    private JButton             requestBTN;
+    /** The parent dialog */
+    private JDialog             dialog;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -98,17 +86,15 @@ public class PlayersView extends AbstractView
      * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#buildImpl()
      */
     @Override
-    public void buildImpl() {
+    protected void buildImpl() {
         setLayout(new BorderLayout());
+        setOpaque(true);
+        setBackground(Color.black);
 
-        // top panel
-        initTopPL();
-        add(topPL, BorderLayout.NORTH);
+        dimension = new Dimension(350, 350);
+        setSize(dimension);
+        setPreferredSize(dimension);
 
-        initPlayersListIPL();
-        topPL.add(playersListIPL);
-
-        // center panel
         initCenterPL();
         add(centerPL, BorderLayout.CENTER);
 
@@ -116,18 +102,6 @@ public class PlayersView extends AbstractView
 
         initPlayersLST(players);
         centerPL.add(new JScrollPane(playersLST));
-
-        // bottom panel
-        initBottomPL();
-        add(bottomPL, BorderLayout.SOUTH);
-
-        final GridBagConstraints gbc = new GridBagConstraints();
-
-        initRequestBTN();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(5, 0, 0, 0);
-        bottomPL.add(requestBTN, gbc);
     }
 
     /**
@@ -141,7 +115,7 @@ public class PlayersView extends AbstractView
 
             if (players.isEmpty()) {
                 playersLST.disableSelection();
-                playersLST.addElement(new PlayerDTO("No available player for the moment", null, null, 0, 0, false));
+                playersLST.addElement(new PlayerDTO("No available player for the moment", null, null, 0, 0));
             } else {
                 playersLST.enableSelection();
                 for (final PlayerDTO player : players) {
@@ -151,24 +125,17 @@ public class PlayersView extends AbstractView
         }
     }
 
+    /**
+     * 
+     * @param _dialog
+     */
+    public void setDialog(final JDialog _dialog) {
+        dialog = _dialog;
+    }
+
     /**********************************************************************************************
      * [BLOCK] PRIVATE METHODS
      **********************************************************************************************/
-
-    /**
-     * 
-     */
-    private void initTopPL() {
-        topPL = new JPanel();
-        topPL.setOpaque(false);
-    }
-
-    /**
-     * 
-     */
-    private void initPlayersListIPL() {
-        playersListIPL = new ImagePanel(ClientGuiConstants.PLAYERS_LIST_PATH);
-    }
 
     /**
      * 
@@ -185,26 +152,10 @@ public class PlayersView extends AbstractView
      */
     private void initPlayersLST(final List<PlayerDTO> players) {
         playersLST = new PlayersList();
+        playersLST.addMouseListener(new InviteListener());
         for (final PlayerDTO player : players) {
             playersLST.addElement(player);
         }
-    }
-
-    /**
-     * 
-     */
-    private void initBottomPL() {
-        bottomPL = new JPanel();
-        bottomPL.setLayout(new GridBagLayout());
-        bottomPL.setOpaque(false);
-    }
-
-    /**
-     * 
-     */
-    private void initRequestBTN() {
-        requestBTN = new JButton("invite");
-        requestBTN.addActionListener(new RequestGameListener());
     }
 
     /**********************************************************************************************
@@ -217,23 +168,20 @@ public class PlayersView extends AbstractView
      * @author Damien Jouanno
      * 
      */
-    private class RequestGameListener implements ActionListener
+    private class InviteListener extends MouseAdapter
     {
 
         /*
          * (non-Javadoc)
          * 
-         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
          */
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            final List<PlayerDTO> selectedPlayers = playersLST.getSelectedValuesList();
-            if (selectedPlayers.size() == 0) {
-                gui.displayErrorMessage("Please select an opponent first");
-            } else {
-                for (final PlayerDTO player : selectedPlayers) {
-                    client.sendRequest(player);
-                }
+        public void mouseClicked(final MouseEvent e) {
+            final PlayerDTO selectedPlayer = playersLST.getSelectedValue();
+            if (selectedPlayer != null) {
+                client.sendRequest(selectedPlayer);
+                dialog.dispose();
             }
         }
 

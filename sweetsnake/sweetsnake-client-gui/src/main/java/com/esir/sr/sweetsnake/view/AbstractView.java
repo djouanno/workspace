@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.esir.sr.sweetsnake.api.IClientForGui;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.gui.ClientGui;
+import com.esir.sr.sweetsnake.provider.BeanProvider;
 
 /**
  * 
@@ -37,6 +38,10 @@ public abstract class AbstractView extends JPanel
     /** The GUI */
     @Autowired
     protected ClientGui       gui;
+
+    /** The bean provider */
+    @Autowired
+    protected BeanProvider    beanProvider;
 
     /** The view dimension */
     protected Dimension       dimension;

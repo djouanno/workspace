@@ -18,13 +18,6 @@ public interface IGameSessionCallback extends Remote
     /**
      * 
      * @param client
-     * @throws RemoteException
-     */
-    void ready(IClientCallback client) throws RemoteException;
-
-    /**
-     * 
-     * @param client
      * @throws UnauthorizedActionException
      * @throws RemoteException
      */

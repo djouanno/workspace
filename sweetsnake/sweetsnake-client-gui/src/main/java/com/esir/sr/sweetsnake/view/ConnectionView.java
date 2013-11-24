@@ -14,12 +14,12 @@ import java.awt.event.FocusListener;
 import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.remoting.RemoteConnectFailureException;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.component.ImagePanel;
@@ -99,7 +99,7 @@ public class ConnectionView extends AbstractView
      * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#buildImpl()
      */
     @Override
-    public void buildImpl() {
+    protected void buildImpl() {
         setLayout(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 
@@ -234,7 +234,9 @@ public class ConnectionView extends AbstractView
             try {
                 client.connect(username);
             } catch (final UnableToConnectException e1) {
-                JOptionPane.showMessageDialog(gui, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                gui.displayErrorMessage(e1.getMessage());
+            } catch (final RemoteConnectFailureException e1) {
+                gui.serverNotReachable();
             }
         }
 

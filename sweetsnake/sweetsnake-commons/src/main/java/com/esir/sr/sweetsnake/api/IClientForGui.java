@@ -1,5 +1,7 @@
 package com.esir.sr.sweetsnake.api;
 
+import org.springframework.remoting.RemoteConnectFailureException;
+
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
@@ -22,7 +24,7 @@ public interface IClientForGui extends IClient
      * from the gui
      * 
      */
-    void connect(String username) throws UnableToConnectException;
+    void connect(String username) throws RemoteConnectFailureException, UnableToConnectException;
 
     /**
      * from the gui
@@ -47,11 +49,6 @@ public interface IClientForGui extends IClient
      * @param session
      */
     void joinSession(GameSessionDTO session);
-
-    /**
-     * 
-     */
-    void readyToPlay();
 
     /**
      * from the gui

@@ -278,6 +278,13 @@ public class StatusView extends AbstractView
         @Override
         public void actionPerformed(final ActionEvent e) {
             server.startServer();
+            days = 0;
+            hours = 0;
+            minutes = 0;
+            seconds = 0;
+            startTimer();
+            disableStartBTN();
+            enableStopBTN();
         }
 
     }
@@ -299,6 +306,9 @@ public class StatusView extends AbstractView
         @Override
         public void actionPerformed(final ActionEvent e) {
             server.stopServer();
+            stopTimer();
+            disableStopBTN();
+            enableStartBTN();
         }
 
     }

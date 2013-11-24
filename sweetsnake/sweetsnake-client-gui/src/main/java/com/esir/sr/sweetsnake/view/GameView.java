@@ -84,9 +84,6 @@ public class GameView extends AbstractView
     /** The quit button */
     private JButton              quitBTN;
 
-    /** The current player's number */
-    private int                  playerNb;
-
     /** The players' numbers & snakes map */
     private Map<Integer, String> playersSnakes;
 
@@ -124,7 +121,7 @@ public class GameView extends AbstractView
      * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#buildImpl()
      */
     @Override
-    public void buildImpl() {
+    protected void buildImpl() {
         setLayout(new BorderLayout());
 
         // top panel
@@ -134,16 +131,14 @@ public class GameView extends AbstractView
         initPlayersScoresLB();
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        final int[][] positions = { { 0, 3, 2, 1 }, { 1, 2, 3, 0 }, { 2, 0, 1, 3 }, { 3, 1, 0, 2 } };
-
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 5, 170);
-        topPL.add(playersScoresLB[positions[playerNb - 1][0]], gbc);
+        topPL.add(playersScoresLB[0], gbc);
 
         gbc.gridx = 1;
         gbc.insets = new Insets(0, 170, 5, 0);
-        topPL.add(playersScoresLB[positions[playerNb - 1][1]], gbc);
+        topPL.add(playersScoresLB[3], gbc);
 
         // center panel
         initCenterPL();
@@ -160,7 +155,7 @@ public class GameView extends AbstractView
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(5, 0, 0, 120);
-        bottomPL.add(playersScoresLB[positions[playerNb - 1][2]], gbc);
+        bottomPL.add(playersScoresLB[2], gbc);
 
         initQuitBTN();
         gbc.gridx = 1;
@@ -169,7 +164,7 @@ public class GameView extends AbstractView
 
         gbc.gridx = 2;
         gbc.insets = new Insets(5, 120, 0, 0);
-        bottomPL.add(playersScoresLB[positions[playerNb - 1][3]], gbc);
+        bottomPL.add(playersScoresLB[1], gbc);
 
         addKeyListener(new KeyboardListener());
     }
@@ -194,14 +189,6 @@ public class GameView extends AbstractView
      */
     public void setGameboardDto(final GameBoardDTO _gameBoardDto) {
         gameBoardDto = _gameBoardDto;
-    }
-
-    /**
-     * 
-     * @param _playerNb
-     */
-    public void setPlayerNb(final int _playerNb) {
-        playerNb = _playerNb;
     }
 
     /**
@@ -249,7 +236,7 @@ public class GameView extends AbstractView
      */
     private void initGameBoardPL() {
         if (gameBoardDto != null) {
-            gameBoardPL = new GameBoardPanel(gameBoardDto.getWidth(), gameBoardDto.getHeight(), playerNb);
+            gameBoardPL = new GameBoardPanel(gameBoardDto.getWidth(), gameBoardDto.getHeight());
             gameBoardPL.setBorder(new EmptyBorder(0, 0, 10, 0));
             drawGameboard();
         }
@@ -409,32 +396,10 @@ public class GameView extends AbstractView
          */
         public KeyboardListener() {
             moveTable = new LinkedHashMap<Integer, MoveDirection>();
-            switch (playerNb) {
-                case 2:
-                    moveTable.put(KeyEvent.VK_DOWN, MoveDirection.UP);
-                    moveTable.put(KeyEvent.VK_UP, MoveDirection.DOWN);
-                    moveTable.put(KeyEvent.VK_LEFT, MoveDirection.RIGHT);
-                    moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.LEFT);
-                    break;
-                case 3:
-                    moveTable.put(KeyEvent.VK_DOWN, MoveDirection.RIGHT);
-                    moveTable.put(KeyEvent.VK_UP, MoveDirection.LEFT);
-                    moveTable.put(KeyEvent.VK_LEFT, MoveDirection.DOWN);
-                    moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.UP);
-                    break;
-                case 4:
-                    moveTable.put(KeyEvent.VK_DOWN, MoveDirection.LEFT);
-                    moveTable.put(KeyEvent.VK_UP, MoveDirection.RIGHT);
-                    moveTable.put(KeyEvent.VK_LEFT, MoveDirection.UP);
-                    moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.DOWN);
-                    break;
-                default:
-                    moveTable.put(KeyEvent.VK_DOWN, MoveDirection.DOWN);
-                    moveTable.put(KeyEvent.VK_UP, MoveDirection.UP);
-                    moveTable.put(KeyEvent.VK_LEFT, MoveDirection.LEFT);
-                    moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.RIGHT);
-                    break;
-            }
+            moveTable.put(KeyEvent.VK_DOWN, MoveDirection.DOWN);
+            moveTable.put(KeyEvent.VK_UP, MoveDirection.UP);
+            moveTable.put(KeyEvent.VK_LEFT, MoveDirection.LEFT);
+            moveTable.put(KeyEvent.VK_RIGHT, MoveDirection.RIGHT);
         }
 
         /*

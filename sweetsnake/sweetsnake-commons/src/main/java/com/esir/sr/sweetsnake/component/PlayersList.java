@@ -5,7 +5,6 @@ import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -39,26 +38,6 @@ public class PlayersList extends AbstractList<PlayerDTO>
      */
     public PlayersList() {
         super();
-
-        setSelectionModel(new DefaultListSelectionModel() {
-
-            /** The serial version UID */
-            private static final long serialVersionUID = 3305919865692499917L;
-
-            /*
-             * (non-Javadoc)
-             * 
-             * @see javax.swing.DefaultListSelectionModel#setSelectionInterval(int, int)
-             */
-            @Override
-            public void setSelectionInterval(final int index0, final int index1) {
-                if (super.isSelectedIndex(index0)) {
-                    super.removeSelectionInterval(index0, index1);
-                } else {
-                    super.addSelectionInterval(index0, index1);
-                }
-            }
-        });
     }
 
     /*
@@ -87,7 +66,7 @@ public class PlayersList extends AbstractList<PlayerDTO>
                 if (player.getStatus() == PlayerStatus.AVAILABLE) {
                     imageIcon = new ImageIcon(PlayersList.class.getResource(ClientGuiConstants.AVAILABLE_ICON_PATH));
                 }
-                if (player.getStatus() == PlayerStatus.PRESENT || player.getStatus() == PlayerStatus.INVITED) {
+                if (player.getStatus() == PlayerStatus.READY || player.getStatus() == PlayerStatus.INVITED || player.getStatus() == PlayerStatus.WINNER || player.getStatus() == PlayerStatus.LOSER) {
                     imageIcon = new ImageIcon(PlayersList.class.getResource(ClientGuiConstants.INVITE_ICON_PATH));
                 }
                 label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0), BorderFactory.createEmptyBorder(3, 10, 3, 10)));

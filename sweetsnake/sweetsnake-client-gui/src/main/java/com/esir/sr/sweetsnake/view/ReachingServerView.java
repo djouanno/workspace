@@ -9,8 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.annotation.PostConstruct;
-import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.Timer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
  * 
  */
 @Component
-public class UnreachableServerView extends AbstractView
+public class ReachingServerView extends AbstractView
 {
 
     /**********************************************************************************************
@@ -34,10 +34,10 @@ public class UnreachableServerView extends AbstractView
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long   serialVersionUID = -4955989460436322020L;
+    private static final long   serialVersionUID = 6866610932112736031L;
 
     /** The logger */
-    private static final Logger log              = LoggerFactory.getLogger(UnreachableServerView.class);
+    private static final Logger log              = LoggerFactory.getLogger(ReachingServerView.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
@@ -46,11 +46,8 @@ public class UnreachableServerView extends AbstractView
     /** The logo panel */
     private ImagePanel          logoPL;
 
-    /** The error label */
-    private JLabel              errorLB;
-
-    /** The retry button */
-    private JButton             retryBTN;
+    /** The reaching label */
+    private JLabel              reachingLB;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -59,7 +56,7 @@ public class UnreachableServerView extends AbstractView
     /**
      * 
      */
-    protected UnreachableServerView() {
+    protected ReachingServerView() {
         super();
     }
 
@@ -72,7 +69,7 @@ public class UnreachableServerView extends AbstractView
     @Override
     protected void init() {
         super.init();
-        log.info("Initializing the Unreachable Server View");
+        log.info("Initializing the Reaching Server View");
     }
 
     /**********************************************************************************************
@@ -90,8 +87,7 @@ public class UnreachableServerView extends AbstractView
         final GridBagConstraints gbc = new GridBagConstraints();
 
         initLogoPL();
-        initErrorLB();
-        initRetryBTN();
+        initReachingLB();
 
         // logo
         gbc.gridx = 0;
@@ -102,12 +98,17 @@ public class UnreachableServerView extends AbstractView
         // label
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, 10, 0);
-        add(errorLB, gbc);
+        add(reachingLB, gbc);
 
-        // button
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        add(retryBTN, gbc);
+        new Timer(500, new ActionListener() {
+            private int i = 1;
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                reachingLB.setForeground(new Color(255, 255, 255, i == 0 ? 0 : 255));
+                i = (i + 1) % 2;
+            }
+        }).start();
     }
 
     /**********************************************************************************************
@@ -124,43 +125,10 @@ public class UnreachableServerView extends AbstractView
     /**
      * 
      */
-    private void initErrorLB() {
-        errorLB = new JLabel("Server is not reachable");
-        errorLB.setForeground(Color.white);
-        errorLB.setFont(new Font("sans-serif", Font.BOLD, 16));
-    }
-
-    /**
-     * 
-     */
-    private void initRetryBTN() {
-        retryBTN = new JButton("retry");
-        retryBTN.addActionListener(new RetryListener());
-    }
-
-    /**********************************************************************************************
-     * [BLOCK] INTERNAL LISTENERS
-     **********************************************************************************************/
-
-    /**
-     * 
-     * @author Herminaël Rougier
-     * @author Damien Jouanno
-     * 
-     */
-    private class RetryListener implements ActionListener
-    {
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-         */
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            client.reachServer();
-        }
-
+    private void initReachingLB() {
+        reachingLB = new JLabel("Contacting server...");
+        reachingLB.setForeground(Color.white);
+        reachingLB.setFont(new Font("sans-serif", Font.BOLD, 16));
     }
 
 }

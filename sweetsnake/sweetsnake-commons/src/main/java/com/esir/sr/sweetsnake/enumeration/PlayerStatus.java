@@ -18,11 +18,14 @@ public enum PlayerStatus
     /** The invited status */
     INVITED("invited"),
 
-    /** The present status */
-    PRESENT("present"),
-
     /** The ready status */
     READY("ready"),
+
+    /** The winner status */
+    WINNER("winner"),
+
+    /** The loser status */
+    LOSER("loser"),
 
     /** The denied status */
     DENIED("denied"),

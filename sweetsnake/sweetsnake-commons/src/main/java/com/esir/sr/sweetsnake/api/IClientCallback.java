@@ -74,11 +74,10 @@ public interface IClientCallback extends Remote
 
     /**
      * 
-     * @param playerNb
      * @param session
      * @throws RemoteException
      */
-    void sessionStarted(int playerNb, GameSessionDTO session) throws RemoteException;
+    void sessionStarted(GameSessionDTO session) throws RemoteException;
 
     /**
      * 

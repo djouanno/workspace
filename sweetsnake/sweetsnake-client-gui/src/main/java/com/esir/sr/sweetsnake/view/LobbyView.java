@@ -13,16 +13,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.component.ImagePanel;
+import com.esir.sr.sweetsnake.component.PlayerPanel;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
@@ -51,6 +53,10 @@ public class LobbyView extends AbstractView
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
+    /** The players view */
+    @Autowired
+    private PlayersView         playersView;
+
     /** The view title panel */
     private ImagePanel          lobbyIPL;
 
@@ -69,8 +75,8 @@ public class LobbyView extends AbstractView
     /** The quit button */
     private JButton             quitBTN;
 
-    /** The ready button */
-    private JButton             readyBTN;
+    /** The invite button */
+    private JButton             inviteBTN;
 
     /** The start button */
     private JButton             startBTN;
@@ -117,7 +123,7 @@ public class LobbyView extends AbstractView
      * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#buildImpl()
      */
     @Override
-    public void buildImpl() {
+    protected void buildImpl() {
         setLayout(new BorderLayout());
 
         // top panel
@@ -132,9 +138,11 @@ public class LobbyView extends AbstractView
         add(centerPL, BorderLayout.CENTER);
 
         initPlayersPL();
-        for (final JPanel panel : playersPL) {
-            centerPL.add(panel);
-        }
+
+        centerPL.add(playersPL[0]);
+        centerPL.add(playersPL[3]);
+        centerPL.add(playersPL[2]);
+        centerPL.add(playersPL[1]);
 
         players = new LinkedList<PlayerDTO>();
 
@@ -152,9 +160,9 @@ public class LobbyView extends AbstractView
         gbc.insets = new Insets(5, 0, 0, 0);
         bottomPL.add(quitBTN, gbc);
 
-        initReadyBTN();
+        initInviteBTN();
         gbc.gridx = 1;
-        bottomPL.add(readyBTN, gbc);
+        bottomPL.add(inviteBTN, gbc);
     }
 
     /**
@@ -172,44 +180,30 @@ public class LobbyView extends AbstractView
 
     /**
      * 
-     * @param allReady
      * @param isStarted
      */
-    // FIXME readyBTN can bug
-    public void refreshButtons(final boolean allReady, final boolean isStarted) {
+    public void refreshButtons(final boolean isStarted) {
         final GridBagConstraints gbc = new GridBagConstraints();
-        if (isStarted) {
-            readyBTN.setEnabled(false);
-        } else if (allReady) {
-            bottomPL.remove(readyBTN);
-            if (waitLB != null) {
-                bottomPL.remove(waitLB);
-                waitLB = null;
-            }
-            gbc.gridx = 1;
-            gbc.gridwidth = 1;
-            gbc.weightx = 1;
-            gbc.weighty = 1;
-            gbc.fill = GridBagConstraints.NONE;
-            gbc.insets = new Insets(5, 0, 0, 0);
-            if (players.get(0).getNumber() == playerNb) {
-                initStartBTN();
-                bottomPL.add(startBTN, gbc);
-            } else {
-                initWaitLB(players.get(0).getName());
-                bottomPL.add(waitLB, gbc);
-            }
-        } else if (startBTN != null) {
+        if (startBTN != null) {
             bottomPL.remove(startBTN);
             startBTN = null;
-            gbc.gridx = 1;
-            gbc.gridwidth = 1;
-            gbc.weightx = 1;
-            gbc.weighty = 1;
-            gbc.fill = GridBagConstraints.NONE;
-            gbc.insets = new Insets(5, 0, 0, 0);
-            bottomPL.add(readyBTN, gbc);
-            readyBTN.setEnabled(false);
+        }
+        if (waitLB != null) {
+            bottomPL.remove(waitLB);
+            waitLB = null;
+        }
+        gbc.gridx = 2;
+        gbc.gridwidth = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = new Insets(5, 0, 0, 0);
+        if (players.get(0).getNumber() == playerNb) {
+            initStartBTN();
+            bottomPL.add(startBTN, gbc);
+        } else {
+            initWaitLB(isStarted, players.get(0).getName());
+            bottomPL.add(waitLB, gbc);
         }
     }
 
@@ -287,9 +281,9 @@ public class LobbyView extends AbstractView
     /**
      * 
      */
-    private void initReadyBTN() {
-        readyBTN = new JButton("ready !");
-        readyBTN.addActionListener(new ReadyListener());
+    private void initInviteBTN() {
+        inviteBTN = new JButton("invite");
+        inviteBTN.addActionListener(new InviteListener());
     }
 
     /**
@@ -302,9 +296,15 @@ public class LobbyView extends AbstractView
 
     /**
      * 
+     * @param isStarted
+     * @param playerName
      */
-    private void initWaitLB(final String playerName) {
-        waitLB = new JLabel("waiting for " + playerName + " to start the game");
+    private void initWaitLB(final boolean isStarted, final String playerName) {
+        if (isStarted) {
+            waitLB = new JLabel("waiting for the game to end");
+        } else {
+            waitLB = new JLabel("waiting for " + playerName + " to start the game");
+        }
         waitLB.setForeground(Color.white);
         waitLB.setFont(new Font("sans-serif", Font.PLAIN, 10));
     }
@@ -312,140 +312,6 @@ public class LobbyView extends AbstractView
     /**********************************************************************************************
      * [BLOCK] INTERNAL LISTENERS
      **********************************************************************************************/
-
-    private class PlayerPanel extends JPanel
-    {
-
-        /** The serial version UID */
-        private static final long serialVersionUID = -5926630505331840276L;
-
-        /** The player label */
-        private final JLabel      playerLB;
-
-        /** The icon label */
-        private final JLabel      iconLB;
-
-        /** The status label */
-        private final JLabel      statusLB;
-
-        /** The score label */
-        private final JLabel      scoreLB;
-
-        /**
-         * 
-         * @param nb
-         */
-        public PlayerPanel(final int nb) {
-            final GridBagConstraints gbc = new GridBagConstraints();
-            setLayout(new GridBagLayout());
-            setOpaque(true);
-            setBackground(findSnakeColor(nb));
-
-            playerLB = generateLabel("Available", 15, Color.gray, Font.ITALIC);
-            gbc.gridwidth = 1;
-            gbc.gridheight = 1;
-            gbc.anchor = GridBagConstraints.CENTER;
-            gbc.fill = GridBagConstraints.NONE;
-            gbc.weightx = 1;
-            gbc.weighty = 0.1;
-            gbc.insets = new Insets(25, 0, 0, 0);
-            add(playerLB, gbc);
-
-            iconLB = generateLabel("", 15, Color.white, Font.PLAIN);
-            gbc.gridy = 1;
-            gbc.weighty = 500;
-            gbc.insets = new Insets(10, 0, 0, 0);
-            add(iconLB, gbc);
-
-            statusLB = generateLabel("", 15, Color.white, Font.ITALIC);
-            gbc.gridy = 2;
-            gbc.weighty = 500;
-            gbc.anchor = GridBagConstraints.NORTH;
-            add(statusLB, gbc);
-
-            scoreLB = generateLabel("", 15, Color.white, Font.BOLD);
-            gbc.gridy = 3;
-            gbc.weighty = 1000;
-            add(scoreLB, gbc);
-        }
-
-        /**
-         * 
-         * @param player
-         */
-        public void refreshPlayer(final PlayerDTO player) {
-            playerLB.setText(player.getName());
-            playerLB.setFont(new Font("sans-serif", Font.BOLD, 25));
-            playerLB.setForeground(Color.white);
-            statusLB.setText("" + player.getStatus());
-            iconLB.setIcon(new ImageIcon(LobbyView.class.getResource(findSnakeIconPath(player.getNumber()))));
-            scoreLB.setText("Score : " + player.getScore());
-        }
-
-        /**
-         * 
-         */
-        public void removePlayer() {
-            playerLB.setText("Available");
-            playerLB.setFont(new Font("sans-serif", Font.ITALIC, 15));
-            playerLB.setForeground(Color.gray);
-            statusLB.setText("");
-            iconLB.setIcon(null);
-            scoreLB.setText("");
-        }
-
-        /**
-         * 
-         * @param text
-         * @param fontSize
-         * @param fontColor
-         * @param fontWeight
-         * @return
-         */
-        private JLabel generateLabel(final String text, final int fontSize, final Color color, final int fontWeight) {
-            final JLabel label = new JLabel(text);
-            label.setForeground(color);
-            label.setFont(new Font("sans-serif", fontWeight, fontSize));
-            return label;
-        }
-
-        /**
-         * 
-         * @param i
-         * @return
-         */
-        private Color findSnakeColor(final int i) { // TODO duplicated
-            switch (i) {
-                case 2:
-                    return new Color(255, 0, 0, 50);
-                case 3:
-                    return new Color(12, 12, 235, 50);
-                case 4:
-                    return new Color(0, 0, 0, 50);
-                default:
-                    return new Color(39, 109, 31, 50);
-            }
-        }
-
-        /**
-         * 
-         * @param nb
-         * @return
-         */
-        private String findSnakeIconPath(final int nb) { // TODO duplicated
-            switch (nb) {
-                case 2:
-                    return ClientGuiConstants.RED_SNAKE_ICON_PATH;
-                case 3:
-                    return ClientGuiConstants.BLUE_SNAKE_ICON_PATH;
-                case 4:
-                    return ClientGuiConstants.BLACK_SNAKE_ICON_PATH;
-                default:
-                    return ClientGuiConstants.GREEN_SNAKE_ICON_PATH;
-            }
-        }
-
-    }
 
     /**
      * 
@@ -474,7 +340,7 @@ public class LobbyView extends AbstractView
      * @author Damien Jouanno
      * 
      */
-    private class ReadyListener implements ActionListener
+    private class InviteListener implements ActionListener
     {
 
         /*
@@ -484,8 +350,13 @@ public class LobbyView extends AbstractView
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
-            client.readyToPlay();
-            readyBTN.setEnabled(false);
+            final JDialog dialog = new JDialog(gui, true);
+            playersView.setDialog(dialog);
+            dialog.setTitle("Connected players");
+            dialog.setSize(playersView.getDimension());
+            dialog.add(playersView);
+            dialog.setLocationRelativeTo(gui);
+            dialog.setVisible(true);
         }
 
     }

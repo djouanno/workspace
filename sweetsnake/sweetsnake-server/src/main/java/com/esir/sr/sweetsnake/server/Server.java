@@ -12,12 +12,13 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.remoting.rmi.RmiServiceExporter;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
+import com.esir.sr.sweetsnake.api.IGuiForServer;
 import com.esir.sr.sweetsnake.api.IServer;
 import com.esir.sr.sweetsnake.api.IServerForAdmin;
-import com.esir.sr.sweetsnake.api.IGuiForServer;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
@@ -59,6 +60,9 @@ public class Server implements IServer, IServerForAdmin
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
+    @Autowired
+    RmiServiceExporter           rmiServiceExporter;
+
     /** The bean provider */
     @Autowired
     private BeanProvider         beanProvider;
@@ -77,7 +81,7 @@ public class Server implements IServer, IServerForAdmin
 
     /** The server GUI */
     @Autowired
-    private IGuiForServer           gui;
+    private IGuiForServer        gui;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -100,6 +104,7 @@ public class Server implements IServer, IServerForAdmin
             @Override
             public void run() {
                 gui.serverStarted();
+                log.info("Server has been started");
             }
         }, 200);
     }
@@ -120,88 +125,6 @@ public class Server implements IServer, IServerForAdmin
     }
 
     /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
-     **********************************************************************************************/
-
-    /**
-     * 
-     * @param client
-     * @return
-     */
-    private String retrieveClientName(final IClientCallback client) {
-        try {
-            return client.getName().trim();
-        } catch (final RemoteException e) {
-            log.error(e.getMessage(), e);
-        }
-        return new String();
-    }
-
-    /**
-     * 
-     * @param name
-     * @return
-     */
-    private boolean validClientName(final String name) {
-        return name.matches("^\\w+$");
-    }
-
-    /**
-     * 
-     * @param client
-     * @return
-     */
-    private List<PlayerDTO> getPlayersList(final IClientCallback client) {
-        final String clientName = client == null ? "" : retrieveClientName(client);
-        final List<PlayerDTO> playersList = new LinkedList<PlayerDTO>();
-        for (final String player : playersRegistry.getPlayersName()) {
-            if (!clientName.equals(player)) {
-                try {
-                    final PlayerDTO playerDTO = DtoConverterFactory.convertPlayer(playersRegistry.get(player));
-                    playersList.add(playerDTO);
-                } catch (final PlayerNotFoundException e) {
-                    log.error(e.getMessage(), e);
-                }
-            }
-        }
-        return playersList;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    private List<GameRequestDTO> getRequestsList() {
-        final List<GameRequestDTO> requestsList = new LinkedList<GameRequestDTO>();
-        for (final String id : requestsRegistry.getRequestsId()) {
-            try {
-                final GameRequestDTO requestDto = DtoConverterFactory.convertGameRequest(requestsRegistry.get(id));
-                requestsList.add(requestDto);
-            } catch (final GameRequestNotFoundException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        return requestsList;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    private List<GameSessionDTO> getSessionsList() {
-        final List<GameSessionDTO> sessionsList = new LinkedList<GameSessionDTO>();
-        for (final String id : sessionsRegistry.getSessionsId()) {
-            try {
-                final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(sessionsRegistry.get(id));
-                sessionsList.add(sessionDto);
-            } catch (final GameSessionNotFoundException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        return sessionsList;
-    }
-
-    /**********************************************************************************************
      * [BLOCK] PUBLIC SERVER IMPLEMENTED METHODS
      **********************************************************************************************/
 
@@ -216,7 +139,7 @@ public class Server implements IServer, IServerForAdmin
 
         // bad username
         if (clientName == null || !validClientName(clientName)) {
-            log.warn("Invalid username {}, must be alphanumeric only", clientName);
+            log.warn("Invalid username {}, must be less than 10 alphanumeric characters only", clientName);
             throw new UnableToConnectException("invalid username, must be alphanumeric only");
         }
 
@@ -304,7 +227,6 @@ public class Server implements IServer, IServerForAdmin
         }
 
         final GameSession gameSession = sessionsRegistry.get(player1.getGameSessionId());
-        gameSession.addFictivePlayer(player2);
 
         // creating request
         final GameRequest request = beanProvider.getPrototype(GameRequest.class, gameSession.getId(), player1, player2);
@@ -327,7 +249,7 @@ public class Server implements IServer, IServerForAdmin
     public void acceptRequest(final IClientCallback client, final GameRequestDTO requestDto) throws GameRequestNotFoundException, GameSessionNotFoundException, MaximumNumberOfPlayersException {
         final GameRequest request = requestsRegistry.get(requestDto.getId());
 
-        // request no more available
+        // no matching request
         if (!request.getRequestedPlayer().getName().equals(retrieveClientName(client))) {
             log.warn("No matching request with id {}", request.getId());
             throw new GameRequestNotFoundException("no matching request");
@@ -363,16 +285,6 @@ public class Server implements IServer, IServerForAdmin
         if (!requestedPlayer.getName().equals(retrieveClientName(client))) {
             log.warn("No matching request with id {}", request.getId());
             throw new GameRequestNotFoundException("no matching request");
-        }
-
-        // deny session and check session status
-        if (sessionsRegistry.contains(request.getSessionid())) {
-            try {
-                final GameSession gameSession = sessionsRegistry.get(request.getSessionid());
-                gameSession.denied(requestedPlayer);
-            } catch (final GameSessionNotFoundException e) {
-                log.error(e.getMessage(), e);
-            }
         }
 
         // deny and remove request
@@ -474,7 +386,12 @@ public class Server implements IServer, IServerForAdmin
      */
     @Override
     public void startServer() {
-        // TODO Auto-generated method stub
+        try {
+            rmiServiceExporter.prepare();
+            log.info("Server has been started");
+        } catch (final RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /*
@@ -484,7 +401,16 @@ public class Server implements IServer, IServerForAdmin
      */
     @Override
     public void stopServer() {
-        // TODO Auto-generated method stub
+        try {
+            for (final String playerName : playersRegistry.getPlayersName()) {
+                final Player player = playersRegistry.get(playerName);
+                disconnect(player.getCallback());
+            }
+            rmiServiceExporter.destroy();
+            log.info("Server has been stopped");
+        } catch (final PlayerNotFoundException | RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /*
@@ -493,8 +419,13 @@ public class Server implements IServer, IServerForAdmin
      * @see com.esir.sr.sweetsnake.api.IServerAdmin#kickPlayer(com.esir.sr.sweetsnake.dto.PlayerDTO)
      */
     @Override
-    public void kickPlayer(final PlayerDTO player) {
-        // TODO Auto-generated method stub
+    public void kickPlayer(final PlayerDTO playerDto) {
+        try {
+            final Player player = playersRegistry.get(playerDto.getName());
+            disconnect(player.getCallback());
+        } catch (final PlayerNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /*
@@ -503,8 +434,13 @@ public class Server implements IServer, IServerForAdmin
      * @see com.esir.sr.sweetsnake.api.IServerAdmin#stopSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void stopSession(final GameSessionDTO session) {
-        // TODO Auto-generated method stub
+    public void stopSession(final GameSessionDTO sessionDto) {
+        try {
+            final GameSession session = sessionsRegistry.get(sessionDto.getId());
+            session.stopGame(true);
+        } catch (final GameSessionNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /*
@@ -513,8 +449,15 @@ public class Server implements IServer, IServerForAdmin
      * @see com.esir.sr.sweetsnake.api.IServerAdmin#removeSession(com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void removeSession(final GameSessionDTO session) {
-        // TODO Auto-generated method stub
+    public void removeSession(final GameSessionDTO sessionDto) {
+        try {
+            final GameSession session = sessionsRegistry.get(sessionDto.getId());
+            for (final Player player : session.getPlayers()) {
+                session.leaveGame(player.getCallback(), false); // FIXME
+            }
+        } catch (final GameSessionNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /*
@@ -523,8 +466,14 @@ public class Server implements IServer, IServerForAdmin
      * @see com.esir.sr.sweetsnake.api.IServerAdmin#removeRequest(com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public void removeRequest(final GameRequestDTO request) {
-        // TODO Auto-generated method stub
+    public void removeRequest(final GameRequestDTO requestDto) {
+        try {
+            final GameRequest request = requestsRegistry.get(requestDto.getId());
+            requestsRegistry.remove(request.getId());
+            sendRefreshRequestsList();
+        } catch (final GameRequestNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /**********************************************************************************************
@@ -584,6 +533,88 @@ public class Server implements IServer, IServerForAdmin
                 gui.refreshRequests(requestsList);
             }
         }, 100);
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] PRIVATE METHODS
+     **********************************************************************************************/
+
+    /**
+     * 
+     * @param client
+     * @return
+     */
+    private String retrieveClientName(final IClientCallback client) {
+        try {
+            return client.getName().trim();
+        } catch (final RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
+        return new String();
+    }
+
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    private boolean validClientName(final String name) {
+        return name.length() <= 10 && name.matches("^\\w+$");
+    }
+
+    /**
+     * 
+     * @param client
+     * @return
+     */
+    private List<PlayerDTO> getPlayersList(final IClientCallback client) {
+        final String clientName = client == null ? "" : retrieveClientName(client);
+        final List<PlayerDTO> playersList = new LinkedList<PlayerDTO>();
+        for (final String player : playersRegistry.getPlayersName()) {
+            if (!clientName.equals(player)) {
+                try {
+                    final PlayerDTO playerDTO = DtoConverterFactory.convertPlayer(playersRegistry.get(player));
+                    playersList.add(playerDTO);
+                } catch (final PlayerNotFoundException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
+        return playersList;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    private List<GameRequestDTO> getRequestsList() {
+        final List<GameRequestDTO> requestsList = new LinkedList<GameRequestDTO>();
+        for (final String id : requestsRegistry.getRequestsId()) {
+            try {
+                final GameRequestDTO requestDto = DtoConverterFactory.convertGameRequest(requestsRegistry.get(id));
+                requestsList.add(requestDto);
+            } catch (final GameRequestNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        return requestsList;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    private List<GameSessionDTO> getSessionsList() {
+        final List<GameSessionDTO> sessionsList = new LinkedList<GameSessionDTO>();
+        for (final String id : sessionsRegistry.getSessionsId()) {
+            try {
+                final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(sessionsRegistry.get(id));
+                sessionsList.add(sessionDto);
+            } catch (final GameSessionNotFoundException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        return sessionsList;
     }
 
 }

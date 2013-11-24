@@ -38,9 +38,6 @@ public class GameBoardPanel extends JPanel
     /** The components */
     private final Map<String, IComponent> components;
 
-    /** The current player's number */
-    private final int                     playerNb;
-
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
@@ -49,14 +46,11 @@ public class GameBoardPanel extends JPanel
      * 
      * @param _width
      * @param _height
-     * @param _nbSweets
-     * @param _isFirstPlayer
      */
-    public GameBoardPanel(final int _width, final int _height, final int _playerNb) {
+    public GameBoardPanel(final int _width, final int _height) {
         super();
         width = _width;
         height = _height;
-        playerNb = _playerNb;
         components = new LinkedHashMap<String, IComponent>();
         setLayout(null);
         setOpaque(false);
@@ -75,26 +69,7 @@ public class GameBoardPanel extends JPanel
         if (component != null) {
             components.put(component.getId(), component);
             final JComponent jcomponent = (JComponent) component;
-            int x = component.getXPos(), y = component.getYPos();
-            // map translation (everybody sees himself on the top left corner)
-            switch (playerNb) {
-                case 2:
-                    x = width - 1 - component.getXPos();
-                    y = height - 1 - component.getYPos();
-                    break;
-                case 3:
-                    final int oldX = x;
-                    x = width - 1 - y;
-                    y = oldX;
-                    break;
-                case 4:
-                    final int oldY = y;
-                    y = height - 1 - x;
-                    x = oldY;
-                    break;
-                default:
-                    break;
-            }
+            final int x = component.getXPos(), y = component.getYPos();
             jcomponent.setLocation(x * GameConstants.CELL_SIZE, y * GameConstants.CELL_SIZE);
             add(jcomponent);
         }
@@ -108,26 +83,7 @@ public class GameBoardPanel extends JPanel
         log.debug("Moving component {} on the map", component);
         if (component != null) {
             final JComponent jcomponent = (JComponent) component;
-            int x = component.getXPos(), y = component.getYPos();
-            // map translation (everybody sees himself on the top left corner)
-            switch (playerNb) {
-                case 2:
-                    x = width - 1 - component.getXPos();
-                    y = height - 1 - component.getYPos();
-                    break;
-                case 3:
-                    final int oldX = x;
-                    x = width - 1 - y;
-                    y = oldX;
-                    break;
-                case 4:
-                    final int oldY = y;
-                    y = height - 1 - x;
-                    x = oldY;
-                    break;
-                default:
-                    break;
-            }
+            final int x = component.getXPos(), y = component.getYPos();
             jcomponent.setLocation(x * GameConstants.CELL_SIZE, y * GameConstants.CELL_SIZE);
         }
     }

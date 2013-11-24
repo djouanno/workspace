@@ -45,9 +45,9 @@ public class DtoConverterFactory
      */
     public static GameSessionDTO convertGameSession(final GameSession session) {
         if (session.getGameEngine() == null) {
-            return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), null, session.getCallback(), session.allReady(), session.isStarted());
+            return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), null, session.getCallback(), session.isStarted());
         }
-        return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), convertGameBoard(session.getGameEngine().getGameBoard()), session.getCallback(), session.allReady(), session.isStarted());
+        return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), convertGameBoard(session.getGameEngine().getGameBoard()), session.getCallback(), session.isStarted());
     }
 
     /**
@@ -56,7 +56,7 @@ public class DtoConverterFactory
      * @return
      */
     public static PlayerDTO convertPlayer(final Player player) {
-        return new PlayerDTO(player.getName(), player.getStatus(), player.getSnakeId(), player.getNumber(), player.getScore(), player.isFictive());
+        return new PlayerDTO(player.getName(), player.getStatus(), player.getSnakeId(), player.getNumber(), player.getScore());
     }
 
     /**

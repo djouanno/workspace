@@ -10,6 +10,7 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.remoting.RemoteConnectFailureException;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
@@ -96,12 +97,8 @@ public class Client implements IClientForServer, IClientForGui
     protected void init() {
         log.info("Initialiazing the Client");
         requests = new LinkedList<GameRequestDTO>();
-        server = rmiProvider.getRmiService();
-        if (server == null) {
-            gui.serverNotReachable();
-        } else {
-            gui.serverReachable();
-        }
+        gui.reachingServer();
+        asyncReachServer();
     }
 
     /**
@@ -127,13 +124,8 @@ public class Client implements IClientForServer, IClientForGui
     @Override
     public void reachServer() {
         if (server == null) {
-            rmiProvider.retryReach();
-            server = rmiProvider.getRmiService();
-            if (server == null) {
-                gui.serverNotReachable();
-            } else {
-                gui.serverReachable();
-            }
+            gui.reachingServer();
+            asyncReachServer();
         }
     }
 
@@ -143,13 +135,17 @@ public class Client implements IClientForServer, IClientForGui
      * @see com.esir.sr.sweetsnake.api.IClientForGui#connect(java.lang.String)
      */
     @Override
-    public void connect(final String _username) throws UnableToConnectException {
+    public void connect(final String _username) throws RemoteConnectFailureException, UnableToConnectException {
         if (_username == null || _username.isEmpty()) {
             throw new UnableToConnectException("invalid username");
         }
         log.debug("Connecting with username {}", _username);
         username = new String(_username).trim();
-        server.connect(callback);
+        try {
+            server.connect(callback);
+        } catch (final RemoteConnectFailureException e) {
+            throw e;
+        }
     }
 
     /*
@@ -201,23 +197,6 @@ public class Client implements IClientForServer, IClientForGui
         try {
             server.joinSession(callback, sessionDto);
         } catch (GameSessionNotFoundException | MaximumNumberOfPlayersException e) {
-            gui.displayErrorMessage(e.getMessage());
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IClientForGui#readyToPlay()
-     */
-    @Override
-    public void readyToPlay() {
-        log.debug("session : {}", session);
-        try {
-            session.getCallback().ready(callback);
-        } catch (final NullPointerException e) {
-            gui.displayErrorMessage("you are not currently playing");
-        } catch (final RemoteException e) {
             gui.displayErrorMessage(e.getMessage());
         }
     }
@@ -376,12 +355,12 @@ public class Client implements IClientForServer, IClientForGui
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClientForServer#sessionStarted(int, com.esir.sr.sweetsnake.dto.GameSessionDTO)
+     * @see com.esir.sr.sweetsnake.api.IClientForServer#sessionStarted(com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void sessionStarted(final int playerNb, final GameSessionDTO sessionDto) {
+    public void sessionStarted(final GameSessionDTO sessionDto) {
         session = sessionDto;
-        gui.sessionStarted(session, playerNb);
+        gui.sessionStarted(session);
     }
 
     /*
@@ -434,6 +413,27 @@ public class Client implements IClientForServer, IClientForGui
     @Override
     public String getUsername() {
         return username;
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] PRIVATE METHODS
+     **********************************************************************************************/
+
+    /**
+     * 
+     */
+    private void asyncReachServer() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                server = rmiProvider.getRmiService();
+                if (server == null) {
+                    gui.serverNotReachable();
+                } else {
+                    gui.serverReachable();
+                }
+            }
+        }).start();
     }
 
 }

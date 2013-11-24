@@ -105,7 +105,7 @@ public class SessionsView extends AbstractView
      * @see com.esir.sr.sweetsnake.view.SweetSnakeAbstractView#buildImpl()
      */
     @Override
-    public void buildImpl() {
+    protected void buildImpl() {
         setLayout(new BorderLayout());
 
         // top panel
@@ -162,7 +162,7 @@ public class SessionsView extends AbstractView
 
             if (sessions.isEmpty()) {
                 sessionsLST.disableSelection();
-                sessionsLST.addElement(new GameSessionDTO("No available game for the moment", new LinkedList<PlayerDTO>(), null, null, false, false));
+                sessionsLST.addElement(new GameSessionDTO("No available game for the moment", new LinkedList<PlayerDTO>(), null, null, false));
             } else {
                 sessionsLST.enableSelection();
                 for (final GameSessionDTO session : sessions) {

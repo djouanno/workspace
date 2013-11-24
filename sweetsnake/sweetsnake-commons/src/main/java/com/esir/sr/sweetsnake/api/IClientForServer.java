@@ -77,10 +77,9 @@ public interface IClientForServer extends IClient
     /**
      * from the server
      * 
-     * @param playerNb
      * @param session
      */
-    void sessionStarted(int playerNb, GameSessionDTO session);
+    void sessionStarted(GameSessionDTO session);
 
     /**
      * from the server

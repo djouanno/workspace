@@ -118,7 +118,7 @@ public class PlayersView extends AbstractView
 
         if (players.isEmpty()) {
             playersLST.disableSelection();
-            playersLST.addElement(new PlayerDTO("No available player for the moment", null, null, 0, 0, false));
+            playersLST.addElement(new PlayerDTO("No available player for the moment", null, null, 0, 0));
         } else {
             playersLST.enableSelection();
             for (final PlayerDTO player : players) {
