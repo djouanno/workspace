@@ -40,6 +40,9 @@ import com.esir.sr.sweetsnake.session.GameSession;
 import com.esir.sr.sweetsnake.session.Player;
 
 /**
+ * This class implements all the methods defined in the IServer and IServerForAdmin interfaces.<br />
+ * All the methods below are intented to be called whether by a client or an administrator, according to the events they
+ * processed.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -60,6 +63,7 @@ public class Server implements IServer, IServerForAdmin
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
+    /** The rmi service exporter */
     @Autowired
     RmiServiceExporter           rmiServiceExporter;
 
@@ -88,14 +92,14 @@ public class Server implements IServer, IServerForAdmin
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new Server instance
      */
     protected Server() {
         super();
     }
 
     /**
-     * 
+     * Initializes the server
      */
     @PostConstruct
     protected void init() {
@@ -110,7 +114,7 @@ public class Server implements IServer, IServerForAdmin
     }
 
     /**
-     * 
+     * Disconnects all the players before destroying the Server instance
      */
     @PreDestroy
     protected void destroy() {
@@ -218,7 +222,7 @@ public class Server implements IServer, IServerForAdmin
      * com.esir.sr.sweetsnake.dto.PlayerDTO)
      */
     @Override
-    public void sendRequest(final IClientCallback client, final PlayerDTO playerDto) throws PlayerNotFoundException, PlayerNotAvailableException, GameSessionNotFoundException {
+    public void sendRequest(final IClientCallback client, final PlayerDTO playerDto) throws PlayerNotFoundException, PlayerNotAvailableException {
         final Player player1 = playersRegistry.get(retrieveClientName(client)), player2 = playersRegistry.get(playerDto.getName());
 
         // player is not available to play
@@ -226,17 +230,21 @@ public class Server implements IServer, IServerForAdmin
             throw new PlayerNotAvailableException("player is not available");
         }
 
-        final GameSession gameSession = sessionsRegistry.get(player1.getGameSessionId());
+        try {
+            final GameSession gameSession = sessionsRegistry.get(player1.getGameSessionId());
 
-        // creating request
-        final GameRequest request = beanProvider.getPrototype(GameRequest.class, gameSession.getId(), player1, player2);
-        requestsRegistry.add(request);
+            // creating request
+            final GameRequest request = beanProvider.getPrototype(GameRequest.class, gameSession.getId(), player1, player2);
+            requestsRegistry.add(request);
 
-        sendRefreshPlayersList();
-        sendRefreshSessionsList();
-        sendRefreshRequestsList();
+            sendRefreshPlayersList();
+            sendRefreshSessionsList();
+            sendRefreshRequestsList();
 
-        log.info("Game request between {} and {} is pending", player1.getName(), player2.getName());
+            log.info("Game request between {} and {} is pending", player1.getName(), player2.getName());
+        } catch (final GameSessionNotFoundException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /*
@@ -305,8 +313,8 @@ public class Server implements IServer, IServerForAdmin
      * com.esir.sr.sweetsnake.dto.GameRequestDTO)
      */
     @Override
-    public void cancelRequest(final IClientCallback client, final GameRequestDTO requestDTO) throws GameRequestNotFoundException {
-        final GameRequest request = requestsRegistry.get(requestDTO.getId());
+    public void cancelRequest(final IClientCallback client, final GameRequestDTO requestDto) throws GameRequestNotFoundException {
+        final GameRequest request = requestsRegistry.get(requestDto.getId());
 
         // cancel and remove the request
         request.cancel();
@@ -360,8 +368,8 @@ public class Server implements IServer, IServerForAdmin
      * com.esir.sr.sweetsnake.dto.GameSessionDTO)
      */
     @Override
-    public void joinSession(final IClientCallback client, final GameSessionDTO sessionDTO) throws GameSessionNotFoundException, MaximumNumberOfPlayersException {
-        final GameSession session = sessionsRegistry.get(sessionDTO.getId());
+    public void joinSession(final IClientCallback client, final GameSessionDTO sessionDto) throws GameSessionNotFoundException, MaximumNumberOfPlayersException {
+        final GameSession session = sessionsRegistry.get(sessionDto.getId());
         try {
             final Player player = playersRegistry.get(retrieveClientName(client));
             session.addPlayer(player);
@@ -481,8 +489,9 @@ public class Server implements IServer, IServerForAdmin
      **********************************************************************************************/
 
     /**
-    *
-    */
+     * This method waits for 100 ms before sending to all the clients a list representing all the connected players<br />
+     * It also notifies the admin GUI.
+     */
     public void sendRefreshPlayersList() {
         new Timer().schedule(new TimerTask() {
             @Override
@@ -502,7 +511,8 @@ public class Server implements IServer, IServerForAdmin
     }
 
     /**
-     * 
+     * This method waits for 100 ms before sending to all the clients a list representing all the available game sessions<br />
+     * It also notifies the admin GUI.
      */
     public void sendRefreshSessionsList() {
         new Timer().schedule(new TimerTask() {
@@ -523,7 +533,7 @@ public class Server implements IServer, IServerForAdmin
     }
 
     /**
-     * 
+     * This method waits for 100 ms before sending to the admin GUI a list representing all the pending requests
      */
     public void sendRefreshRequestsList() {
         new Timer().schedule(new TimerTask() {
@@ -540,9 +550,11 @@ public class Server implements IServer, IServerForAdmin
      **********************************************************************************************/
 
     /**
+     * This methods retrieves the client username from his callback
      * 
      * @param client
-     * @return
+     *            The client callback
+     * @return The client username
      */
     private String retrieveClientName(final IClientCallback client) {
         try {
@@ -554,18 +566,22 @@ public class Server implements IServer, IServerForAdmin
     }
 
     /**
+     * This methods checks whether the client username is valid or not
      * 
      * @param name
-     * @return
+     *            The client username
+     * @return True if the client username is valid, false otherwise
      */
     private boolean validClientName(final String name) {
         return name.length() <= 10 && name.matches("^\\w+$");
     }
 
     /**
+     * This methods retrieves all the connected client except the one passed in parameter
      * 
      * @param client
-     * @return
+     *            The client callback
+     * @return A list containing the DTO representing all the connected clients
      */
     private List<PlayerDTO> getPlayersList(final IClientCallback client) {
         final String clientName = client == null ? "" : retrieveClientName(client);
@@ -584,8 +600,9 @@ public class Server implements IServer, IServerForAdmin
     }
 
     /**
+     * This methods retrieves all the pending requests
      * 
-     * @return
+     * @return A list containing the DTO representing all the pending requests
      */
     private List<GameRequestDTO> getRequestsList() {
         final List<GameRequestDTO> requestsList = new LinkedList<GameRequestDTO>();
@@ -601,8 +618,9 @@ public class Server implements IServer, IServerForAdmin
     }
 
     /**
+     * This methods retrieves all the game sessions
      * 
-     * @return
+     * @return A list containing the DTO representing all the game sessions
      */
     private List<GameSessionDTO> getSessionsList() {
         final List<GameSessionDTO> sessionsList = new LinkedList<GameSessionDTO>();

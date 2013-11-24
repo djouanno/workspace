@@ -168,7 +168,7 @@ public class Client implements IClientForServer, IClientForGui
     public void sendRequest(final PlayerDTO playerDto) {
         try {
             server.sendRequest(callback, playerDto);
-        } catch (PlayerNotFoundException | PlayerNotAvailableException | GameSessionNotFoundException e) {
+        } catch (PlayerNotFoundException | PlayerNotAvailableException e) {
             gui.displayErrorMessage(e.getMessage());
         }
     }
