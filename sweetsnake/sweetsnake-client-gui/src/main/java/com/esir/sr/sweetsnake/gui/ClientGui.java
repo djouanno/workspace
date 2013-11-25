@@ -6,7 +6,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IClientForGui;
@@ -33,7 +31,6 @@ import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
-import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.view.AbstractView;
 import com.esir.sr.sweetsnake.view.ConnectionView;
 import com.esir.sr.sweetsnake.view.GameView;
@@ -53,19 +50,20 @@ import com.esir.sr.sweetsnake.view.UnreachableServerView;
 public class ClientGui extends JFrame implements IGuiForClient
 {
 
-    public static void main(final String[] args) {
-        @SuppressWarnings("resource")
-        final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-client-gui-context.xml");
-        context.registerShutdownHook();
-
-        final IGuiForClient gui = context.getBean(IGuiForClient.class);
-        final List<PlayerDTO> playersDto = new LinkedList<PlayerDTO>();
-        playersDto.add(new PlayerDTO("hermi", PlayerStatus.READY, null, 1, 0));
-        playersDto.add(new PlayerDTO("zoby", PlayerStatus.READY, null, 2, 0));
-        playersDto.add(new PlayerDTO("zoba", PlayerStatus.READY, null, 3, 0));
-        final GameSessionDTO session = new GameSessionDTO("id", playersDto, null, null, false);
-        gui.sessionJoined(session, 1);
-    }
+    // public static void main(final String[] args) {
+    // @SuppressWarnings("resource")
+    // final ClassPathXmlApplicationContext context = new
+    // ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-client-gui-context.xml");
+    // context.registerShutdownHook();
+    //
+    // final IGuiForClient gui = context.getBean(IGuiForClient.class);
+    // final List<PlayerDTO> playersDto = new LinkedList<PlayerDTO>();
+    // playersDto.add(new PlayerDTO("hermi", PlayerStatus.READY, null, 1, 0));
+    // playersDto.add(new PlayerDTO("zoby", PlayerStatus.READY, null, 2, 0));
+    // playersDto.add(new PlayerDTO("zoba", PlayerStatus.READY, null, 3, 0));
+    // final GameSessionDTO session = new GameSessionDTO("id", playersDto, null, null, false);
+    // gui.sessionJoined(session, 1);
+    // }
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
