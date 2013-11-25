@@ -146,11 +146,4 @@ public abstract class AbstractComponent implements IComponent
         y = _y;
     }
 
-    /*
-     * 
-     */
-    public boolean equals(final IComponent element) {
-        return id.equals(element.getId());
-    }
-
 }

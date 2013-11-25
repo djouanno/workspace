@@ -149,6 +149,7 @@ public class StatusView extends AbstractView
      */
     public void enableStartBTN() {
         startBTN.setEnabled(true);
+        statusLB.setText("Status : Stopped");
     }
 
     /**
@@ -163,6 +164,7 @@ public class StatusView extends AbstractView
      */
     public void enableStopBTN() {
         stopBTN.setEnabled(true);
+        statusLB.setText("Status : Started");
     }
 
     /**
@@ -207,7 +209,7 @@ public class StatusView extends AbstractView
      * 
      */
     private void initStatusLB() {
-        statusLB = new JLabel("Status : Running");
+        statusLB = new JLabel("Status : Started");
         statusLB.setFont(new Font("sans-serif", Font.BOLD, 13));
     }
 
@@ -215,7 +217,7 @@ public class StatusView extends AbstractView
      * 
      */
     private void initRunningTimeLB() {
-        runningTimeLB = new JLabel("Running time : " + days + " day(s) " + intToString(hours, 2) + " hour(s) " + intToString(minutes, 2) + " minute(s) " + intToString(seconds, 2) + " second(s)");
+        runningTimeLB = new JLabel("Uptime : " + days + " day(s) " + intToString(hours, 2) + " hour(s) " + intToString(minutes, 2) + " minute(s) " + intToString(seconds, 2) + " second(s)");
         runningTimeLB.setFont(new Font("sans-serif", Font.BOLD, 13));
         timer = new Timer(1000, new TimerListener());
     }
@@ -342,7 +344,7 @@ public class StatusView extends AbstractView
                 hours = 0;
                 days++;
             }
-            runningTimeLB.setText("Running time : " + days + " day(s) " + intToString(hours, 2) + " hour(s) " + intToString(minutes, 2) + " minute(s) " + intToString(seconds, 2) + " second(s)");
+            runningTimeLB.setText("Uptime : " + days + " day(s) " + intToString(hours, 2) + " hour(s) " + intToString(minutes, 2) + " minute(s) " + intToString(seconds, 2) + " second(s)");
         }
 
     }
