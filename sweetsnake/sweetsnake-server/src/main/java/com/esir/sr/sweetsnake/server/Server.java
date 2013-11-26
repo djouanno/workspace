@@ -558,7 +558,7 @@ public class Server implements IServer, IServerForAdmin
      */
     private String retrieveClientName(final IClientCallback client) {
         try {
-            return client.getName().trim();
+            return client.getUsername().trim();
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }

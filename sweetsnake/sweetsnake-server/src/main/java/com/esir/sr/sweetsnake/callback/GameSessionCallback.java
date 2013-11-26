@@ -81,7 +81,7 @@ public class GameSessionCallback extends UnicastRemoteObject implements IGameSes
      * com.esir.sr.sweetsnake.enumeration.MoveDirection)
      */
     @Override
-    public void move(final IClientCallback client, final MoveDirection direction) throws UnauthorizedActionException, RemoteException {
+    public void move(final IClientCallback client, final MoveDirection direction) throws RemoteException {
         session.movePlayer(client, direction);
     }
 

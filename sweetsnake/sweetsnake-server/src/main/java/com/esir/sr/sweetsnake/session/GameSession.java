@@ -122,7 +122,7 @@ public class GameSession extends AbstractSession
      */
     public void startGame(final IClientCallback starterClient) throws UnauthorizedActionException {
         try {
-            final Player starter = playersRegistry.get(starterClient.getName());
+            final Player starter = playersRegistry.get(starterClient.getUsername());
 
             if (starter.getNumber() != 1) {
                 log.warn("Player {} tried to start session {} but was not authorized to", starter.getName(), id);
@@ -159,7 +159,7 @@ public class GameSession extends AbstractSession
      */
     public void leaveGame(final IClientCallback leaverClient, final boolean fromDisconnect) {
         try {
-            final Player leaver = playersRegistry.get(leaverClient.getName());
+            final Player leaver = playersRegistry.get(leaverClient.getUsername());
             final PlayerDTO leaverDto = DtoConverterFactory.convertPlayer(leaver);
 
             log.debug("Player {} is leaving session {}", leaver.getName(), id);
@@ -212,7 +212,7 @@ public class GameSession extends AbstractSession
     public void movePlayer(final IClientCallback client, final MoveDirection direction) {
         if (isStarted) {
             try {
-                final Player player = playersRegistry.get(client.getName());
+                final Player player = playersRegistry.get(client.getUsername());
 
                 if (System.currentTimeMillis() - timeout.get(player) > GameConstants.TIME_BETWEEN_2_MOVES) {
                     engine.moveSnake(direction, player);

@@ -74,7 +74,7 @@ public class Player
         callback = _client;
         sentRequestsIds = new LinkedList<String>();
         try {
-            name = callback.getName();
+            name = callback.getUsername();
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }

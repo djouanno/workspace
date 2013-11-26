@@ -181,7 +181,7 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
      * @see com.esir.sr.sweetsnake.api.IClientCallback#getName()
      */
     @Override
-    public String getName() throws RemoteException {
+    public String getUsername() throws RemoteException {
         return client.getUsername();
     }
 

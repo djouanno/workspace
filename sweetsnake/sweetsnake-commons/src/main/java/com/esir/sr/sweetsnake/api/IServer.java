@@ -22,10 +22,6 @@ import com.esir.sr.sweetsnake.exception.UnauthorizedActionException;
 public interface IServer
 {
 
-    /**********************************************************************************************
-     * [BLOCK] CONNECTION METHODS
-     **********************************************************************************************/
-
     /**
      * This method is called by the client in order to connect to the server
      * 
@@ -43,10 +39,6 @@ public interface IServer
      *            The client callback
      */
     void disconnect(IClientCallback client);
-
-    /**********************************************************************************************
-     * [BLOCK] GAME REQUESTS METHODS
-     **********************************************************************************************/
 
     /**
      * This method is called by the client in order to send a game request to another player
@@ -99,10 +91,6 @@ public interface IServer
      *             If the requestis no more available
      */
     void denyRequest(IClientCallback client, GameRequestDTO requestDto) throws GameRequestNotFoundException;
-
-    /**********************************************************************************************
-     * [BLOCK] GAME SESSIONS METHODS
-     **********************************************************************************************/
 
     /**
      * This method is called by the client in order to create a new game session
