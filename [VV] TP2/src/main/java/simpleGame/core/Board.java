@@ -16,32 +16,33 @@ public class Board
     /**
      * The number of squares on the x axis.
      */
-    private final int             xSize;
+    private final int       xSize;
 
     /**
      * The number of squares on the y axis.
      */
-    private final int             ySize;
+    private final int       ySize;
 
     /**
      * The Pawns that currently are on the board.
      */
-    private final ArrayList<Pawn> pawns;
+    private ArrayList<Pawn> pawns;
+
 
     /**
      * The x position of the bonus square
      */
-    private final int             xBonusSquare;
+    private final int       xBonusSquare;
 
     /**
      * the y position of the bonus square
      */
-    private final int             yBonusSquare;
+    private final int       yBonusSquare;
 
     /**
      * An iterator pointing towards the current pawn that must play.
      */
-    private Pawn                  currentPawn;
+    private Pawn            currentPawn;
 
 
 
@@ -215,5 +216,19 @@ public class Board
         return result;
     }
 
+    public Pawn getCurrentPawn() {
+        return currentPawn;
+    }
 
+    public void setCurrentPawn(final Pawn currentPawn) {
+        this.currentPawn = currentPawn;
+    }
+
+    public ArrayList<Pawn> getPawns() {
+        return pawns;
+    }
+
+    public void setPawns(final ArrayList<Pawn> pawns) {
+        this.pawns = pawns;
+    }
 }
