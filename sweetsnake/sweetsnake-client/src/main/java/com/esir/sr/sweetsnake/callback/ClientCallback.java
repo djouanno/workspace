@@ -14,7 +14,7 @@ import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
- * This class implements the client callback interface defined in the API
+ * This class implements the IClientCallback interface defined in the API.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno

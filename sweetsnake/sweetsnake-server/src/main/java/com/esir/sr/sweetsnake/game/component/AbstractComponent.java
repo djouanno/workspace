@@ -8,6 +8,7 @@ import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
 /**
+ * This class provides the common behavior of any gameboard component.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -37,8 +38,10 @@ public abstract class AbstractComponent implements IComponent
      **********************************************************************************************/
 
     /**
+     * Creates a new component
      * 
      * @param _type
+     *            The component type
      */
     protected AbstractComponent(final ComponentType _type) {
         id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);

@@ -8,7 +8,13 @@ import com.esir.sr.sweetsnake.registry.GameSessionsRegistry;
 import com.esir.sr.sweetsnake.registry.PlayersRegistry;
 import com.esir.sr.sweetsnake.server.Server;
 
-
+/**
+ * This class provides all the common fields needed by a session class.
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ */
 public abstract class AbstractSession
 {
 
@@ -41,7 +47,7 @@ public abstract class AbstractSession
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new session
      */
     protected AbstractSession() {
         super();

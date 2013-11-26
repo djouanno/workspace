@@ -12,6 +12,8 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.RefreshAction;
 
 /**
+ * This class represents a gameboard and handles both the component position and the refreshes to make after the gameboard has
+ * changed.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -51,9 +53,12 @@ public class GameBoard
      **********************************************************************************************/
 
     /**
+     * Creates a new gameboard
      * 
      * @param _width
+     *            The gameboard width
      * @param _height
+     *            The gameboard height
      */
     public GameBoard(final int _width, final int _height) {
         log.info("Initializing a new gameboard with dimensions {}x{}", _width, _height);
@@ -68,8 +73,10 @@ public class GameBoard
      **********************************************************************************************/
 
     /**
+     * This method adds a component to the gameboard
      * 
      * @param component
+     *            The component to add
      */
     public void addComponent(final IComponent component) {
         log.debug("Adding component {} to the map", component);
@@ -81,9 +88,12 @@ public class GameBoard
     }
 
     /**
+     * This method moves a component on the gameboard
      * 
      * @param component
+     *            The component to move
      * @param direction
+     *            The direction where to move
      */
     public void moveComponent(final IComponent component, final MoveDirection direction) {
         final IComponent oldComponent = getComponentById(component.getId());
@@ -96,8 +106,10 @@ public class GameBoard
     }
 
     /**
+     * This method removes a component from the gameboard
      * 
      * @param component
+     *            The component to remove
      */
     public void removeComponent(final IComponent component) {
         log.debug("Removing component {} from the map", component);
@@ -109,19 +121,24 @@ public class GameBoard
     }
 
     /**
+     * This method returns a component according to its coordinates
      * 
      * @param x
+     *            The X position of the component
      * @param y
-     * @return
+     *            The Y position of the component
+     * @return The component at the specified coordinates if it was found, null otherwise
      */
     public IComponent getComponent(final int x, final int y) {
         return gameMap[x][y];
     }
 
     /**
+     * This method returns a component according to its id
      * 
      * @param id
-     * @return
+     *            The component id
+     * @return The component with the specified id if it was found, null otherwise
      */
     public IComponent getComponentById(final String id) {
         for (int x = 0; x < width; x++) {
@@ -136,17 +153,20 @@ public class GameBoard
     }
 
     /**
+     * This method checks if a component is set on the gameboard at the specified coordinates
      * 
      * @param x
+     *            The X coordinate
      * @param y
-     * @return
+     *            The Y coordinate
+     * @return True if a component exists at the specified coordinates, false otherwise
      */
     public boolean hasComponent(final int x, final int y) {
         return getComponent(x, y) != null;
     }
 
     /**
-     * 
+     * This method clears all the refreshes recorded since the last clear, according to the actions done on the gameboard
      */
     public void clearRefreshes() {
         refreshes.clear();
@@ -157,32 +177,36 @@ public class GameBoard
      **********************************************************************************************/
 
     /**
+     * This method returns the width of the gameboard
      * 
-     * @return
-     */
-    public int getHeight() {
-        return height;
-    }
-
-    /**
-     * 
-     * @return
+     * @return An integer representing the width of the gameboard
      */
     public int getWidth() {
         return width;
     }
 
     /**
+     * This method returns the height of the gameboard
      * 
-     * @return
+     * @return An integer representing the height of the gameboard
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * This method returns the number of sweets remaining on the gameboard
+     * 
+     * @return An integer representing the number of sweets remaining on the gameboard
      */
     public int getNbSweets() {
         return nbSweets;
     }
 
     /**
+     * This method returns all the refresh recorded since the last clear
      * 
-     * @return
+     * @return A list containing all the refresh recorded since the last clear
      */
     public List<GameBoardRefresh> getRefreshes() {
         return refreshes;

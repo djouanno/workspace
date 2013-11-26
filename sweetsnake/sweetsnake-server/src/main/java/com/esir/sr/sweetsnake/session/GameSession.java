@@ -32,6 +32,7 @@ import com.esir.sr.sweetsnake.factory.DtoConverterFactory;
 import com.esir.sr.sweetsnake.game.engine.GameEngine;
 
 /**
+ * This class represents a game session between players.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -76,15 +77,14 @@ public class GameSession extends AbstractSession
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new game session
      */
     protected GameSession() {
         super();
     }
 
     /**
-     * 
-     * @throws RemoteException
+     * Initializes a new game session
      */
     @PostConstruct
     protected void init() {
@@ -100,8 +100,10 @@ public class GameSession extends AbstractSession
      **********************************************************************************************/
 
     /**
+     * This method decreases the player's number of all the player which number is superior or equal to the starting index
      * 
      * @param startIndex
+     *            The starting index
      */
     private void updatePlayersNumber(final int startIndex) {
         final ListIterator<Player> it = players.listIterator(startIndex);
@@ -116,9 +118,12 @@ public class GameSession extends AbstractSession
      **********************************************************************************************/
 
     /**
+     * This method is called by the client in order to ask for a game session to start
      * 
      * @param starterClient
+     *            The client callback
      * @throws UnauthorizedActionException
+     *             If the client is not authorized to start the session
      */
     public void startGame(final IClientCallback starterClient) throws UnauthorizedActionException {
         try {
@@ -155,7 +160,12 @@ public class GameSession extends AbstractSession
     }
 
     /**
+     * This method is called by the client in order to ask for leaving a game session
      * 
+     * @param leaverClient
+     *            The client callback
+     * @param fromDisconnect
+     *            True if the player leaves the game due to a disconnection, false otherwise
      */
     public void leaveGame(final IClientCallback leaverClient, final boolean fromDisconnect) {
         try {
@@ -205,9 +215,12 @@ public class GameSession extends AbstractSession
     }
 
     /**
+     * This method is called by the client in order to ask for a snake move in the game session
      * 
-     * @param player
+     * @param client
+     *            The client callback
      * @param direction
+     *            The direction where to move the snake
      */
     public void movePlayer(final IClientCallback client, final MoveDirection direction) {
         if (isStarted) {
@@ -236,9 +249,12 @@ public class GameSession extends AbstractSession
      **********************************************************************************************/
 
     /**
+     * This method adds a player to the game session
      * 
      * @param player
+     *            The player to add
      * @throws MaximumNumberOfPlayersException
+     *             If the game session is full
      */
     public void addPlayer(final Player player) throws MaximumNumberOfPlayersException {
         if (players.size() >= GameConstants.MAX_NUMBER_OF_PLAYERS) {
@@ -273,13 +289,17 @@ public class GameSession extends AbstractSession
     }
 
     /**
+     * This method removes a player from the game session
      * 
      * @param player
+     *            The player to remove
      */
     public void removePlayer(final Player player) {
         timeout.remove(player);
         players.remove(player);
-        updatePlayersNumber(player.getNumber() - 1);
+        if (!isStarted) {
+            updatePlayersNumber(player.getNumber() - 1);
+        }
         player.setStatus(PlayerStatus.AVAILABLE);
         player.setGameSessionId(null);
         player.setNumber(0);
@@ -287,17 +307,21 @@ public class GameSession extends AbstractSession
     }
 
     /**
+     * This methods checks whether a player is taking part in the game session or not
      * 
      * @param player
-     * @return
+     *            The player to check
+     * @return True if the player is taking part in the game session, false otherwise
      */
     public boolean contains(final Player player) {
         return players.contains(player);
     }
 
     /**
+     * This method stops the current game session
      * 
      * @param fromAdmin
+     *            True if the stop order comes from an administrator, false otherwise
      */
     public void stopGame(final boolean fromAdmin) {
         try {
@@ -339,7 +363,7 @@ public class GameSession extends AbstractSession
     }
 
     /**
-     * 
+     * This method destroys the game session
      */
     public void destroy() {
         for (final Player player : players) {
@@ -362,32 +386,36 @@ public class GameSession extends AbstractSession
      **********************************************************************************************/
 
     /**
+     * This method returns the id of the game session
      * 
-     * @return
+     * @return A string representing the id of the game session
      */
     public String getId() {
         return id;
     }
 
     /**
+     * This method returns all the players taking part in the game session
      * 
-     * @return
+     * @return A list containing all the players taking part in the game session
      */
     public List<Player> getPlayers() {
         return players;
     }
 
     /**
+     * This method returns the game engine associated with the game session
      * 
-     * @return
+     * @return The game engine associated with the game session
      */
     public GameEngine getGameEngine() {
         return engine;
     }
 
     /**
+     * This methods tells if the session is started or not
      * 
-     * @return
+     * @return True if the session is started, false otherwise
      */
     public boolean isStarted() {
         return isStarted;
@@ -395,8 +423,9 @@ public class GameSession extends AbstractSession
 
 
     /**
+     * This method returns the game session callback
      * 
-     * @return
+     * @return The game session callback
      */
     public IGameSessionCallback getCallback() {
         return callback;

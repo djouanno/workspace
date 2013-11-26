@@ -16,6 +16,7 @@ import com.esir.sr.sweetsnake.session.GameSession;
 import com.esir.sr.sweetsnake.session.Player;
 
 /**
+ * This class represents a game engine used by a game session in order to proceed the events triggered by the clients.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -49,9 +50,12 @@ public class GameEngine
      **********************************************************************************************/
 
     /**
+     * Creates a new game engine
      * 
      * @param _board
+     *            The gameboard
      * @param _playersMap
+     *            The players' snakes map
      */
     public GameEngine(final GameSession _session) {
         log.info("Initializing a new Game Engine for session {}", _session.getId());
@@ -76,9 +80,12 @@ public class GameEngine
      **********************************************************************************************/
 
     /**
+     * This method moves, if it is possible, a player's snake to another cell of the gameboard
      * 
      * @param direction
+     *            The direction where to move the snake
      * @param player
+     *            The player to whom belongs the snake to move
      */
     public void moveSnake(final MoveDirection direction, final Player player) {
         final IComponent snake = playersMap.get(player);
@@ -109,8 +116,10 @@ public class GameEngine
     }
 
     /**
+     * This method removes a player's snake from the gameboard
      * 
      * @param player
+     *            The player to whom belongs the snake to remove
      */
     public void removeSnake(final Player player) {
         final IComponent snake = playersMap.get(player);
@@ -123,8 +132,9 @@ public class GameEngine
      **********************************************************************************************/
 
     /**
+     * This method returns the gameboard associated to the game engine
      * 
-     * @return
+     * @return The gameboard associated to the game engine
      */
     public GameBoard getGameBoard() {
         return gameBoard;

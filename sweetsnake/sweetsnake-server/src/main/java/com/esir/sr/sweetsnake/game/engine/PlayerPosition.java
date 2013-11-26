@@ -1,6 +1,8 @@
 package com.esir.sr.sweetsnake.game.engine;
 
 /**
+ * This class provides the methods which calculate where to place a player's snake according to the player's number in the game
+ * session.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -27,10 +29,14 @@ public class PlayerPosition
      **********************************************************************************************/
 
     /**
+     * Creates a new player position
      * 
      * @param _witdh
+     *            The gameboard width
      * @param _height
+     *            The gameboard height
      * @param _playerNb
+     *            The player's number in the game session
      */
     public PlayerPosition(final int _witdh, final int _height, final int _playerNb) {
         width = _witdh;
@@ -43,8 +49,9 @@ public class PlayerPosition
      **********************************************************************************************/
 
     /**
+     * This method returns the X position of the player
      * 
-     * @return
+     * @return An integer representing the X position of the player
      */
     public int getXPos() {
         switch (playerNb) {
@@ -60,8 +67,9 @@ public class PlayerPosition
     }
 
     /**
+     * This method returns the Y position of the player
      * 
-     * @return
+     * @return An integer representing the Y position of the player
      */
     public int getYPos() {
         switch (playerNb) {

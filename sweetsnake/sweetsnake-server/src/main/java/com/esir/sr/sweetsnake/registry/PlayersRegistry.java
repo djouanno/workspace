@@ -15,6 +15,7 @@ import com.esir.sr.sweetsnake.exception.PlayerNotFoundException;
 import com.esir.sr.sweetsnake.session.Player;
 
 /**
+ * This class represents a players registry in order to store and managed them.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -43,14 +44,14 @@ public class PlayersRegistry
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new players registry
      */
     protected PlayersRegistry() {
         super();
     }
 
     /**
-     * 
+     * Initializes a new players registry
      */
     @PostConstruct
     protected void init() {
@@ -63,27 +64,34 @@ public class PlayersRegistry
      **********************************************************************************************/
 
     /**
+     * This method returns whether the registry contains or not the player with the specified name
      * 
      * @param name
-     * @return
+     *            The player name to look for
+     * @return True if the registry contains the player, false otherwise
      */
     public boolean contains(final String name) {
         return players.containsKey(name);
     }
 
     /**
+     * This method add a player to the registry
      * 
      * @param player
+     *            The player to add
      */
     public void add(final Player player) {
         players.put(player.getName(), player);
     }
 
     /**
+     * This method returns the player with the specified name from the registry
      * 
      * @param name
-     * @return
+     *            The player name to look for
+     * @return The player
      * @throws PlayerNotFoundException
+     *             If the player was not found
      */
     public Player get(final String name) throws PlayerNotFoundException {
         if (!contains(name)) {
@@ -95,9 +103,12 @@ public class PlayersRegistry
     }
 
     /**
+     * This method removes the player with the specified name from the registry
      * 
      * @param name
+     *            The player name to remove
      * @throws PlayerNotFoundException
+     *             If the player was not found
      */
     public void remove(final String name) throws PlayerNotFoundException {
         if (!contains(name)) {
@@ -111,8 +122,9 @@ public class PlayersRegistry
     }
 
     /**
+     * This method returns all the names of the stored players in the registry
      * 
-     * @return
+     * @return A set containing the string of all the player names stored in the registry
      */
     public Set<String> getPlayersName() {
         return Collections.unmodifiableSet(players.keySet());

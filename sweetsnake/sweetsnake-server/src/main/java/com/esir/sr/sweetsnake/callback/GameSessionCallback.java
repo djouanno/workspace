@@ -13,6 +13,7 @@ import com.esir.sr.sweetsnake.exception.UnauthorizedActionException;
 import com.esir.sr.sweetsnake.session.GameSession;
 
 /**
+ * This class implements the IGameSessionCallback defined in the API.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -42,8 +43,9 @@ public class GameSessionCallback extends UnicastRemoteObject implements IGameSes
      **********************************************************************************************/
 
     /**
-     * @throws RemoteException
+     * Creates a new game session callback
      * 
+     * @throws RemoteException
      */
     protected GameSessionCallback(final GameSession _session) throws RemoteException {
         super();

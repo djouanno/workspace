@@ -15,6 +15,7 @@ import com.esir.sr.sweetsnake.exception.GameRequestNotFoundException;
 import com.esir.sr.sweetsnake.session.GameRequest;
 
 /**
+ * This class represents a game requests registry in order to store and managed them.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -43,14 +44,14 @@ public class GameRequestsRegistry
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new game requests registry
      */
     protected GameRequestsRegistry() {
         super();
     }
 
     /**
-     * 
+     * Initializes a new game requests registry
      */
     @PostConstruct
     protected void init() {
@@ -63,17 +64,21 @@ public class GameRequestsRegistry
      **********************************************************************************************/
 
     /**
+     * This method returns whether the registry contains or not the game request with the specified id
      * 
      * @param id
-     * @return
+     *            The game request id to look for
+     * @return True if the registry contains the game request, false otherwise
      */
     public boolean contains(final String id) {
         return requests.containsKey(id);
     }
 
     /**
+     * This method add a game request to the registry
      * 
      * @param request
+     *            The game request to add
      */
     public void add(final GameRequest request) {
         requests.put(request.getId(), request);
@@ -81,10 +86,13 @@ public class GameRequestsRegistry
     }
 
     /**
+     * This method returns the game request with the specified id from the registry
      * 
      * @param id
-     * @return
+     *            The game request id to look for
+     * @return The game request
      * @throws GameRequestNotFoundException
+     *             If the game request was not found
      */
     public GameRequest get(final String id) throws GameRequestNotFoundException {
         if (!contains(id)) {
@@ -96,9 +104,12 @@ public class GameRequestsRegistry
     }
 
     /**
+     * This method removes the game request with the specified id from the registry
      * 
      * @param id
+     *            The game request id to remove
      * @throws GameRequestNotFoundException
+     *             If the game request was not found
      */
     public void remove(final String id) throws GameRequestNotFoundException {
         if (!contains(id)) {
@@ -113,8 +124,9 @@ public class GameRequestsRegistry
     }
 
     /**
+     * This method returns all the ids of the stored game requests in the registry
      * 
-     * @return
+     * @return A set containing the string of all the game requests ids stored in the registry
      */
     public Set<String> getRequestsId() {
         return Collections.unmodifiableSet(requests.keySet());

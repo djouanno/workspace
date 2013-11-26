@@ -7,6 +7,7 @@ import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
 /**
+ * This class represents a sweet on the gameboard.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -26,7 +27,7 @@ public class Sweet extends AbstractComponent
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new sweet
      */
     public Sweet() {
         super(ComponentType.SWEET);

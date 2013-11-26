@@ -16,6 +16,7 @@ import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.factory.DtoConverterFactory;
 
 /**
+ * This class represents a game request sent by a player to another one in order to invite him to join a game session.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -54,9 +55,12 @@ public class GameRequest extends AbstractSession
      **********************************************************************************************/
 
     /**
+     * Creates a new game request
      * 
      * @param _requestingPlayer
+     *            The requesting player
      * @param _requestedPlayer
+     *            The requested player
      */
     protected GameRequest(final String _sessionId, final Player _requestingPlayer, final Player _requestedPlayer) {
         super();
@@ -67,7 +71,7 @@ public class GameRequest extends AbstractSession
     }
 
     /**
-     * 
+     * Initializes a new game request
      */
     @PostConstruct
     protected void init() {
@@ -104,14 +108,14 @@ public class GameRequest extends AbstractSession
      **********************************************************************************************/
 
     /**
-     * 
+     * This method cancels the game request
      */
     public void cancel() {
-
+        // TODO
     }
 
     /**
-     * 
+     * This method denies a game request
      */
     public void deny() {
         try {
@@ -123,7 +127,7 @@ public class GameRequest extends AbstractSession
     }
 
     /**
-     * 
+     * This method destroys a game request
      */
     public void destroy() {
         requestingPlayer.removeSentRequestId(id);
@@ -145,32 +149,36 @@ public class GameRequest extends AbstractSession
      **********************************************************************************************/
 
     /**
+     * This method returns the game request id
      * 
-     * @return
+     * @return A string representing the game request id
      */
     public String getId() {
         return id;
     }
 
     /**
+     * This method returns the game session id from which the request was sent
      * 
-     * @return
+     * @return A string representing the game session id from which the request was sent
      */
     public String getSessionid() {
         return sessionId;
     }
 
     /**
+     * This method returns the requesting player
      * 
-     * @return
+     * @return The requesting player
      */
     public Player getRequestingPlayer() {
         return requestingPlayer;
     }
 
     /**
+     * This method returns the requested player
      * 
-     * @return
+     * @return The requested player
      */
     public Player getRequestedPlayer() {
         return requestedPlayer;

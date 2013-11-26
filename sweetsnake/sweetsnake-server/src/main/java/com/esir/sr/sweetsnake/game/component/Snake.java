@@ -8,6 +8,7 @@ import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
 /**
+ * This class represents a player's snake on the gameboard.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -27,7 +28,7 @@ public class Snake extends AbstractComponent
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new snake
      */
     public Snake() {
         super(ComponentType.SNAKE);
