@@ -1,6 +1,7 @@
 package com.esir.sr.sweetsnake.enumeration;
 
 /**
+ * This enumeration contains all the possible directions for a move.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -8,6 +9,10 @@ package com.esir.sr.sweetsnake.enumeration;
  */
 public enum MoveDirection
 {
+
+    /**********************************************************************************************
+     * [BLOCK] STATIC ENUMERATIONS
+     **********************************************************************************************/
 
     /** The left direction */
     LEFT(new int[] { -1, 0 }),
@@ -21,20 +26,36 @@ public enum MoveDirection
     /** The down direction */
     DOWN(new int[] { 0, +1 });
 
+    /**********************************************************************************************
+     * [BLOCK] FIELDS
+     **********************************************************************************************/
+
     /** The direction value */
     private int[] value;
 
-    /**
-     * 
-     * @param _value
-     */
-    MoveDirection(final int[] _value) {
-        value = _value;
-    }
+    /**********************************************************************************************
+     * [BLOCK] CONSTRUCTOR
+     **********************************************************************************************/
 
     /**
+     * Creates a new move direction
      * 
-     * @return
+     * @param _value
+     *            The move direction value
+     */
+    MoveDirection(final int[] _value) {
+        value = new int[_value.length];
+        System.arraycopy(_value, 0, value, 0, _value.length);
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC METHODS
+     **********************************************************************************************/
+
+    /**
+     * This method return the move direction value
+     * 
+     * @return An array containing the move direction value
      */
     public int[] getValue() {
         return value;

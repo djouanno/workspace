@@ -3,6 +3,7 @@ package com.esir.sr.sweetsnake.dto;
 import java.io.Serializable;
 
 /**
+ * This class is a Data Transfert Object representing a GameRequest.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -39,11 +40,16 @@ public class GameRequestDTO implements Serializable
      **********************************************************************************************/
 
     /**
+     * Creates a new game request DTO
      * 
      * @param _id
+     *            The game request id
      * @param _sessionId
+     *            The game session id from which the request was sent
      * @param _requestingPlayerDto
+     *            The DTO representing the requesting player
      * @param _requestedPlayerDto
+     *            The DTO representing the requested player
      */
     public GameRequestDTO(final String _id, final String _sessionId, final PlayerDTO _requestingPlayerDto, final PlayerDTO _requestedPlayerDto) {
         id = _id;
@@ -71,32 +77,36 @@ public class GameRequestDTO implements Serializable
      **********************************************************************************************/
 
     /**
+     * This method returns the game request id
      * 
-     * @return
+     * @return A string representing the game request id
      */
     public String getId() {
         return id;
     }
 
     /**
+     * This method returns the id of the game session from which the game request was sent
      * 
-     * @return
+     * @return A string representing the game session id from which the game request was sent
      */
     public String getSessionId() {
         return sessionId;
     }
 
     /**
+     * This method returns the DTO representing the requesting player
      * 
-     * @return
+     * @return The DTO representing the requesting player
      */
     public PlayerDTO getRequestingPlayerDto() {
         return requestingPlayerDto;
     }
 
     /**
+     * This method returns the DTO represented the requesting player
      * 
-     * @return
+     * @return The DTO representing the requested player
      */
     public PlayerDTO getRequestedPlayerDto() {
         return requestedPlayerDto;

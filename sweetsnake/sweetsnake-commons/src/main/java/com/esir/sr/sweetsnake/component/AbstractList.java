@@ -10,11 +10,14 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 
 /**
+ * This class provides the common behaviors for a JList.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
  * @param <E>
+ *            The type of the objects stored in the JList
+ * @see javax.swing.JList
  */
 public abstract class AbstractList<E> extends JList<E>
 {
@@ -38,7 +41,7 @@ public abstract class AbstractList<E> extends JList<E>
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new abstract list
      */
     protected AbstractList() {
         super();
@@ -51,35 +54,39 @@ public abstract class AbstractList<E> extends JList<E>
      **********************************************************************************************/
 
     /**
+     * This method adds an element to the list
      * 
      * @param element
+     *            The element to add
      */
     public void addElement(final E element) {
         model.addElement(element);
     }
 
     /**
+     * This method removes an element from the list
      * 
      * @param element
+     *            The element to remove
      */
     public void removeElement(final E element) {
         model.removeElement(element);
     }
 
     /**
-     * 
+     * This methods removes all the elements from the list
      */
     public void removeAllElements() {
         model.removeAllElements();
     }
 
     /**
-     * 
+     * This method enables the selection capability of the list and formats the displayed items
      */
     public abstract void enableSelection();
 
     /**
-     * 
+     * This method disables the selection capability of the lists
      */
     public void disableSelection() {
         setCellRenderer(new DefaultListCellRenderer() {

@@ -14,10 +14,12 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 
 /**
+ * This class provides all the behavior for using a JList containing PlayerDTO objects
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.component.AbstractList
  */
 public class PlayersList extends AbstractList<PlayerDTO>
 {
@@ -34,7 +36,7 @@ public class PlayersList extends AbstractList<PlayerDTO>
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new players list
      */
     public PlayersList() {
         super();

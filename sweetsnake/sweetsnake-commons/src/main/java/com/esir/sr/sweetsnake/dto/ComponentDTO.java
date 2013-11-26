@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.esir.sr.sweetsnake.enumeration.ComponentType;
 
 /**
+ * This class is a Data Transfert Object representing an IComponent.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -12,6 +13,7 @@ import com.esir.sr.sweetsnake.enumeration.ComponentType;
  */
 public class ComponentDTO implements Serializable
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
@@ -24,27 +26,32 @@ public class ComponentDTO implements Serializable
      **********************************************************************************************/
 
     /** The element id */
-    protected String            id;
+    private final String        id;
 
     /** The element x position on the game map */
-    protected int               x;
+    private final int           x;
 
     /** The element y position on the game map */
-    protected int               y;
+    private final int           y;
 
     /** The element type */
-    protected final ComponentType type;
+    private final ComponentType type;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
     /**
+     * Creates a new component DTO
      * 
      * @param _id
+     *            The component id
      * @param _x
+     *            The component x position
      * @param _y
+     *            The component y position
      * @param _type
+     *            The component type
      */
     public ComponentDTO(final String _id, final int _x, final int _y, final ComponentType _type) {
         id = _id;
@@ -58,32 +65,36 @@ public class ComponentDTO implements Serializable
      **********************************************************************************************/
 
     /**
+     * This method returns the component id
      * 
-     * @return
+     * @return A string representing the component id
      */
     public String getId() {
         return id;
     }
 
     /**
+     * This method returns the component X position
      * 
-     * @return
+     * @return An integer representing the component X position
      */
     public int getX() {
         return x;
     }
 
     /**
+     * This method returns the component Y position
      * 
-     * @return
+     * @return An integer representing the component Y position
      */
     public int getY() {
         return y;
     }
 
     /**
+     * This method returns the component type
      * 
-     * @return
+     * @return The component type
      */
     public ComponentType getType() {
         return type;

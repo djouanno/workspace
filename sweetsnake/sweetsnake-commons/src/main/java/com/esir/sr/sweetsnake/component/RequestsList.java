@@ -13,11 +13,12 @@ import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 
 /**
+ * This class provides all the behavior for using a JList containing GameRequestDTO objects
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
- * @param <GameSessionDTO>
+ * @see com.esir.sr.sweetsnake.component.AbstractList
  */
 public class RequestsList extends AbstractList<GameRequestDTO>
 {
@@ -34,7 +35,7 @@ public class RequestsList extends AbstractList<GameRequestDTO>
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new requests list
      */
     public RequestsList() {
         super();

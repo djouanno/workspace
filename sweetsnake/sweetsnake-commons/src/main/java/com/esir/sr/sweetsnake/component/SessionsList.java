@@ -14,11 +14,12 @@ import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 
 /**
+ * This class provides all the behavior for using a JList containing GameSessionDTO objects
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
- * @param <GameSessionDTO>
+ * @see com.esir.sr.sweetsnake.component.AbstractList
  */
 public class SessionsList extends AbstractList<GameSessionDTO>
 {
@@ -35,7 +36,7 @@ public class SessionsList extends AbstractList<GameSessionDTO>
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new sessions list
      */
     public SessionsList() {
         super();

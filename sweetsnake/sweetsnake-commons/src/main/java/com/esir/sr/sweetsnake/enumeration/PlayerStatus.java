@@ -1,6 +1,7 @@
 package com.esir.sr.sweetsnake.enumeration;
 
 /**
+ * This enumeration contains all the possible status for a player.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -8,6 +9,10 @@ package com.esir.sr.sweetsnake.enumeration;
  */
 public enum PlayerStatus
 {
+
+    /**********************************************************************************************
+     * [BLOCK] STATIC ENUMERATIONS
+     **********************************************************************************************/
 
     /** The disconnected status */
     DISCONNECTED("disconnected"),
@@ -33,16 +38,30 @@ public enum PlayerStatus
     /** The playing status */
     PLAYING("playing");
 
+    /**********************************************************************************************
+     * [BLOCK] FIELDS
+     **********************************************************************************************/
+
     /** The status value */
     private String value = "unknown";
 
+    /**********************************************************************************************
+     * [BLOCK] CONSTRUCTOR
+     **********************************************************************************************/
+
     /**
+     * Creates a new player status
      * 
      * @param _value
+     *            The player status value
      */
     PlayerStatus(final String _value) {
         value = _value;
     }
+
+    /**********************************************************************************************
+     * [BLOCK] PUBLIC METHODS
+     **********************************************************************************************/
 
     /*
      * (non-Javadoc)

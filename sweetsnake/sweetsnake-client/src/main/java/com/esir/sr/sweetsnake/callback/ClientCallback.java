@@ -14,6 +14,7 @@ import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
+ * This class implements the client callback interface defined in the API
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -43,6 +44,7 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
      **********************************************************************************************/
 
     /**
+     * Initializes a new client callback
      * 
      * @throws RemoteException
      */
@@ -178,7 +180,7 @@ public class ClientCallback extends UnicastRemoteObject implements IClientCallba
     /*
      * (non-Javadoc)
      * 
-     * @see com.esir.sr.sweetsnake.api.IClientCallback#getName()
+     * @see com.esir.sr.sweetsnake.api.IClientCallback#getUsername()
      */
     @Override
     public String getUsername() throws RemoteException {

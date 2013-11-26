@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * This class is a Data Transfert Object representing a GameBoard.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -24,10 +25,10 @@ public class GameBoardDTO implements Serializable
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The map width */
+    /** The gameboard width */
     private final int                       width;
 
-    /** The map height */
+    /** The gameboard height */
     private final int                       height;
 
     /** The number of sweets */
@@ -41,6 +42,7 @@ public class GameBoardDTO implements Serializable
      **********************************************************************************************/
 
     /**
+     * Creates a new gameboard DTO
      * 
      * @param _width
      * @param _height
@@ -59,32 +61,36 @@ public class GameBoardDTO implements Serializable
      **********************************************************************************************/
 
     /**
+     * This method returns the gameboard width
      * 
-     * @return
-     */
-    public int getHeight() {
-        return height;
-    }
-
-    /**
-     * 
-     * @return
+     * @return An integer representing the gameboard width
      */
     public int getWidth() {
         return width;
     }
 
     /**
+     * This method return the gameboard height
      * 
-     * @return
+     * @return An integer representing the gameboard height
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * This method returns the number of sweets present on the gameboard
+     * 
+     * @return An integer representing the number of sweets present on the gameboard
      */
     public int getNbSweets() {
         return nbSweets;
     }
 
     /**
+     * This method returns all the gameboard refresh DTO to perform
      * 
-     * @return
+     * @return A list containing the DTO representing all the gameboard refresh to perform
      */
     public List<GameBoardRefreshDTO> getComponentsToRefresh() {
         return Collections.unmodifiableList(refreshes);

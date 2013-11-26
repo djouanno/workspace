@@ -9,6 +9,7 @@ import com.esir.sr.sweetsnake.api.IServer;
 import com.esir.sr.sweetsnake.constants.PropertiesConstants;
 
 /**
+ * This class is used to retrieve the server RMI server on the client side
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
@@ -25,13 +26,12 @@ public class RmiProvider
     /** The logger */
     private static final Logger log = LoggerFactory.getLogger(RmiProvider.class);
 
-
     /**********************************************************************************************
-     * [BLOCK] CONSTRUCTOR & INIT
+     * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
     /**
-     * 
+     * Initializes a new RmiProvider
      */
     protected RmiProvider() {
         super();
@@ -42,8 +42,9 @@ public class RmiProvider
      **********************************************************************************************/
 
     /**
+     * This method returns the RMI server instance
      * 
-     * @return
+     * @return The RMI server instance if it has been found, null otherwise
      */
     public IServer getRmiService() {
         try {

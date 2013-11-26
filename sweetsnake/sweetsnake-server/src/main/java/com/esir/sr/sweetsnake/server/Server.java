@@ -92,7 +92,7 @@ public class Server implements IServer, IServerForAdmin
      **********************************************************************************************/
 
     /**
-     * Creates a new Server instance
+     * Creates a new server instance
      */
     protected Server() {
         super();
@@ -114,7 +114,7 @@ public class Server implements IServer, IServerForAdmin
     }
 
     /**
-     * Disconnects all the players before destroying the Server instance
+     * Disconnects all the players before destroying the server instance
      */
     @PreDestroy
     protected void destroy() {
