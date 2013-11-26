@@ -244,7 +244,7 @@ public class Client implements IClientForServer, IClientForGui
             session.getCallback().move(callback, direction);
         } catch (final NullPointerException e) {
             gui.displayErrorMessage("you are not currently playing");
-        } catch (final UnauthorizedActionException | RemoteException e) {
+        } catch (final RemoteException e) {
             gui.displayErrorMessage(e.getMessage());
         }
     }
