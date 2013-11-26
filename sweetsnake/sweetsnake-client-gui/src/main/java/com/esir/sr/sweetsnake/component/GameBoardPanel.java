@@ -13,8 +13,17 @@ import org.slf4j.LoggerFactory;
 import com.esir.sr.sweetsnake.api.IComponent;
 import com.esir.sr.sweetsnake.constants.GameConstants;
 
+/**
+ * This class graphically reprents the gameboard by extending the JPanel class.
+ * 
+ * @author Herminaël Rougier
+ * @author Damien Jouanno
+ * 
+ * @see javax.swing.JPanel
+ */
 public class GameBoardPanel extends JPanel
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
@@ -29,13 +38,13 @@ public class GameBoardPanel extends JPanel
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The map width */
+    /** The gameboard width */
     private final int                     width;
 
-    /** The map height */
+    /** The gameboard height */
     private final int                     height;
 
-    /** The components */
+    /** The gameboard components */
     private final Map<String, IComponent> components;
 
     /**********************************************************************************************
@@ -43,9 +52,12 @@ public class GameBoardPanel extends JPanel
      **********************************************************************************************/
 
     /**
+     * Creates a new gameboard panel
      * 
      * @param _width
+     *            The gameboard width
      * @param _height
+     *            The gameboard height
      */
     public GameBoardPanel(final int _width, final int _height) {
         super();
@@ -61,8 +73,10 @@ public class GameBoardPanel extends JPanel
      **********************************************************************************************/
 
     /**
+     * This method adds a component to the gameboard panel
      * 
      * @param component
+     *            The component to add
      */
     public void addComponent(final IComponent component) {
         log.debug("Adding component {} on the map", component);
@@ -76,8 +90,10 @@ public class GameBoardPanel extends JPanel
     }
 
     /**
+     * This method moves a component on the gameboard panel
      * 
      * @param component
+     *            The component to move
      */
     public void moveComponent(final IComponent component) {
         log.debug("Moving component {} on the map", component);
@@ -89,8 +105,10 @@ public class GameBoardPanel extends JPanel
     }
 
     /**
+     * This method removes a component from the gameboard panel
      * 
      * @param component
+     *            The component to remove
      */
     public void removeComponent(final IComponent component) {
         log.debug("Removing component {} from the map", component);
@@ -101,9 +119,11 @@ public class GameBoardPanel extends JPanel
     }
 
     /**
+     * This method returns a gameboard component according to its id
      * 
      * @param id
-     * @return
+     *            The component id
+     * @return The component if it is found, null otherwise
      */
     public IComponent getComponentById(final String id) {
         return components.get(id);

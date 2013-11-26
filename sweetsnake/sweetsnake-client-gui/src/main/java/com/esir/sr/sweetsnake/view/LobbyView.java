@@ -30,10 +30,12 @@ import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
+ * This class graphically reprents the lobby view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class LobbyView extends AbstractView
@@ -95,7 +97,7 @@ public class LobbyView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new lobby view
      */
     protected LobbyView() {
         super();
@@ -166,7 +168,7 @@ public class LobbyView extends AbstractView
     }
 
     /**
-     * 
+     * This method refresh the player panels
      */
     public void refreshPlayers() {
         for (final PlayerPanel panel : playersPL) {
@@ -179,8 +181,10 @@ public class LobbyView extends AbstractView
     }
 
     /**
+     * This method refresh the buttons
      * 
      * @param isStarted
+     *            True if the session is started, false otherwise
      */
     public void refreshButtons(final boolean isStarted) {
         final GridBagConstraints gbc = new GridBagConstraints();
@@ -208,16 +212,20 @@ public class LobbyView extends AbstractView
     }
 
     /**
+     * This method sets the current player's number in the game session
      * 
      * @param _playerNb
+     *            The player's number in the game session
      */
     public void setPlayerNb(final int _playerNb) {
         playerNb = _playerNb;
     }
 
     /**
+     * This method sets the list of the DTO representing all the players present in the game session
      * 
      * @param _players
+     *            A list containing the DTO representing all the players present in the game session
      */
     public void setPlayers(final List<PlayerDTO> _players) {
         players = new LinkedList<PlayerDTO>(_players);
@@ -228,7 +236,7 @@ public class LobbyView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This methods initializes the top panel
      */
     private void initTopPL() {
         topPL = new JPanel();
@@ -236,14 +244,14 @@ public class LobbyView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the lobby image panel
      */
     private void initLobbyIPL() {
         lobbyIPL = new ImagePanel(ClientGuiConstants.GAME_LOBBY_PATH);
     }
 
     /**
-     * 
+     * This methods initializes the center panel
      */
     private void initCenterPL() {
         centerPL = new JPanel();
@@ -252,7 +260,7 @@ public class LobbyView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the players panel
      */
     private void initPlayersPL() {
         playersPL = new PlayerPanel[GameConstants.MAX_NUMBER_OF_PLAYERS];
@@ -262,7 +270,7 @@ public class LobbyView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the bottom pannel
      */
     private void initBottomPL() {
         bottomPL = new JPanel();
@@ -271,7 +279,7 @@ public class LobbyView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the quit button
      */
     private void initQuitBTN() {
         quitBTN = new JButton("quit game");
@@ -279,7 +287,7 @@ public class LobbyView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the invite button
      */
     private void initInviteBTN() {
         inviteBTN = new JButton("invite");
@@ -287,7 +295,7 @@ public class LobbyView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the start button
      */
     private void initStartBTN() {
         startBTN = new JButton("start game");
@@ -295,9 +303,12 @@ public class LobbyView extends AbstractView
     }
 
     /**
+     * This methods initializes the wait label
      * 
      * @param isStarted
+     *            True if the game session is started, false otherwise
      * @param playerName
+     *            The head playername
      */
     private void initWaitLB(final boolean isStarted, final String playerName) {
         if (isStarted) {
@@ -314,10 +325,12 @@ public class LobbyView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides an action listener for the quit button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class QuitGameListener implements ActionListener
     {
@@ -335,10 +348,12 @@ public class LobbyView extends AbstractView
     }
 
     /**
+     * This class provides an action listener for the invite button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class InviteListener implements ActionListener
     {
@@ -362,10 +377,12 @@ public class LobbyView extends AbstractView
     }
 
     /**
+     * This class provides an action listener for the start button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class StartGameListener implements ActionListener
     {

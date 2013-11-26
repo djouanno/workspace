@@ -20,10 +20,12 @@ import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 
 /**
+ * This class graphically reprents the unreachable server view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class UnreachableServerView extends AbstractView
@@ -57,7 +59,7 @@ public class UnreachableServerView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new unreachable server view
      */
     protected UnreachableServerView() {
         super();
@@ -115,14 +117,14 @@ public class UnreachableServerView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This methods initializes the logo panel
      */
     private void initLogoPL() {
         logoPL = new ImagePanel(ClientGuiConstants.LOGO_PATH);
     }
 
     /**
-     * 
+     * This methods initializes the error label
      */
     private void initErrorLB() {
         errorLB = new JLabel("Server is not reachable");
@@ -131,7 +133,7 @@ public class UnreachableServerView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the retry button
      */
     private void initRetryBTN() {
         retryBTN = new JButton("retry");
@@ -143,10 +145,12 @@ public class UnreachableServerView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides an action listener for the retry button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class RetryListener implements ActionListener
     {

@@ -27,10 +27,12 @@ import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
 /**
+ * This class graphically reprents the connection view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class ConnectionView extends AbstractView
@@ -73,14 +75,16 @@ public class ConnectionView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new connection view
      */
     protected ConnectionView() {
         super();
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.view.AbstractView#init()
      */
     @PostConstruct
     @Override
@@ -139,14 +143,14 @@ public class ConnectionView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This methods initializes the logo panel
      */
     private void initLogoPL() {
         logoPL = new ImagePanel(ClientGuiConstants.LOGO_PATH);
     }
 
     /**
-     * 
+     * This methods initializes the connect label
      */
     private void initConnectLB() {
         connectLB = new JLabel("Connect to server");
@@ -155,7 +159,7 @@ public class ConnectionView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the username text field
      */
     private void initUsernameTF() {
         usernameTF = new JTextField(new String(USERNAME_TF_TEXT));
@@ -167,7 +171,7 @@ public class ConnectionView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the connect button
      */
     private void initConnectBTN() {
         connectBTN = new JButton(CONNECT_BTN_TEXT);
@@ -179,10 +183,12 @@ public class ConnectionView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides a focus listener on the username textfield by implements the FocusListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.FocusListener
      */
     private class FocusClearListener implements FocusListener
     {
@@ -214,10 +220,12 @@ public class ConnectionView extends AbstractView
     }
 
     /**
+     * This class provides an action listener on the connect button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class ConnectListener implements ActionListener
     {

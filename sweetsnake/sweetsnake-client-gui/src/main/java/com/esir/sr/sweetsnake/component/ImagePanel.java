@@ -13,10 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This class extends the JPanel class in order to provide a JPanel with a background image.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see javax.swing.JPanel
  */
 public class ImagePanel extends JPanel
 {
@@ -36,15 +38,17 @@ public class ImagePanel extends JPanel
      **********************************************************************************************/
 
     /** The image */
-    protected Image             image;
+    private Image               image;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
 
     /**
+     * Creates a new image panel
      * 
      * @param imagePath
+     *            The image path to set in background
      */
     public ImagePanel(final String imagePath) {
         try {

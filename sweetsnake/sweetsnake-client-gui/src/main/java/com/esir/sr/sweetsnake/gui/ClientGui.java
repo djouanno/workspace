@@ -41,29 +41,18 @@ import com.esir.sr.sweetsnake.view.SessionsView;
 import com.esir.sr.sweetsnake.view.UnreachableServerView;
 
 /**
+ * This class implements the IGuiForClient interface.<br />
+ * It extends the JFrame class to provide the main frame GUI.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.api.IGuiForClient
+ * @see javax.swing.JFrame
  */
 @Component
 public class ClientGui extends JFrame implements IGuiForClient
 {
-
-    // public static void main(final String[] args) {
-    // @SuppressWarnings("resource")
-    // final ClassPathXmlApplicationContext context = new
-    // ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-client-gui-context.xml");
-    // context.registerShutdownHook();
-    //
-    // final IGuiForClient gui = context.getBean(IGuiForClient.class);
-    // final List<PlayerDTO> playersDto = new LinkedList<PlayerDTO>();
-    // playersDto.add(new PlayerDTO("hermi", PlayerStatus.READY, null, 1, 0));
-    // playersDto.add(new PlayerDTO("zoby", PlayerStatus.READY, null, 2, 0));
-    // playersDto.add(new PlayerDTO("zoba", PlayerStatus.READY, null, 3, 0));
-    // final GameSessionDTO session = new GameSessionDTO("id", playersDto, null, null, false);
-    // gui.sessionJoined(session, 1);
-    // }
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
@@ -122,14 +111,14 @@ public class ClientGui extends JFrame implements IGuiForClient
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new client GUI
      */
     protected ClientGui() {
         super();
     }
 
     /**
-     * 
+     * Initializes a new client GUI
      */
     @PostConstruct
     protected void init() {
@@ -145,7 +134,7 @@ public class ClientGui extends JFrame implements IGuiForClient
     }
 
     /**
-     * 
+     * Called before destroying the client GUI
      */
     @PreDestroy
     protected void destroy() {
@@ -453,8 +442,9 @@ public class ClientGui extends JFrame implements IGuiForClient
      **********************************************************************************************/
 
     /**
+     * This method returns the current dimension of the GUI
      * 
-     * @return
+     * @return The dimension of the GUI
      */
     public Dimension getDimension() {
         return dimension;
@@ -465,7 +455,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      **********************************************************************************************/
 
     /**
-     * 
+     * This method initializes the frame parameters
      */
     private void initFrameParameters() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -491,9 +481,12 @@ public class ClientGui extends JFrame implements IGuiForClient
     }
 
     /**
+     * This method switch the current view displayed in the frame
      * 
      * @param view
+     *            The new view to display
      * @param unbuildPrevious
+     *            True to unbuild the previous view, false otherwise
      */
     private void switchView(final AbstractView view, final boolean unbuildPrevious) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -513,7 +506,7 @@ public class ClientGui extends JFrame implements IGuiForClient
     }
 
     /**
-     * 
+     * This method refreshes the GUI
      */
     private void refreshUI() {
         revalidate();
@@ -521,9 +514,11 @@ public class ClientGui extends JFrame implements IGuiForClient
     }
 
     /**
+     * This method retrieves the parent option pane of a component
      * 
      * @param parent
-     * @return
+     *            The first parent of the component
+     * @return The parent option pane if it is found, false otherwise
      */
     private JOptionPane getOptionPane(final JComponent parent) {
         JOptionPane pane = null;
@@ -536,18 +531,25 @@ public class ClientGui extends JFrame implements IGuiForClient
     }
 
     /**
+     * This method displays a toast on the GUI
      * 
      * @param message
+     *            The message to display
      */
     private void displayToast(final String message) {
         Toast.displayToast(this, message);
     }
 
     /**
+     * This method shows a multiple choice dialog with the specified buttons
      * 
+     * @param title
+     *            The title of the dialog
      * @param message
+     *            The question to display
      * @param buttonsText
-     * @return
+     *            The buttons choice
+     * @return An integer representing the clicked button (starting by 0 from the left)
      */
     private int displayCustomQuestion(final String title, final String message, final String[] buttonsText) {
         final Object[] buttons = new Object[buttonsText.length];
@@ -568,9 +570,12 @@ public class ClientGui extends JFrame implements IGuiForClient
     }
 
     /**
+     * This method refreshes the lobby view
      * 
      * @param players
+     *            The list of the players to display
      * @param isStarted
+     *            True if the game session is started, false otherwise
      */
     private void refreshLobbyView(final List<PlayerDTO> players, final boolean isStarted) {
         lobbyView.setPlayers(players);

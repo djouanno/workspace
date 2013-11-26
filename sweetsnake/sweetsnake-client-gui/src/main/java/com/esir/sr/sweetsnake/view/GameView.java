@@ -40,10 +40,12 @@ import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.RefreshAction;
 
 /**
+ * This class graphically reprents the game view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class GameView extends AbstractView
@@ -92,7 +94,7 @@ public class GameView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new game view
      */
     protected GameView() {
         super();
@@ -170,8 +172,10 @@ public class GameView extends AbstractView
     }
 
     /**
+     * This method refreshes the displayed players' scores
      * 
      * @param playersScores
+     *            The players list
      */
     public void refreshScores(final List<PlayerDTO> players) {
         for (final PlayerDTO player : players) {
@@ -179,91 +183,18 @@ public class GameView extends AbstractView
         }
     }
 
+    /**
+     * This method hides the score label for the specified player
+     * 
+     * @param _playerNb
+     *            The player's number to hide
+     */
     public void hideScore(final int _playerNb) {
         playersScoresLB[_playerNb - 1].setForeground(findSnakeColor(null, _playerNb));
     }
 
     /**
-     * 
-     * @param _gameBoardDto
-     */
-    public void setGameboardDto(final GameBoardDTO _gameBoardDto) {
-        gameBoardDto = _gameBoardDto;
-    }
-
-    /**
-     * 
-     * @param _playersSnakes
-     */
-    public void setPlayersSnakesMap(final Map<Integer, String> _playersSnakes) {
-        playersSnakes = _playersSnakes;
-    }
-
-    /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
-     **********************************************************************************************/
-
-    /**
-     * 
-     */
-    private void initTopPL() {
-        topPL = new JPanel();
-        topPL.setLayout(new GridBagLayout());
-        topPL.setOpaque(false);
-    }
-
-    /**
-     * 
-     */
-    private void initCenterPL() {
-        centerPL = new JPanel();
-        centerPL.setOpaque(true);
-        centerPL.setBackground(Color.cyan);
-        centerPL.setLayout(new GridBagLayout());
-    }
-
-    /**
-     * 
-     */
-    private void initBottomPL() {
-        bottomPL = new JPanel();
-        bottomPL.setLayout(new GridBagLayout());
-        bottomPL.setOpaque(false);
-    }
-
-    /**
-     * 
-     */
-    private void initGameBoardPL() {
-        if (gameBoardDto != null) {
-            gameBoardPL = new GameBoardPanel(gameBoardDto.getWidth(), gameBoardDto.getHeight());
-            gameBoardPL.setBorder(new EmptyBorder(0, 0, 10, 0));
-            drawGameboard();
-        }
-    }
-
-    /**
-     * 
-     */
-    private void initPlayersScoresLB() {
-        playersScoresLB = new JLabel[GameConstants.MAX_NUMBER_OF_PLAYERS];
-        for (int i = 0; i < playersScoresLB.length; i++) {
-            playersScoresLB[i] = new JLabel(intToString(0, 3));
-            playersScoresLB[i].setForeground(findSnakeColor(playersSnakes.get(i + 1), i + 1));
-            playersScoresLB[i].setFont(new Font("sans-serif", Font.BOLD, 20));
-        }
-    }
-
-    /**
-     * 
-     */
-    private void initQuitBTN() {
-        quitBTN = new JButton("quit game");
-        quitBTN.addActionListener(new QuitGameListener());
-    }
-
-    /**
-     * 
+     * This method draws the gameboard according to the DTO representing the gameboard currently set
      */
     public void drawGameboard() {
         final List<GameBoardRefreshDTO> refreshes = gameBoardDto.getComponentsToRefresh();
@@ -299,9 +230,94 @@ public class GameView extends AbstractView
     }
 
     /**
+     * This methods sets the DTO representing the gameboard to be drawn
+     * 
+     * @param _gameBoardDto
+     *            The DTO representing the gameboard to be drawn
+     */
+    public void setGameboardDto(final GameBoardDTO _gameBoardDto) {
+        gameBoardDto = _gameBoardDto;
+    }
+
+    /**
+     * This method sets the players' snakes map to map each player with its component
+     * 
+     * @param _playersSnakes
+     *            The players' snakes map
+     */
+    public void setPlayersSnakesMap(final Map<Integer, String> _playersSnakes) {
+        playersSnakes = _playersSnakes;
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] PRIVATE METHODS
+     **********************************************************************************************/
+
+    /**
+     * This methods initializes the top panel
+     */
+    private void initTopPL() {
+        topPL = new JPanel();
+        topPL.setLayout(new GridBagLayout());
+        topPL.setOpaque(false);
+    }
+
+    /**
+     * This methods initializes the center panel
+     */
+    private void initCenterPL() {
+        centerPL = new JPanel();
+        centerPL.setOpaque(true);
+        centerPL.setBackground(Color.cyan);
+        centerPL.setLayout(new GridBagLayout());
+    }
+
+    /**
+     * This methods initializes the bottom panel
+     */
+    private void initBottomPL() {
+        bottomPL = new JPanel();
+        bottomPL.setLayout(new GridBagLayout());
+        bottomPL.setOpaque(false);
+    }
+
+    /**
+     * This methods initializes the gameboard panel
+     */
+    private void initGameBoardPL() {
+        if (gameBoardDto != null) {
+            gameBoardPL = new GameBoardPanel(gameBoardDto.getWidth(), gameBoardDto.getHeight());
+            gameBoardPL.setBorder(new EmptyBorder(0, 0, 10, 0));
+            drawGameboard();
+        }
+    }
+
+    /**
+     * This methods initializes the players' scores labels
+     */
+    private void initPlayersScoresLB() {
+        playersScoresLB = new JLabel[GameConstants.MAX_NUMBER_OF_PLAYERS];
+        for (int i = 0; i < playersScoresLB.length; i++) {
+            playersScoresLB[i] = new JLabel(intToString(0, 3));
+            playersScoresLB[i].setForeground(findSnakeColor(playersSnakes.get(i + 1), i + 1));
+            playersScoresLB[i].setFont(new Font("sans-serif", Font.BOLD, 20));
+        }
+    }
+
+    /**
+     * This methods initializes the quit button
+     */
+    private void initQuitBTN() {
+        quitBTN = new JButton("quit game");
+        quitBTN.addActionListener(new QuitGameListener());
+    }
+
+    /**
+     * This method finds the snake icon path according to the specified snake id
      * 
      * @param snakeId
-     * @return
+     *            The snake id
+     * @return The snake icon path according to the specified snake id
      */
     private String findSnakeIconPath(final String snakeId) {
         for (final int player : playersSnakes.keySet()) {
@@ -322,10 +338,13 @@ public class GameView extends AbstractView
     }
 
     /**
+     * This method finds the snake color according to the specified snake id and player's number
      * 
      * @param snakeId
+     *            The snake id
      * @param i
-     * @return
+     *            The player's number
+     * @return The snake color according to the specified snake id and player's number
      */
     private Color findSnakeColor(final String snakeId, final int i) {
         switch (i) {
@@ -341,10 +360,13 @@ public class GameView extends AbstractView
     }
 
     /**
+     * This method converts an integer to a string containing the specified number of zeros before the integer
      * 
      * @param num
+     *            The number to convert
      * @param digits
-     * @return
+     *            The number of 0 to display before the number
+     * @return A string representing the number filled with zero
      */
     private static String intToString(final int num, final int digits) {
         final char[] zeros = new char[digits];
@@ -359,10 +381,12 @@ public class GameView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides an action listener for the quit button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class QuitGameListener implements ActionListener
     {
@@ -380,19 +404,21 @@ public class GameView extends AbstractView
     }
 
     /**
+     * This class provides a key listener for the game view by implementing the KeyListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.KeyListener
      */
     private class KeyboardListener implements KeyListener
     {
 
-        /** */
+        /** The move table mapping */
         private final Map<Integer, MoveDirection> moveTable;
 
         /**
-         * 
+         * Creates a new keyboard listener
          */
         public KeyboardListener() {
             moveTable = new LinkedHashMap<Integer, MoveDirection>();

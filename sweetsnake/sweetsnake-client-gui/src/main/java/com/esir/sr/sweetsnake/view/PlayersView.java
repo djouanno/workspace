@@ -21,10 +21,12 @@ import com.esir.sr.sweetsnake.component.PlayersList;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
+ * This class graphically reprents the players view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class PlayersView extends AbstractView
@@ -58,7 +60,7 @@ public class PlayersView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new players view
      */
     protected PlayersView() {
         super();
@@ -105,8 +107,10 @@ public class PlayersView extends AbstractView
     }
 
     /**
+     * This method refreshes the players list
      * 
      * @param playersList
+     *            A list containing the DTO representing all the connected players
      */
     public void refreshPlayersList(final List<PlayerDTO> playersList) {
         if (isBuilded) {
@@ -126,8 +130,10 @@ public class PlayersView extends AbstractView
     }
 
     /**
+     * This method sets the dialog in which the view is currently displayed
      * 
      * @param _dialog
+     *            The dialog in which the view is currently displayed
      */
     public void setDialog(final JDialog _dialog) {
         dialog = _dialog;
@@ -138,7 +144,7 @@ public class PlayersView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This methods initializes the center panel
      */
     private void initCenterPL() {
         centerPL = new JPanel();
@@ -147,8 +153,10 @@ public class PlayersView extends AbstractView
     }
 
     /**
+     * This methods initializes the players list
      * 
      * @param players
+     *            A list containing the DTO representing all the connected players
      */
     private void initPlayersLST(final List<PlayerDTO> players) {
         playersLST = new PlayersList();
@@ -163,10 +171,12 @@ public class PlayersView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides a mouse listener for the players list by extending the MouseAdapter class.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.MouseAdapter
      */
     private class InviteListener extends MouseAdapter
     {

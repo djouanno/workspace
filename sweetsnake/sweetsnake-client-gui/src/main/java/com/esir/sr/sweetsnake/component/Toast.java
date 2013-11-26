@@ -14,10 +14,12 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 
 /**
+ * This class provides a graphical Toast (Android-like) by extending the JDialog class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see javax.swing.JDialog
  */
 public class Toast extends JDialog
 {
@@ -47,15 +49,18 @@ public class Toast extends JDialog
      **********************************************************************************************/
 
     /**
-     * 
+     * Private empty constructor to prevent instiation of Toast
      */
     private Toast() {
     }
 
     /**
+     * Creates a new toast
      * 
      * @param _gui
+     *            The main parent GUI
      * @param _msg
+     *            The message to display
      */
     private Toast(final JFrame _gui, final String _msg) {
         super(_gui, false);
@@ -69,9 +74,12 @@ public class Toast extends JDialog
      **********************************************************************************************/
 
     /**
+     * This method displays a toast with the specified message
      * 
      * @param _gui
+     *            The main parent GUI
      * @param _msg
+     *            The message to display
      */
     public static void displayToast(final JFrame _gui, final String _msg) {
         final JDialog dialog = new Toast(_gui, _msg);
@@ -92,7 +100,7 @@ public class Toast extends JDialog
      **********************************************************************************************/
 
     /**
-     * 
+     * This method initializes the toast
      */
     private void initComponents() {
         setLayout(new GridBagLayout());
@@ -116,4 +124,5 @@ public class Toast extends JDialog
         label.setText(message);
         add(label);
     }
+
 }

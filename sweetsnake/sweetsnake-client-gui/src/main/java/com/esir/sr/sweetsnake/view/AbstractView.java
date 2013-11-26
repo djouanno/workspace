@@ -12,10 +12,13 @@ import com.esir.sr.sweetsnake.gui.ClientGui;
 import com.esir.sr.sweetsnake.provider.BeanProvider;
 
 /**
+ * This class provides the common behaviors for any GUI view.<br />
+ * It extends the JPanel class to be graphically displayed.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see javax.swing.JPanel
  */
 public abstract class AbstractView extends JPanel
 {
@@ -54,14 +57,14 @@ public abstract class AbstractView extends JPanel
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new view
      */
     protected AbstractView() {
         super();
     }
 
     /**
-     * 
+     * Initializes a new view
      */
     protected void init() {
         setOpaque(false);
@@ -72,7 +75,7 @@ public abstract class AbstractView extends JPanel
      **********************************************************************************************/
 
     /**
-     * 
+     * This method builds the view if it has not already been built
      */
     public void build() {
         if (!isBuilded) {
@@ -86,7 +89,7 @@ public abstract class AbstractView extends JPanel
     }
 
     /**
-     * 
+     * This method unbuilds the view if it has already been built
      */
     public void unbuild() {
         if (isBuilded) {
@@ -96,7 +99,7 @@ public abstract class AbstractView extends JPanel
     }
 
     /**
-     * 
+     * This method provides the implemented code to build the view
      */
     protected abstract void buildImpl();
 
@@ -105,8 +108,9 @@ public abstract class AbstractView extends JPanel
      **********************************************************************************************/
 
     /**
+     * This method returns the dimension of the view
      * 
-     * @return
+     * @return The dimension of the view
      */
     public Dimension getDimension() {
         return dimension;

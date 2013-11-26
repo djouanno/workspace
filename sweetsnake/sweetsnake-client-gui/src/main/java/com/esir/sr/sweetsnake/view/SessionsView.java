@@ -25,10 +25,12 @@ import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
+ * This class graphically reprents the sessions view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class SessionsView extends AbstractView
@@ -77,7 +79,7 @@ public class SessionsView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new sessions view
      */
     protected SessionsView() {
         super();
@@ -145,15 +147,17 @@ public class SessionsView extends AbstractView
         gbc.weightx = 0.1;
         bottomPL.add(createBTN, gbc);
 
-        initRequestBTN();
+        initJoinBTN();
         gbc.gridx = 2;
         gbc.insets = new Insets(5, 5, 0, 0);
         bottomPL.add(joinBTN, gbc);
     }
 
     /**
+     * This method refreshes the sessions list
      * 
      * @param sessionsList
+     *            A list containing the DTO representing all the available game sessions
      */
     public void refreshSessionsList(final List<GameSessionDTO> sessionsList) {
         if (isBuilded) {
@@ -177,7 +181,7 @@ public class SessionsView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This methods initializes the top panel
      */
     private void initTopPL() {
         topPL = new JPanel();
@@ -185,14 +189,14 @@ public class SessionsView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the sessions list image panel
      */
     private void initSessionsListIPL() {
         sessionsListIPL = new ImagePanel(ClientGuiConstants.GAMES_LIST_PATH);
     }
 
     /**
-     * 
+     * This methods initializes the center panel
      */
     private void initCenterPL() {
         centerPL = new JPanel();
@@ -201,8 +205,10 @@ public class SessionsView extends AbstractView
     }
 
     /**
+     * This methods initializes the sessions list
      * 
      * @param sessions
+     *            A list containing the DTO representing all the available sessions
      */
     private void initSessionsLST(final List<GameSessionDTO> sessions) {
         sessionsLST = new SessionsList();
@@ -212,7 +218,7 @@ public class SessionsView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the bottom panel
      */
     private void initBottomPL() {
         bottomPL = new JPanel();
@@ -221,7 +227,7 @@ public class SessionsView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the disconnect button
      */
     private void initDisconnectBTN() {
         disconnectBTN = new JButton("disconnect");
@@ -229,7 +235,7 @@ public class SessionsView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the create button
      */
     private void initCreateBTN() {
         createBTN = new JButton("create game");
@@ -237,9 +243,9 @@ public class SessionsView extends AbstractView
     }
 
     /**
-     * 
+     * This methods initializes the join button
      */
-    private void initRequestBTN() {
+    private void initJoinBTN() {
         joinBTN = new JButton("join game");
         joinBTN.addActionListener(new JoinGameListener());
     }
@@ -249,10 +255,12 @@ public class SessionsView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides an action listener for the disconnect button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class DisconnectListener implements ActionListener
     {
@@ -270,10 +278,12 @@ public class SessionsView extends AbstractView
     }
 
     /**
+     * This class provides an action listener for the create button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class CreateGameListener implements ActionListener
     {
@@ -291,10 +301,12 @@ public class SessionsView extends AbstractView
     }
 
     /**
+     * This class provides an action listener for the join button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class JoinGameListener implements ActionListener
     {

@@ -4,10 +4,12 @@ import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.enumeration.ComponentType;
 
 /**
+ * This class graphically represents a player's snake by extending the AbstractComponent class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.component.AbstractComponent
  */
 public class Snake extends AbstractComponent
 {
@@ -24,10 +26,14 @@ public class Snake extends AbstractComponent
      **********************************************************************************************/
 
     /**
+     * Creates a new snake
      * 
      * @param _id
+     *            The snake id
      * @param _x
+     *            The snake X position
      * @param _y
+     *            The snake Y position
      */
     public Snake(final String _id, final int _x, final int _y, final String iconPath) {
         super(_id, _x, _y, ComponentType.SNAKE, iconPath);
@@ -38,9 +44,11 @@ public class Snake extends AbstractComponent
      **********************************************************************************************/
 
     /**
+     * This method returns the snake icon path according to the player's number in the game session
      * 
      * @param nb
-     * @return
+     *            The player's number in the game session
+     * @return The snake icon path according to the player's number in the game session
      */
     public static String findSnakeIconPath(final int nb) {
         switch (nb) {

@@ -16,10 +16,12 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.view.LobbyView;
 
 /**
+ * This class extends the JPanel class in order to provide a panel with a common layout for all players in a game lobby.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see javax.swing.JPanel
  */
 public class PlayerPanel extends JPanel
 {
@@ -52,8 +54,10 @@ public class PlayerPanel extends JPanel
      **********************************************************************************************/
 
     /**
+     * Creates a new player panel
      * 
      * @param _playerNb
+     *            The player's number in the game session
      */
     public PlayerPanel(final int playerNb) {
         final GridBagConstraints gbc = new GridBagConstraints();
@@ -94,8 +98,10 @@ public class PlayerPanel extends JPanel
      **********************************************************************************************/
 
     /**
+     * This method refreshes the panel with the specified player
      * 
      * @param player
+     *            The player to display on the panel
      */
     public void refreshPlayer(final PlayerDTO player) {
         playerLB.setText(player.getName());
@@ -107,7 +113,7 @@ public class PlayerPanel extends JPanel
     }
 
     /**
-     * 
+     * This method remove any player displayed on the panel
      */
     public void removePlayer() {
         playerLB.setText("Available");
@@ -123,12 +129,17 @@ public class PlayerPanel extends JPanel
      **********************************************************************************************/
 
     /**
+     * This method generates a label with the specified parameters
      * 
      * @param text
+     *            The label text
      * @param fontSize
+     *            The font size
      * @param fontColor
+     *            The font color
      * @param fontWeight
-     * @return
+     *            The font weight
+     * @return A JLabel with the specified text and parameters
      */
     private JLabel generateLabel(final String text, final int fontSize, final Color color, final int fontWeight) {
         final JLabel label = new JLabel(text);
@@ -138,9 +149,11 @@ public class PlayerPanel extends JPanel
     }
 
     /**
+     * This method generate the panel border according to the specified player's number in the game session
      * 
      * @param nb
-     * @return
+     *            The player's number in the game session
+     * @return A border generated for the specified player's number in the game session
      */
     private MatteBorder generateBorder(final int nb) {
         switch (nb) {

@@ -20,10 +20,12 @@ import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 
 /**
+ * This class graphically reprents the reaching server view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class ReachingServerView extends AbstractView
@@ -54,7 +56,7 @@ public class ReachingServerView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new reaching server view
      */
     protected ReachingServerView() {
         super();
@@ -116,14 +118,14 @@ public class ReachingServerView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This methods initializes the logo panel
      */
     private void initLogoPL() {
         logoPL = new ImagePanel(ClientGuiConstants.LOGO_PATH);
     }
 
     /**
-     * 
+     * This methods initializes the reaching label
      */
     private void initReachingLB() {
         reachingLB = new JLabel("Contacting server...");

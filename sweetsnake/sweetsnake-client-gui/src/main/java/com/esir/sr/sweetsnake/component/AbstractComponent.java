@@ -12,10 +12,13 @@ import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 
 /**
+ * This class implements the IComponent interface and extends the JPanel class in order to graphically represent a game component.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see javax.swing.JPanel
+ * @see com.esir.sr.sweetsnake.api.IComponent
  */
 public abstract class AbstractComponent extends JPanel implements IComponent
 {
@@ -31,19 +34,19 @@ public abstract class AbstractComponent extends JPanel implements IComponent
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The element id */
+    /** The component id */
     protected String          id;
 
-    /** The element x position on the game map */
+    /** The component x position on the gameboard */
     protected int             x;
 
-    /** The element y position on the game map */
+    /** The component y position on the gameboard */
     protected int             y;
 
-    /** The element type */
+    /** The component type */
     protected ComponentType   type;
 
-    /** The image */
+    /** The component image */
     protected ImageIcon       image;
 
     /** The jlabel icon */
@@ -54,11 +57,16 @@ public abstract class AbstractComponent extends JPanel implements IComponent
      **********************************************************************************************/
 
     /**
+     * Creates a new component
      * 
      * @param _id
+     *            The component id
      * @param _x
+     *            The component X position
      * @param _y
+     *            The component Y position
      * @param _type
+     *            The component type
      */
     protected AbstractComponent(final String _id, final int _x, final int _y, final ComponentType _type, final String imagePath) {
         id = _id;
