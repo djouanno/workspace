@@ -122,6 +122,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      */
     @PostConstruct
     protected void init() {
+        currentView = reachingServerView;
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
