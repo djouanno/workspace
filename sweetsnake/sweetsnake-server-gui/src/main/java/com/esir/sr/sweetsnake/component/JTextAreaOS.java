@@ -14,10 +14,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
+ * This class provides a JTextArea displaying the the default output stream stream by extending the OutputStream class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see javax.io.OutputStream
  */
 @Component
 public class JTextAreaOS extends OutputStream
@@ -48,15 +50,14 @@ public class JTextAreaOS extends OutputStream
      **********************************************************************************************/
 
     /**
-     * 
-     * @param _destination
+     * Creates a new text area output stream
      */
     protected JTextAreaOS() {
         super();
     }
 
     /**
-     * 
+     * Initializes a new text area output stream
      */
     @PostConstruct
     protected void init() {
@@ -100,7 +101,7 @@ public class JTextAreaOS extends OutputStream
     }
 
     /**
-     * 
+     * This method clears the recorded logs since the last clear
      */
     public void clearLogs() {
         logs = new StringBuilder();
@@ -111,8 +112,9 @@ public class JTextAreaOS extends OutputStream
      **********************************************************************************************/
 
     /**
+     * This method returns the recorded logs since the last clear
      * 
-     * @return
+     * @return A string representing the recorded logs
      */
     public String getLogs() {
         if (level.equals("ALL")) {
@@ -137,8 +139,9 @@ public class JTextAreaOS extends OutputStream
     }
 
     /**
+     * This method returns the text area in which the logs are appened
      * 
-     * @return
+     * @return A jtextarea in which the logs are appened
      */
     public JTextArea getTextArea() {
         return destination;
@@ -149,8 +152,10 @@ public class JTextAreaOS extends OutputStream
      **********************************************************************************************/
 
     /**
+     * This method sets the level of logs which will be appened in the text area
      * 
      * @param _level
+     *            A string representing the level of logs which will be appened in the text area
      */
     public void setLevel(final String _level) {
         level = _level;

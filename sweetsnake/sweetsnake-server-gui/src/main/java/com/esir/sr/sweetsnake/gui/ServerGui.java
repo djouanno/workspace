@@ -30,21 +30,18 @@ import com.esir.sr.sweetsnake.view.SessionsView;
 import com.esir.sr.sweetsnake.view.StatusView;
 
 /**
+ * This class implements the IGuiForServer interface.<br />
+ * It extends the JFrame class to provide the main frame GUI.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.api.IGuiForServer
+ * @see javax.swing.JFrame
  */
 @Component
 public class ServerGui extends JFrame implements IGuiForServer
 {
-
-    // public static void main(final String[] args) {
-    // @SuppressWarnings("resource")
-    // final ClassPathXmlApplicationContext context = new
-    // ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-server-gui-context.xml");
-    // context.registerShutdownHook();
-    // }
 
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
@@ -88,14 +85,14 @@ public class ServerGui extends JFrame implements IGuiForServer
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new server GUI
      */
     protected ServerGui() {
         super();
     }
 
     /**
-     * 
+     * Initializes a new server GUI
      */
     @PostConstruct
     protected void init() {
@@ -110,57 +107,11 @@ public class ServerGui extends JFrame implements IGuiForServer
     }
 
     /**
-     * 
+     * Called before destroying the server GUI
      */
     @PreDestroy
     protected void destroy() {
         log.info("Destroying the Server GUI");
-    }
-
-    /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
-     **********************************************************************************************/
-
-    /**
-     * 
-     */
-    private void initFrameParameters() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("SweetSnake Server");
-
-        final Image icon = Toolkit.getDefaultToolkit().getImage(ServerGui.class.getResource(ServerGuiConstants.ICON_PATH));
-        setIconImage(icon);
-
-        final Dimension dimension = new Dimension(ServerGuiConstants.GUI_WIDTH, ServerGuiConstants.GUI_HEIGHT);
-        setSize(dimension);
-        setPreferredSize(dimension);
-
-        setExtendedState(Frame.MAXIMIZED_BOTH);
-
-        pack();
-
-        setVisible(true);
-    }
-
-    /**
-     * 
-     * @param view
-     * @param unbuildPrevious
-     */
-    private void switchView(final AbstractView view, final boolean unbuildPrevious) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (currentView != null && unbuildPrevious) {
-                    currentView.unbuild();
-                }
-                view.build();
-                getContentPane().removeAll();
-                getContentPane().add(view);
-                refreshUI();
-                currentView = view;
-            }
-        });
     }
 
     /**********************************************************************************************
@@ -201,6 +152,9 @@ public class ServerGui extends JFrame implements IGuiForServer
                 statusView.stopTimer();
                 statusView.disableStopBTN();
                 statusView.enableStartBTN();
+                playersView.refreshPlayers(new LinkedList<PlayerDTO>());
+                sessionsView.refreshSessions(new LinkedList<GameSessionDTO>());
+                requestsView.refreshRequests(new LinkedList<GameRequestDTO>());
             }
         });
     }
@@ -258,11 +212,60 @@ public class ServerGui extends JFrame implements IGuiForServer
      **********************************************************************************************/
 
     /**
-     * 
+     * This method refreshes the GUI
      */
     public void refreshUI() {
         revalidate();
         repaint();
+    }
+
+    /**********************************************************************************************
+     * [BLOCK] PRIVATE METHODS
+     **********************************************************************************************/
+
+    /**
+     * This method initializes the frame parameters
+     */
+    private void initFrameParameters() {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("SweetSnake Server");
+
+        final Image icon = Toolkit.getDefaultToolkit().getImage(ServerGui.class.getResource(ServerGuiConstants.ICON_PATH));
+        setIconImage(icon);
+
+        final Dimension dimension = new Dimension(ServerGuiConstants.GUI_WIDTH, ServerGuiConstants.GUI_HEIGHT);
+        setSize(dimension);
+        setPreferredSize(dimension);
+
+        setExtendedState(Frame.MAXIMIZED_BOTH);
+
+        pack();
+
+        setVisible(true);
+    }
+
+    /**
+     * This method switch the current view displayed in the frame
+     * 
+     * @param view
+     *            The new view to display
+     * @param unbuildPrevious
+     *            True to unbuild the previous view, false otherwise
+     */
+    private void switchView(final AbstractView view, final boolean unbuildPrevious) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (currentView != null && unbuildPrevious) {
+                    currentView.unbuild();
+                }
+                view.build();
+                getContentPane().removeAll();
+                getContentPane().add(view);
+                refreshUI();
+                currentView = view;
+            }
+        });
     }
 
 }

@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * This class graphically reprents the main view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class MainView extends AbstractView
@@ -70,7 +72,7 @@ public class MainView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new main view
      */
     protected MainView() {
         super();
@@ -133,7 +135,7 @@ public class MainView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This method initializes the top panel
      */
     private void initTopPL() {
         topPL = new JPanel();
@@ -141,7 +143,7 @@ public class MainView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the bottom panel
      */
     private void initBottomPL() {
         bottomPL = new JPanel();
@@ -150,7 +152,7 @@ public class MainView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the monitoring panels
      */
     private void initMonitoringPL() {
         monitoringPL = new JPanel[4];
@@ -160,9 +162,5 @@ public class MainView extends AbstractView
             monitoringPL[i].setBorder(new EmptyBorder(10, 10, 10, 10));
         }
     }
-
-    /**********************************************************************************************
-     * [BLOCK] INTERNAL LISTENERS
-     **********************************************************************************************/
 
 }

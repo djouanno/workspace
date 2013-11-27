@@ -344,11 +344,7 @@ public class Server implements IServer, IServerForAdmin
 
             final GameSession gameSession = beanProvider.getPrototype(GameSession.class);
 
-            try {
-                gameSession.addPlayer(player);
-            } catch (final MaximumNumberOfPlayersException e) {
-                log.error(e.getMessage(), e);
-            }
+            gameSession.addPlayer(player);
 
             sessionsRegistry.add(gameSession);
 
@@ -356,7 +352,7 @@ public class Server implements IServer, IServerForAdmin
             sendRefreshSessionsList();
 
             log.info("Game session {} has been created by {}", gameSession.getId(), player.getName());
-        } catch (final PlayerNotFoundException e) {
+        } catch (final PlayerNotFoundException | MaximumNumberOfPlayersException e) {
             log.error(e.getMessage(), e);
         }
     }
@@ -562,7 +558,7 @@ public class Server implements IServer, IServerForAdmin
         } catch (final RemoteException e) {
             log.error(e.getMessage(), e);
         }
-        return new String();
+        return "";
     }
 
     /**

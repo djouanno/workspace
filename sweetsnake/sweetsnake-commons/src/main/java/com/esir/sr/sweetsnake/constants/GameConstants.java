@@ -1,7 +1,7 @@
 package com.esir.sr.sweetsnake.constants;
 
 /**
- * This class contains all the game constants
+ * This class contains all the game constants.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno

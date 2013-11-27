@@ -212,7 +212,7 @@ public class ConnectionView extends AbstractView
          */
         @Override
         public void focusLost(final FocusEvent arg0) {
-            if (usernameTF.getText().isEmpty() || usernameTF.getText().equals(" ")) {
+            if (usernameTF.getText().isEmpty() || " ".equals(usernameTF.getText())) {
                 usernameTF.setText(USERNAME_TF_TEXT);
             }
         }

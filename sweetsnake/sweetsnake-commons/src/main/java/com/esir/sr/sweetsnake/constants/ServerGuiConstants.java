@@ -1,7 +1,7 @@
 package com.esir.sr.sweetsnake.constants;
 
 /**
- * This class contains all the server GUI constants
+ * This class contains all the server GUI constants.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno

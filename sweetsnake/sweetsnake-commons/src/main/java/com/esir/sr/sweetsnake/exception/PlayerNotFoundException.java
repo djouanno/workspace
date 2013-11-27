@@ -1,7 +1,7 @@
 package com.esir.sr.sweetsnake.exception;
 
 /**
- * This class represents the exception raised when a player is not found
+ * This class represents the exception raised when a player is not found.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno

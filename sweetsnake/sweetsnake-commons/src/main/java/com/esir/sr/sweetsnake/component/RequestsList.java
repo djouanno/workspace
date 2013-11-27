@@ -13,7 +13,7 @@ import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 
 /**
- * This class provides all the behavior for using a JList containing GameRequestDTO objects
+ * This class provides all the behavior for using a JList containing GameRequestDTO objects.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno

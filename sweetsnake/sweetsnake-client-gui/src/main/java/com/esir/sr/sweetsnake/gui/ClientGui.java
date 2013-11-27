@@ -152,7 +152,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      */
     @Override
     public void reachingServer() {
-        if (currentView != reachingServerView) {
+        if (!currentView.equals(reachingServerView)) {
             switchView(reachingServerView, true);
         }
     }
@@ -164,7 +164,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      */
     @Override
     public void serverReachable() {
-        if (currentView != connectionView) {
+        if (!currentView.equals(connectionView)) {
             switchView(connectionView, true);
         }
     }
@@ -176,7 +176,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      */
     @Override
     public void serverNotReachable() {
-        if (currentView != unreachableServerView) {
+        if (!currentView.equals(unreachableServerView)) {
             switchView(unreachableServerView, true);
         } else {
             SwingUtilities.invokeLater(new Runnable() {
@@ -195,7 +195,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      */
     @Override
     public void disconnectedFromServer() {
-        if (currentView != connectionView) {
+        if (!currentView.equals(connectionView)) {
             switchView(connectionView, true);
         }
     }
@@ -289,7 +289,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      */
     @Override
     public void sessionJoined(final GameSessionDTO session, final int playerNb) {
-        if (currentView != lobbyView && currentView != gameView) {
+        if (!currentView.equals(lobbyView) && !currentView.equals(gameView)) {
             switchView(lobbyView, true);
         }
         SwingUtilities.invokeLater(new Runnable() {
@@ -355,9 +355,9 @@ public class ClientGui extends JFrame implements IGuiForClient
                 @Override
                 public void run() {
                     displayToast(leaver + " has left the game :(");
-                    if (currentView == gameView) {
+                    if (currentView.equals(gameView)) {
                         gameView.hideScore(leaver.getNumber());
-                    } else if (currentView == lobbyView) {
+                    } else if (currentView.equals(lobbyView)) {
                         refreshLobbyView(session.getPlayersDto(), session.isStarted());
                     }
                     refreshUI();
@@ -392,7 +392,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      */
     @Override
     public void refreshGameboard(final GameBoardDTO gameBoard) {
-        if (currentView == gameView) {
+        if (currentView.equals(gameView)) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -411,7 +411,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      */
     @Override
     public void refreshScores(final List<PlayerDTO> players) {
-        if (currentView == gameView) {
+        if (currentView.equals(gameView)) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {

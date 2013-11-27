@@ -25,14 +25,17 @@ import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
+ * This class graphically reprents the sessions view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class SessionsView extends AbstractView
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
@@ -70,7 +73,7 @@ public class SessionsView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new sessions view
      */
     public SessionsView() {
         super();
@@ -120,8 +123,10 @@ public class SessionsView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This method refreshes the sessions list
      * 
      * @param _sessions
+     *            A list containing the DTO representing all the available game sessions
      */
     public void refreshSessions(final List<GameSessionDTO> _sessions) {
         sessionsLST.removeAllElements();
@@ -145,7 +150,7 @@ public class SessionsView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This method initializes the title label
      */
     private void initTitleLB() {
         titleLB = new JLabel("Running sessions (0)");
@@ -153,7 +158,7 @@ public class SessionsView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the center panel
      */
     private void initCenterPL() {
         centerPL = new JPanel(new BorderLayout());
@@ -161,14 +166,14 @@ public class SessionsView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the bottom panel
      */
     private void initBottomPL() {
         bottomPL = new JPanel(new GridBagLayout());
     }
 
     /**
-     * 
+     * This method initializes the stop button
      */
     private void initStopBTN() {
         stopBTN = new JButton("stop session");
@@ -176,7 +181,7 @@ public class SessionsView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the remove button
      */
     private void initRemoveBTN() {
         removeBTN = new JButton("remove session");
@@ -184,7 +189,7 @@ public class SessionsView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the sessions list
      */
     private void initSessionsLST() {
         sessionsLST = new SessionsList();
@@ -195,10 +200,12 @@ public class SessionsView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides an action listener on the stop button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class StopListener implements ActionListener
     {
@@ -219,10 +226,12 @@ public class SessionsView extends AbstractView
     }
 
     /**
+     * This class provides an action listener on the remove button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class RemoveListener implements ActionListener
     {

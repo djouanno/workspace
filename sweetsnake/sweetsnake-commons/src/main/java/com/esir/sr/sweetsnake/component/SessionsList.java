@@ -14,7 +14,7 @@ import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 
 /**
- * This class provides all the behavior for using a JList containing GameSessionDTO objects
+ * This class provides all the behavior for using a JList containing GameSessionDTO objects.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno

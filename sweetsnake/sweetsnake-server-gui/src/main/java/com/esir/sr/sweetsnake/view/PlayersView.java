@@ -23,14 +23,17 @@ import com.esir.sr.sweetsnake.component.PlayersList;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 
 /**
+ * This class graphically reprents the players view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class PlayersView extends AbstractView
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
@@ -65,7 +68,7 @@ public class PlayersView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new players view
      */
     public PlayersView() {
         super();
@@ -109,8 +112,10 @@ public class PlayersView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This method refreshes the players list
      * 
      * @param _players
+     *            A list containing the DTO representing all the connected players
      */
     public void refreshPlayers(final List<PlayerDTO> _players) {
         playersLST.removeAllElements();
@@ -134,7 +139,7 @@ public class PlayersView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This method initializes the title label
      */
     private void initTitleLB() {
         titleLB = new JLabel("Connected players (0)");
@@ -142,7 +147,7 @@ public class PlayersView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the center panel
      */
     private void initCenterPL() {
         centerPL = new JPanel(new BorderLayout());
@@ -150,14 +155,14 @@ public class PlayersView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the bottom panel
      */
     private void initBottomPL() {
         bottomPL = new JPanel(new GridBagLayout());
     }
 
     /**
-     * 
+     * This method initializes the kick button
      */
     private void initKickBTN() {
         kickBTN = new JButton("kick player");
@@ -165,7 +170,7 @@ public class PlayersView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the players list
      */
     private void initPlayersLST() {
         playersLST = new PlayersList();
@@ -176,10 +181,12 @@ public class PlayersView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides an action listener on the kick button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class KickListener implements ActionListener
     {

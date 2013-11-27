@@ -21,14 +21,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
+ * This class graphically reprents the status view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class StatusView extends AbstractView
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
@@ -75,7 +78,7 @@ public class StatusView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new status view
      */
     public StatusView() {
         super();
@@ -138,14 +141,14 @@ public class StatusView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This method disables the start button
      */
     public void disableStartBTN() {
         startBTN.setEnabled(false);
     }
 
     /**
-     * 
+     * This method enables the start button
      */
     public void enableStartBTN() {
         startBTN.setEnabled(true);
@@ -153,14 +156,14 @@ public class StatusView extends AbstractView
     }
 
     /**
-     * 
+     * This method disables the stop button
      */
     public void disableStopBTN() {
         stopBTN.setEnabled(false);
     }
 
     /**
-     * 
+     * This method enables the start button
      */
     public void enableStopBTN() {
         stopBTN.setEnabled(true);
@@ -168,7 +171,7 @@ public class StatusView extends AbstractView
     }
 
     /**
-     * 
+     * This method starts the uptime timer
      */
     public void startTimer() {
         if (!timer.isRunning()) {
@@ -177,7 +180,7 @@ public class StatusView extends AbstractView
     }
 
     /**
-     * 
+     * This method stops the uptime timer
      */
     public void stopTimer() {
         if (timer.isRunning()) {
@@ -190,7 +193,7 @@ public class StatusView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This method initializes the title label
      */
     private void initTitleLB() {
         titleLB = new JLabel("Server status");
@@ -198,7 +201,7 @@ public class StatusView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the center panel
      */
     private void initCenterPL() {
         centerPL = new JPanel(new GridBagLayout());
@@ -206,7 +209,7 @@ public class StatusView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the status label
      */
     private void initStatusLB() {
         statusLB = new JLabel("Status : Started");
@@ -214,7 +217,7 @@ public class StatusView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the running time label
      */
     private void initRunningTimeLB() {
         runningTimeLB = new JLabel("Uptime : " + days + " day(s) " + intToString(hours, 2) + " hour(s) " + intToString(minutes, 2) + " minute(s) " + intToString(seconds, 2) + " second(s)");
@@ -223,14 +226,14 @@ public class StatusView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the bottom panel
      */
     private void initBottomPL() {
         bottomPL = new JPanel(new GridBagLayout());
     }
 
     /**
-     * 
+     * This method initializes the start button
      */
     private void initStartBTN() {
         startBTN = new JButton("start server");
@@ -238,7 +241,7 @@ public class StatusView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the stop button
      */
     private void initStopBTN() {
         stopBTN = new JButton("stop server");
@@ -246,10 +249,13 @@ public class StatusView extends AbstractView
     }
 
     /**
+     * This method converts an integer to a string containing the specified number of zeros before the integer
      * 
      * @param num
+     *            The number to convert
      * @param digits
-     * @return
+     *            The number of 0 to display before the number
+     * @return A string representing the number filled with zero
      */
     private static String intToString(final int num, final int digits) {
         final char[] zeros = new char[digits];
@@ -264,10 +270,12 @@ public class StatusView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides an action listener on the start button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class StartListener implements ActionListener
     {
@@ -292,10 +300,12 @@ public class StatusView extends AbstractView
     }
 
     /**
+     * This class provides an action listener on the stop button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class StopListener implements ActionListener
     {
@@ -316,10 +326,12 @@ public class StatusView extends AbstractView
     }
 
     /**
+     * This class provides an action listener on the uptime timer by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class TimerListener implements ActionListener
     {

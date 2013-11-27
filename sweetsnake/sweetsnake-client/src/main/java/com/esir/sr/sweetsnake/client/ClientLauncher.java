@@ -5,7 +5,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.esir.sr.sweetsnake.constants.PropertiesConstants;
 
 /**
- * This class provides the client application launcher
+ * This class provides the client application launcher.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno

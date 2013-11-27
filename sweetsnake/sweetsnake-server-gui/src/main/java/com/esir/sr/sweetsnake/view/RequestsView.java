@@ -23,14 +23,17 @@ import com.esir.sr.sweetsnake.component.RequestsList;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 
 /**
+ * This class graphically reprents the requests view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class RequestsView extends AbstractView
 {
+
     /**********************************************************************************************
      * [BLOCK] STATIC FIELDS
      **********************************************************************************************/
@@ -65,7 +68,7 @@ public class RequestsView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new requests view
      */
     public RequestsView() {
         super();
@@ -109,8 +112,10 @@ public class RequestsView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This method refreshes the requests list
      * 
      * @param _requests
+     *            A list containing the DTO representing all the available game requests
      */
     public void refreshRequests(final List<GameRequestDTO> _requests) {
         requestsLST.removeAllElements();
@@ -134,7 +139,7 @@ public class RequestsView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * This method initializes the title label
      */
     private void initTitleLB() {
         titleLB = new JLabel("Pending requests (0)");
@@ -142,7 +147,7 @@ public class RequestsView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the center panel
      */
     private void initCenterPL() {
         centerPL = new JPanel(new BorderLayout());
@@ -150,14 +155,14 @@ public class RequestsView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the bottom panel
      */
     private void initBottomPL() {
         bottomPL = new JPanel(new GridBagLayout());
     }
 
     /**
-     * 
+     * This method initializes the remove button
      */
     private void initRemoveBTN() {
         removeBTN = new JButton("remove request");
@@ -165,7 +170,7 @@ public class RequestsView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the requests list
      */
     private void initRequestsLST() {
         requestsLST = new RequestsList();
@@ -176,10 +181,12 @@ public class RequestsView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides an action listener on the remove button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class RemoveListener implements ActionListener
     {

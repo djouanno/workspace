@@ -9,7 +9,7 @@ import com.esir.sr.sweetsnake.api.IServer;
 import com.esir.sr.sweetsnake.constants.PropertiesConstants;
 
 /**
- * This class is used to retrieve the server RMI server on the client side
+ * This class is used to retrieve the server RMI server on the client side.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno

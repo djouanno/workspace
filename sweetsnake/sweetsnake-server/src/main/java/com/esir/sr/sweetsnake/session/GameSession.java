@@ -297,7 +297,7 @@ public class GameSession extends AbstractSession
     public void removePlayer(final Player player) {
         timeout.remove(player);
         players.remove(player);
-        if (!isStarted) {
+        if (!isStarted) { // FIXME !!!!
             updatePlayersNumber(player.getNumber() - 1);
         }
         player.setStatus(PlayerStatus.AVAILABLE);

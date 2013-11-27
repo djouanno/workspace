@@ -142,7 +142,7 @@ public class Client implements IClientForServer, IClientForGui
             throw new UnableToConnectException("invalid username");
         }
         log.debug("Connecting with username {}", _username);
-        username = new String(_username).trim();
+        username = _username.trim();
         try {
             server.connect(callback);
         } catch (final RemoteConnectFailureException e) {

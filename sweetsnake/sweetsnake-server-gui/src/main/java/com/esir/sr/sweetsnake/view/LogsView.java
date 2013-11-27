@@ -27,10 +27,12 @@ import org.springframework.stereotype.Component;
 import com.esir.sr.sweetsnake.component.JTextAreaOS;
 
 /**
+ * This class graphically reprents the logs view by extending the AbstractView class.
  * 
  * @author Herminaël Rougier
  * @author Damien Jouanno
  * 
+ * @see com.esir.sr.sweetsnake.view.AbstractView
  */
 @Component
 public class LogsView extends AbstractView
@@ -76,7 +78,7 @@ public class LogsView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * 
+     * Creates a new logs view
      */
     public LogsView() {
         super();
@@ -134,22 +136,18 @@ public class LogsView extends AbstractView
     }
 
     /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
-     **********************************************************************************************/
-
-    /**********************************************************************************************
      * [BLOCK] PRIVATE METHODS
      **********************************************************************************************/
 
     /**
-     * 
+     * This method initializes the top panel
      */
     private void initTopPL() {
         topPL = new JPanel(new GridBagLayout());
     }
 
     /**
-     * 
+     * This method initializes the title label
      */
     private void initTitleLB() {
         titleLB = new JLabel("Output logs");
@@ -157,7 +155,7 @@ public class LogsView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the levels combobox
      */
     private void initLevelsCB() {
         final String[] levels = { "ALL", "INFO", "DEBUG", "WARN", "ERROR" };
@@ -166,7 +164,7 @@ public class LogsView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the clear button
      */
     private void initClearBTN() {
         clearBTN = new JButton("clear logs");
@@ -175,7 +173,7 @@ public class LogsView extends AbstractView
 
 
     /**
-     * 
+     * This method initializes the center panel
      */
     private void initCenterPL() {
         centerPL = new JPanel(new BorderLayout());
@@ -183,7 +181,7 @@ public class LogsView extends AbstractView
     }
 
     /**
-     * 
+     * This method initializes the logs textarea
      */
     private void initLogTAR() {
         logsTAR = logsOS.getTextArea();
@@ -195,10 +193,12 @@ public class LogsView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides an action listener on the level combobox by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class LevelListener implements ActionListener
     {
@@ -214,13 +214,16 @@ public class LogsView extends AbstractView
             logsOS.setLevel(level);
             logsTAR.setText(logsOS.getLogs());
         }
+
     }
 
     /**
+     * This class provides an action listener on the clear button by implementing the ActionListener interface.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.ActionListener
      */
     private class ClearListener implements ActionListener
     {
