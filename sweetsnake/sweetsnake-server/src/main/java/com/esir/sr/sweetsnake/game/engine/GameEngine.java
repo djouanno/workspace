@@ -97,15 +97,16 @@ public class GameEngine
             gameBoard.moveComponent(snake, direction);
         } else {
             switch (currentComponent.getType()) {
-            // other player snake cell
                 case SNAKE:
                     // do nothing
                     break;
-                // sweet cell
                 case SWEET:
                     gameBoard.removeComponent(currentComponent);
                     gameBoard.moveComponent(snake, direction);
                     player.setScore(player.getScore() + GameConstants.SWEET_SCORE_VALUE);
+                    break;
+                default:
+                    log.warn("Unknown component type {}", currentComponent.getType());
                     break;
             }
         }

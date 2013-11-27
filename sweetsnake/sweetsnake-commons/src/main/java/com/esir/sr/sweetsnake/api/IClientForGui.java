@@ -1,7 +1,5 @@
 package com.esir.sr.sweetsnake.api;
 
-import org.springframework.remoting.RemoteConnectFailureException;
-
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
@@ -32,12 +30,10 @@ public interface IClientForGui extends IClient
      * 
      * @param username
      *            The username chosen by the user
-     * @throws RemoteConnectFailureException
-     *             If the server is not reachable
      * @throws UnableToConnectException
      *             If the connection was not possible (bad username)
      */
-    void connect(String username) throws RemoteConnectFailureException, UnableToConnectException;
+    void connect(String username) throws UnableToConnectException;
 
     /**
      * This method is called by the GUI in order to ask the client to disconnect from the server

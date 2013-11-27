@@ -137,7 +137,7 @@ public class Client implements IClientForServer, IClientForGui
      * @see com.esir.sr.sweetsnake.api.IClientForGui#connect(java.lang.String)
      */
     @Override
-    public void connect(final String _username) throws RemoteConnectFailureException, UnableToConnectException {
+    public void connect(final String _username) throws UnableToConnectException {
         if (_username == null || _username.isEmpty()) {
             throw new UnableToConnectException("invalid username");
         }
@@ -146,6 +146,7 @@ public class Client implements IClientForServer, IClientForGui
         try {
             server.connect(callback);
         } catch (final RemoteConnectFailureException e) {
+            log.error(e.getMessage(), e);
             throw e;
         }
     }
@@ -172,7 +173,7 @@ public class Client implements IClientForServer, IClientForGui
             server.sendRequest(callback, playerDto);
         } catch (PlayerNotFoundException | PlayerNotAvailableException e) {
             gui.displayErrorMessage(e.getMessage());
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -187,7 +188,7 @@ public class Client implements IClientForServer, IClientForGui
             server.createSession(callback);
         } catch (final UnauthorizedActionException e) {
             gui.displayErrorMessage(e.getMessage());
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -202,7 +203,7 @@ public class Client implements IClientForServer, IClientForGui
             server.joinSession(callback, sessionDto);
         } catch (GameSessionNotFoundException | MaximumNumberOfPlayersException e) {
             gui.displayErrorMessage(e.getMessage());
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -217,10 +218,10 @@ public class Client implements IClientForServer, IClientForGui
             session.getCallback().startGame(callback);
         } catch (final NullPointerException e) {
             gui.displayErrorMessage("you are not currently playing");
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
         } catch (final UnauthorizedActionException | RemoteException e) {
             gui.displayErrorMessage(e.getMessage());
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -235,10 +236,10 @@ public class Client implements IClientForServer, IClientForGui
             session.getCallback().leaveGame(callback);
         } catch (final NullPointerException e) {
             gui.displayErrorMessage("you are not currently playing");
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
         } catch (final RemoteException e) {
             gui.displayErrorMessage(e.getMessage());
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -253,10 +254,10 @@ public class Client implements IClientForServer, IClientForGui
             session.getCallback().move(callback, direction);
         } catch (final NullPointerException e) {
             gui.displayErrorMessage("you are not currently playing");
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
         } catch (final RemoteException e) {
             gui.displayErrorMessage(e.getMessage());
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -332,14 +333,14 @@ public class Client implements IClientForServer, IClientForGui
                 server.acceptRequest(callback, requestDTO);
             } catch (GameRequestNotFoundException | GameSessionNotFoundException | MaximumNumberOfPlayersException e) {
                 gui.displayErrorMessage(e.getMessage());
-                log.warn(e.getMessage());
+                log.warn(e.getMessage(), e);
             }
         } else {
             try {
                 server.denyRequest(callback, requestDTO);
             } catch (final GameRequestNotFoundException e) {
                 gui.displayErrorMessage(e.getMessage());
-                log.warn(e.getMessage());
+                log.warn(e.getMessage(), e);
             }
         }
     }

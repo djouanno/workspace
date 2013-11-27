@@ -186,7 +186,7 @@ public class GameSession extends AbstractSession
             }
 
             final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
-            final boolean stopped = players.size() <= 1, finished = players.size() <= 0;
+            final boolean stopped = players.size() <= 1, finished = players.isEmpty();
 
             for (final Player player : players) {
                 player.getCallback().sessionLeft(sessionDto, leaverDto, stopped, finished);

@@ -55,14 +55,14 @@ public class PlayerPosition
      */
     public int getXPos() {
         switch (playerNb) {
-            default:
-                return 0;
             case 2:
                 return width - 1;
             case 3:
                 return 0;
             case 4:
                 return width - 1;
+            default:
+                return 0;
         }
     }
 
@@ -73,13 +73,13 @@ public class PlayerPosition
      */
     public int getYPos() {
         switch (playerNb) {
-            default:
-                return 0;
             case 2:
                 return height - 1;
             case 3:
                 return height - 1;
             case 4:
+                return 0;
+            default:
                 return 0;
         }
     }

@@ -82,7 +82,8 @@ public class GameSessionDTO implements Serializable
     @Override
     public String toString() {
         String st = id;
-        if (playersDto.size() > 0) {
+        if (!playersDto.isEmpty()) {
+            st = playersDto.get(0).getName();
             st += " [" + playersDto.size() + "/" + GameConstants.MAX_NUMBER_OF_PLAYERS + "]";
         }
         return st;

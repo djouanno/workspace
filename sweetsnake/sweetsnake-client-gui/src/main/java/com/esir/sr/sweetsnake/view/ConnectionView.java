@@ -242,8 +242,10 @@ public class ConnectionView extends AbstractView
             try {
                 client.connect(username);
             } catch (final UnableToConnectException e1) {
+                log.warn(e1.getMessage(), e1);
                 gui.displayErrorMessage(e1.getMessage());
             } catch (final RemoteConnectFailureException e1) {
+                log.error(e1.getMessage(), e1);
                 gui.serverNotReachable();
             }
         }

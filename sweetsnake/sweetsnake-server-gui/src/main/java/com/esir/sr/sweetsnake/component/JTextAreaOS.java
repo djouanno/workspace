@@ -83,7 +83,7 @@ public class JTextAreaOS extends OutputStream
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (level.equals("ALL") || text.contains("[" + level + "]")) {
+                if ("ALL".equals(level) || text.contains("[" + level + "]")) {
                     destination.append(text);
                 }
             }
@@ -117,7 +117,7 @@ public class JTextAreaOS extends OutputStream
      * @return A string representing the recorded logs
      */
     public String getLogs() {
-        if (level.equals("ALL")) {
+        if ("ALL".equals(level)) {
             return logs.toString();
         }
 

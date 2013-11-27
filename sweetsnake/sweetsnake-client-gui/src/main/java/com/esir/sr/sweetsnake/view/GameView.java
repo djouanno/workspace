@@ -215,6 +215,9 @@ public class GameView extends AbstractView
                         case SWEET:
                             newComponent = new Sweet(componentDto.getId(), x, y);
                             break;
+                        default:
+                            log.warn("Unknown component type {}", componentDto.getType());
+                            break;
                     }
                     gameBoardPL.addComponent(newComponent);
                     break;
@@ -224,6 +227,9 @@ public class GameView extends AbstractView
                     break;
                 case REMOVE:
                     gameBoardPL.removeComponent(component);
+                    break;
+                default:
+                    log.warn("Unknown action {}", action);
                     break;
             }
         }
@@ -347,15 +353,16 @@ public class GameView extends AbstractView
      * @return The snake color according to the specified snake id and player's number
      */
     private Color findSnakeColor(final String snakeId, final int i) {
+        final int opacity = snakeId == null ? 0 : 255;
         switch (i) {
             case 2:
-                return new Color(255, 0, 0, snakeId == null ? 0 : 255);
+                return new Color(255, 0, 0, opacity);
             case 3:
-                return new Color(12, 12, 235, snakeId == null ? 0 : 255);
+                return new Color(12, 12, 235, opacity);
             case 4:
-                return new Color(0, 0, 0, snakeId == null ? 0 : 255);
+                return new Color(0, 0, 0, opacity);
             default:
-                return new Color(39, 109, 31, snakeId == null ? 0 : 255);
+                return new Color(39, 109, 31, opacity);
         }
     }
 
@@ -448,6 +455,7 @@ public class GameView extends AbstractView
          */
         @Override
         public void keyReleased(final KeyEvent e) {
+            // unsupported
         }
 
         /*
@@ -457,6 +465,7 @@ public class GameView extends AbstractView
          */
         @Override
         public void keyTyped(final KeyEvent e) {
+            // unsupported
         }
 
     }

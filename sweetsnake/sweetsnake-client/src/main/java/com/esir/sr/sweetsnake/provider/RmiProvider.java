@@ -55,6 +55,7 @@ public class RmiProvider
             factory.afterPropertiesSet();
             return (IServer) factory.getObject();
         } catch (final Exception e) {
+            log.error(e.getMessage(), e);
             return null;
         }
     }
