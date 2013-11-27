@@ -299,6 +299,8 @@ public class GameSession extends AbstractSession
         players.remove(player);
         if (!isStarted) { // FIXME !!!!
             updatePlayersNumber(player.getNumber() - 1);
+        } else {
+            // TODO
         }
         player.setStatus(PlayerStatus.AVAILABLE);
         player.setGameSessionId(null);

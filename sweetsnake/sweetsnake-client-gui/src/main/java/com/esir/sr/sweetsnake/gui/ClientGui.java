@@ -128,6 +128,7 @@ public class ClientGui extends JFrame implements IGuiForClient
             public void run() {
                 log.info("Initializing the Client GUI");
                 initFrameParameters();
+                reachingServerView.build();
                 playersView.build();
                 sessionsView.build();
             }
