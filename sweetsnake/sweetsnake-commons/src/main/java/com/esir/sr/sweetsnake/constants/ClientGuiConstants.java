@@ -97,6 +97,6 @@ public class ClientGuiConstants
     public static final String  MOVE_PATH             = SOUND_PATH + "move.wav";
 
     /** The eat sound path */
-    public static final String  EAT_PATH              = SOUND_PATH + "sweet.wav";
+    public static final String  EAT_PATH              = SOUND_PATH + "eat.wav";
 
 }

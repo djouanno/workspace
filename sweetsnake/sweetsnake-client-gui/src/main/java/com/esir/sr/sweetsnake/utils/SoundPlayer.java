@@ -2,8 +2,6 @@ package com.esir.sr.sweetsnake.utils;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -31,20 +29,7 @@ public class SoundPlayer
      **********************************************************************************************/
 
     /** The logger */
-    private static final Logger                                log = LoggerFactory.getLogger(SoundPlayer.class);
-
-    /** The sounds mapping */
-    private static final Map<SoundEffect, BufferedInputStream> sounds;
-
-    /**********************************************************************************************
-     * [BLOCK] STATIC INITIALIZATION
-     **********************************************************************************************/
-
-    static {
-        sounds = new LinkedHashMap<SoundEffect, BufferedInputStream>();
-        sounds.put(SoundEffect.MOVE, new UnclosableBufferedInputStream(SoundPlayer.class.getResourceAsStream(SoundEffect.MOVE.toString())));
-        sounds.put(SoundEffect.EAT, new UnclosableBufferedInputStream(SoundPlayer.class.getResourceAsStream(SoundEffect.EAT.toString())));
-    }
+    private static final Logger log = LoggerFactory.getLogger(SoundPlayer.class);
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -66,7 +51,7 @@ public class SoundPlayer
      */
     public static void play(final SoundEffect soundEffect) {
         try {
-            final AudioInputStream stream = AudioSystem.getAudioInputStream(sounds.get(soundEffect));
+            final AudioInputStream stream = AudioSystem.getAudioInputStream(new BufferedInputStream(SoundPlayer.class.getResourceAsStream(soundEffect.toString())));
             final Clip clip = (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, stream.getFormat()));
             clip.open(stream);
             clip.start();

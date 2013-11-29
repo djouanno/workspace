@@ -1,8 +1,6 @@
 package com.esir.sr.sweetsnake.view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -14,7 +12,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.slf4j.Logger;
@@ -82,8 +79,8 @@ public class LobbyView extends AbstractView
     /** The start button */
     private JButton             startBTN;
 
-    /** The waiting label */
-    private JLabel              waitLB;
+    /** The waiting button */
+    private JButton             waitBTN;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -147,15 +144,27 @@ public class LobbyView extends AbstractView
 
         initQuitBTN();
         gbc.gridwidth = 1;
-        gbc.weightx = 1;
+        gbc.gridheight = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.weightx = 1000;
         gbc.weighty = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(5, 0, 0, 0);
+        gbc.insets = new Insets(10, 0, 0, 0);
         bottomPL.add(quitBTN, gbc);
 
         initInviteBTN();
         gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.weightx = 0.1;
+        gbc.insets = new Insets(10, 0, 0, 5);
         bottomPL.add(inviteBTN, gbc);
+
+        initStartBTN();
+        gbc.gridx = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.weightx = 0.1;
+        gbc.insets = new Insets(10, 0, 0, 0);
+        bottomPL.add(startBTN, gbc);
     }
 
     /**
@@ -188,22 +197,24 @@ public class LobbyView extends AbstractView
             bottomPL.remove(startBTN);
             startBTN = null;
         }
-        if (waitLB != null) {
-            bottomPL.remove(waitLB);
-            waitLB = null;
+        if (waitBTN != null) {
+            bottomPL.remove(waitBTN);
+            waitBTN = null;
         }
         gbc.gridx = 2;
         gbc.gridwidth = 1;
-        gbc.weightx = 1;
+        gbc.gridheight = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.weightx = 0.1;
         gbc.weighty = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(5, 0, 0, 0);
+        gbc.insets = new Insets(10, 0, 0, 0);
         if (leaderName.equals(client.getUsername())) {
             initStartBTN();
             bottomPL.add(startBTN, gbc);
         } else {
-            initWaitLB(isStarted, leaderName);
-            bottomPL.add(waitLB, gbc);
+            initWaitBTN(isStarted, leaderName);
+            bottomPL.add(waitBTN, gbc);
         }
     }
 
@@ -279,21 +290,20 @@ public class LobbyView extends AbstractView
     }
 
     /**
-     * This methods initializes the wait label
+     * This methods initializes the wait button
      * 
      * @param isStarted
      *            True if the game session is started, false otherwise
      * @param playerName
      *            The head playername
      */
-    private void initWaitLB(final boolean isStarted, final String playerName) {
+    private void initWaitBTN(final boolean isStarted, final String playerName) {
         if (isStarted) {
-            waitLB = new JLabel("waiting for the game to end");
+            waitBTN = new JButton("waiting for the game to end");
         } else {
-            waitLB = new JLabel("waiting for " + playerName + " to start the game");
+            waitBTN = new JButton("waiting for " + playerName + " to start the game");
         }
-        waitLB.setForeground(Color.white);
-        waitLB.setFont(new Font("sans-serif", Font.PLAIN, 10));
+        waitBTN.setEnabled(false);
     }
 
     /**********************************************************************************************

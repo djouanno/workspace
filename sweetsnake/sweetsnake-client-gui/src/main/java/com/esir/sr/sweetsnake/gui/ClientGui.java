@@ -69,10 +69,10 @@ public class ClientGui extends JFrame implements IGuiForClient
         context.registerShutdownHook();
         final ClientGui gui = context.getBean(ClientGui.class);
         final List<PlayerDTO> players = new LinkedList<PlayerDTO>();
-        players.add(new PlayerDTO("suce", PlayerStatus.PLAYING, "1", 1, 0));
-        players.add(new PlayerDTO("zob", PlayerStatus.PLAYING, "2", 2, 0));
-        players.add(new PlayerDTO("big", PlayerStatus.PLAYING, "3", 3, 0));
-        players.add(new PlayerDTO("mon", PlayerStatus.PLAYING, "4", 4, 0));
+        players.add(new PlayerDTO("toto", PlayerStatus.PLAYING, "1", 1, 0));
+        players.add(new PlayerDTO("titi", PlayerStatus.PLAYING, "2", 2, 0));
+        players.add(new PlayerDTO("tata", PlayerStatus.PLAYING, "3", 3, 0));
+        players.add(new PlayerDTO("tutu", PlayerStatus.PLAYING, "4", 4, 0));
         final List<GameBoardRefreshDTO> components = new LinkedList<GameBoardRefreshDTO>();
         components.add(new GameBoardRefreshDTO(new ComponentDTO("1", 0, 0, ComponentType.SNAKE), RefreshAction.ADD));
         components.add(new GameBoardRefreshDTO(new ComponentDTO("2", GameConstants.GRID_SIZE - 1, GameConstants.GRID_SIZE - 1, ComponentType.SNAKE), RefreshAction.ADD));
@@ -89,8 +89,9 @@ public class ClientGui extends JFrame implements IGuiForClient
         snakesMapping.put(players.get(2), components.get(2).getComponentDto());
         snakesMapping.put(players.get(3), components.get(3).getComponentDto());
         final GameEngineDTO gameEngine = new GameEngineDTO(gameBoard, snakesMapping);
-        final GameSessionDTO session = new GameSessionDTO("id", players, gameEngine, null, true);
-        gui.sessionStarted(session);
+        final GameSessionDTO session = new GameSessionDTO("id", players, gameEngine, null, false);
+        // gui.sessionStarted(session);
+        gui.sessionJoined(session, 1);
     }
 
     /**********************************************************************************************
