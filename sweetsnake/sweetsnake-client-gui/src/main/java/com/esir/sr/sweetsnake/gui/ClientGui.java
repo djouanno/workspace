@@ -89,9 +89,10 @@ public class ClientGui extends JFrame implements IGuiForClient
         snakesMapping.put(players.get(2), components.get(2).getComponentDto());
         snakesMapping.put(players.get(3), components.get(3).getComponentDto());
         final GameEngineDTO gameEngine = new GameEngineDTO(gameBoard, snakesMapping);
-        final GameSessionDTO session = new GameSessionDTO("id", players, gameEngine, null, false);
-        // gui.sessionStarted(session);
-        gui.sessionJoined(session, 1);
+        final GameSessionDTO session = new GameSessionDTO("id", players, gameEngine, null, true);
+        gui.sessionStarted(session);
+        // gui.sessionJoined(session, 1);
+        // gui.serverReachable();
     }
 
     /**********************************************************************************************
@@ -519,7 +520,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      *            True to unbuild the previous view, false otherwise
      */
     private void switchView(final AbstractView view, final boolean unbuildPrevious) {
-        if (currentView != null && unbuildPrevious) {
+        if (unbuildPrevious) {
             currentView.unbuild();
         }
         view.build();
@@ -606,4 +607,5 @@ public class ClientGui extends JFrame implements IGuiForClient
         lobbyView.refreshPlayers(players);
         lobbyView.refreshButtons(players.get(0).getName(), isStarted);
     }
+
 }

@@ -272,7 +272,7 @@ public class GameView extends AbstractView
         centerPL.setOpaque(false);
         centerPL.setLayout(new GridBagLayout());
         centerPL.setOpaque(true);
-        centerPL.setBackground(new Color(0, 255, 255, 180));
+        centerPL.setBackground(new Color(0, 180, 50, 150));
     }
 
     /**
