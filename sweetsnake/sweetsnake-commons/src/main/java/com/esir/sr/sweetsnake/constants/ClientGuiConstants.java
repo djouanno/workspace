@@ -25,25 +25,25 @@ public class ClientGuiConstants
      **********************************************************************************************/
 
     /** The GUI dimension */
-    public static final int     GUI_DIMENSION         = 420;
-
-    /** The GUI offset **/
-    public static final int     GUI_OFFSET            = 10;
+    public static final int     GUI_DIMENSION         = 690;
 
     /** The GUI heifht offset */
-    public static final int     GUI_HEIGHT_OFFSET     = 106;
+    public static final int     GUI_HEIGHT_OFFSET     = 64;
 
     /** The GUI width */
-    public static final int     GUI_WIDTH             = GUI_DIMENSION + GUI_OFFSET;
+    public static final int     GUI_WIDTH             = GUI_DIMENSION;
 
     /** The GUI height */
-    public static final int     GUI_HEIGHT            = GUI_DIMENSION + GUI_OFFSET + GUI_HEIGHT_OFFSET;
+    public static final int     GUI_HEIGHT            = GUI_DIMENSION + GUI_HEIGHT_OFFSET;
+
+    /** The view dimension **/
+    public static final int     VIEW_DIMENSION        = GUI_DIMENSION - 55;
 
     /** The view width */
-    public static final int     VIEW_WIDTH            = GUI_WIDTH - GUI_OFFSET;
+    public static final int     VIEW_WIDTH            = VIEW_DIMENSION;
 
     /** The view height */
-    public static final int     VIEW_HEIGHT           = GUI_HEIGHT - GUI_OFFSET;
+    public static final int     VIEW_HEIGHT           = VIEW_DIMENSION + GUI_HEIGHT_OFFSET;
 
     /** The images folder path */
     public static final String  IMG_PATH              = "/img/";
@@ -89,5 +89,14 @@ public class ClientGuiConstants
 
     /** The sweet icon path */
     public static final String  SWEET_ICON_PATH       = IMG_PATH + "sweet.png";
+
+    /** The sounds folder path */
+    public static final String  SOUND_PATH            = "/sound/";
+
+    /** The move sound path */
+    public static final String  MOVE_PATH             = SOUND_PATH + "move.wav";
+
+    /** The eat sound path */
+    public static final String  EAT_PATH              = SOUND_PATH + "sweet.wav";
 
 }

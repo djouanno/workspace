@@ -2,7 +2,6 @@ package com.esir.sr.sweetsnake.api;
 
 import java.util.List;
 
-import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
@@ -127,20 +126,12 @@ public interface IGuiForClient
     void sessionFinished(GameSessionDTO session);
 
     /**
-     * This method is called by the client in order to notify the GUI to refresh the gameboard
+     * This method is called by the client in order to notify the GUI to refresh the session
      * 
-     * @param gameBoard
-     *            The DTO representing the gameboard
+     * @param session
+     *            The DTO representing the session
      */
-    void refreshGameboard(GameBoardDTO gameBoard);
-
-    /**
-     * This method is called by the client in order to notify the GUI to refresh the players' scores
-     * 
-     * @param players
-     *            A list containing the DTO of all the players to refresh
-     */
-    void refreshScores(List<PlayerDTO> players);
+    void refreshSession(GameSessionDTO session);
 
     /**
      * This method id called by the client in order for the GUI to display an error message to the user

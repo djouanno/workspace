@@ -65,7 +65,7 @@ public class PlayerPanel extends JPanel
         setOpaque(false);
         setBorder(generateBorder(playerNb));
 
-        playerLB = generateLabel("Available", 15, Color.gray, Font.ITALIC);
+        playerLB = generateLabel("Available", 20, Color.gray, Font.ITALIC);
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -75,19 +75,19 @@ public class PlayerPanel extends JPanel
         gbc.insets = new Insets(25, 0, 0, 0);
         add(playerLB, gbc);
 
-        iconLB = generateLabel("", 15, Color.white, Font.PLAIN);
+        iconLB = generateLabel("", 15, Color.black, Font.PLAIN);
         gbc.gridy = 1;
         gbc.weighty = 500;
         gbc.insets = new Insets(10, 0, 0, 0);
         add(iconLB, gbc);
 
-        statusLB = generateLabel("", 15, Color.white, Font.ITALIC);
+        statusLB = generateLabel("", 15, Color.black, Font.ITALIC);
         gbc.gridy = 2;
         gbc.weighty = 500;
         gbc.anchor = GridBagConstraints.NORTH;
         add(statusLB, gbc);
 
-        scoreLB = generateLabel("", 15, Color.white, Font.BOLD);
+        scoreLB = generateLabel("", 15, Color.black, Font.BOLD);
         gbc.gridy = 3;
         gbc.weighty = 1000;
         add(scoreLB, gbc);
@@ -106,7 +106,7 @@ public class PlayerPanel extends JPanel
     public void refreshPlayer(final PlayerDTO player) {
         playerLB.setText(player.getName());
         playerLB.setFont(new Font("sans-serif", Font.BOLD, 25));
-        playerLB.setForeground(Color.white);
+        playerLB.setForeground(Color.black);
         statusLB.setText("" + player.getStatus());
         iconLB.setIcon(new ImageIcon(LobbyView.class.getResource(Snake.findSnakeIconPath(player.getNumber()))));
         scoreLB.setText("Score : " + player.getScore());

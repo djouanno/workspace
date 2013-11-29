@@ -2,6 +2,7 @@ package com.esir.sr.sweetsnake.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -20,7 +21,6 @@ import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +33,13 @@ import com.esir.sr.sweetsnake.component.Sweet;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.constants.GameConstants;
 import com.esir.sr.sweetsnake.dto.ComponentDTO;
-import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameBoardRefreshDTO;
+import com.esir.sr.sweetsnake.dto.GameEngineDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.RefreshAction;
+import com.esir.sr.sweetsnake.enumeration.SoundEffect;
+import com.esir.sr.sweetsnake.utils.SoundPlayer;
 
 /**
  * This class graphically reprents the game view by extending the AbstractView class.
@@ -56,38 +58,32 @@ public class GameView extends AbstractView
      **********************************************************************************************/
 
     /** The serial version UID */
-    private static final long    serialVersionUID = 6919247419837806743L;
+    private static final long   serialVersionUID = 6919247419837806743L;
 
     /** The logger */
-    private static final Logger  log              = LoggerFactory.getLogger(GameView.class);
+    private static final Logger log              = LoggerFactory.getLogger(GameView.class);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The game board DTO */
-    private GameBoardDTO         gameBoardDto;
-
     /** The top panel */
-    private JPanel               topPL;
+    private JPanel              topPL;
 
     /** The center panel */
-    private JPanel               centerPL;
+    private JPanel              centerPL;
 
     /** The game board panel */
-    private GameBoardPanel       gameBoardPL;
+    private GameBoardPanel      gameBoardPL;
 
     /** The bottom panel */
-    private JPanel               bottomPL;
+    private JPanel              bottomPL;
 
     /** The players' scores label */
-    private JLabel[]             playersScoresLB;
+    private JLabel[]            playersScoresLB;
 
     /** The quit button */
-    private JButton              quitBTN;
-
-    /** The players' numbers & snakes map */
-    private Map<Integer, String> playersSnakes;
+    private JButton             quitBTN;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
@@ -110,7 +106,6 @@ public class GameView extends AbstractView
     protected void init() {
         super.init();
         log.info("Initializing the Game View");
-        playersSnakes = new LinkedHashMap<Integer, String>();
     }
 
     /**********************************************************************************************
@@ -125,6 +120,9 @@ public class GameView extends AbstractView
     @Override
     protected void buildImpl() {
         setLayout(new BorderLayout());
+        dimension = new Dimension(ClientGuiConstants.VIEW_WIDTH - 15, ClientGuiConstants.VIEW_HEIGHT);
+        setSize(dimension);
+        setPreferredSize(dimension);
 
         // top panel
         initTopPL();
@@ -133,13 +131,16 @@ public class GameView extends AbstractView
         initPlayersScoresLB();
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(0, 0, 5, 170);
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
         topPL.add(playersScoresLB[0], gbc);
 
         gbc.gridx = 1;
-        gbc.insets = new Insets(0, 170, 5, 0);
+        gbc.anchor = GridBagConstraints.EAST;
         topPL.add(playersScoresLB[3], gbc);
 
         // center panel
@@ -155,18 +156,19 @@ public class GameView extends AbstractView
         add(bottomPL, BorderLayout.SOUTH);
 
         gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(5, 0, 0, 120);
+        gbc.anchor = GridBagConstraints.WEST;
         bottomPL.add(playersScoresLB[2], gbc);
+
+        gbc.gridx = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        bottomPL.add(playersScoresLB[1], gbc);
 
         initQuitBTN();
         gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(5, 0, 0, 0);
         bottomPL.add(quitBTN, gbc);
-
-        gbc.gridx = 2;
-        gbc.insets = new Insets(5, 120, 0, 0);
-        bottomPL.add(playersScoresLB[1], gbc);
 
         addKeyListener(new KeyboardListener());
     }
@@ -178,8 +180,15 @@ public class GameView extends AbstractView
      *            The players list
      */
     public void refreshScores(final List<PlayerDTO> players) {
-        for (final PlayerDTO player : players) {
-            playersScoresLB[player.getNumber() - 1].setText(intToString(player.getScore(), 3));
+        for (int i = 0; i < playersScoresLB.length; i++) {
+            try {
+                final PlayerDTO player = players.get(i);
+                final String text = i % 2 == 0 ? intToString(player.getScore(), 3) + " " + player.getName() : player.getName() + " " + intToString(player.getScore(), 3);
+                playersScoresLB[i].setText(text);
+                playersScoresLB[i].setForeground(findSnakeColor(player.getSnakeId(), player.getNumber()));
+            } catch (final IndexOutOfBoundsException e) {
+                playersScoresLB[i].setForeground(new Color(0, 0, 0, 0));
+            }
         }
     }
 
@@ -194,10 +203,15 @@ public class GameView extends AbstractView
     }
 
     /**
-     * This method draws the gameboard according to the DTO representing the gameboard currently set
+     * This method draws the gameboard according to the DTO representing the game engine
+     * 
+     * @param gameEngine
+     *            The DTO representing the game engine
      */
-    public void drawGameboard() {
-        final List<GameBoardRefreshDTO> refreshes = gameBoardDto.getComponentsToRefresh();
+    public void drawGameboard(final GameEngineDTO gameEngineDto) {
+        final List<GameBoardRefreshDTO> refreshes = gameEngineDto.getGameBoardDto().getComponentsToRefresh();
+        final Map<PlayerDTO, ComponentDTO> snakesMapping = gameEngineDto.getSnakesMapping();
+
         for (final GameBoardRefreshDTO refresh : refreshes) {
             final ComponentDTO componentDto = refresh.getComponentDto();
             final RefreshAction action = refresh.getAction();
@@ -205,54 +219,36 @@ public class GameView extends AbstractView
 
             switch (action) {
                 case ADD:
-                    IComponent newComponent = null;
-                    final int x = componentDto.getX(),
-                    y = componentDto.getY();
-                    switch (componentDto.getType()) {
-                        case SNAKE:
-                            newComponent = new Snake(componentDto.getId(), x, y, findSnakeIconPath(componentDto.getId()));
-                            break;
-                        case SWEET:
-                            newComponent = new Sweet(componentDto.getId(), x, y);
-                            break;
-                        default:
-                            log.warn("Unknown component type {}", componentDto.getType());
-                            break;
-                    }
+                    final IComponent newComponent = generateComponent(snakesMapping, componentDto);
                     gameBoardPL.addComponent(newComponent);
                     break;
                 case MOVE:
                     component.setXYPos(componentDto.getX(), componentDto.getY());
                     gameBoardPL.moveComponent(component);
+                    for (final PlayerDTO player : snakesMapping.keySet()) {
+                        if (player.getName().equals(client.getUsername()) && snakesMapping.get(player).getId().equals(component.getId())) {
+                            SoundPlayer.play(SoundEffect.MOVE);
+                            break;
+                        }
+                    }
                     break;
                 case REMOVE:
                     gameBoardPL.removeComponent(component);
+                    for (final PlayerDTO player : snakesMapping.keySet()) {
+                        if (player.getName().equals(client.getUsername())) {
+                            final ComponentDTO snake = snakesMapping.get(player);
+                            if (snake.getX() == component.getXPos() && snake.getY() == component.getYPos()) {
+                                SoundPlayer.play(SoundEffect.EAT);
+                            }
+                            break;
+                        }
+                    }
                     break;
                 default:
                     log.warn("Unknown action {}", action);
                     break;
             }
         }
-    }
-
-    /**
-     * This methods sets the DTO representing the gameboard to be drawn
-     * 
-     * @param _gameBoardDto
-     *            The DTO representing the gameboard to be drawn
-     */
-    public void setGameboardDto(final GameBoardDTO _gameBoardDto) {
-        gameBoardDto = _gameBoardDto;
-    }
-
-    /**
-     * This method sets the players' snakes map to map each player with its component
-     * 
-     * @param _playersSnakes
-     *            The players' snakes map
-     */
-    public void setPlayersSnakesMap(final Map<Integer, String> _playersSnakes) {
-        playersSnakes = _playersSnakes;
     }
 
     /**********************************************************************************************
@@ -273,9 +269,10 @@ public class GameView extends AbstractView
      */
     private void initCenterPL() {
         centerPL = new JPanel();
-        centerPL.setOpaque(true);
-        centerPL.setBackground(Color.cyan);
+        centerPL.setOpaque(false);
         centerPL.setLayout(new GridBagLayout());
+        centerPL.setOpaque(true);
+        centerPL.setBackground(new Color(0, 255, 255, 180));
     }
 
     /**
@@ -291,11 +288,7 @@ public class GameView extends AbstractView
      * This methods initializes the gameboard panel
      */
     private void initGameBoardPL() {
-        if (gameBoardDto != null) {
-            gameBoardPL = new GameBoardPanel(gameBoardDto.getWidth(), gameBoardDto.getHeight());
-            gameBoardPL.setBorder(new EmptyBorder(0, 0, 10, 0));
-            drawGameboard();
-        }
+        gameBoardPL = new GameBoardPanel(GameConstants.GRID_SIZE, GameConstants.GRID_SIZE);
     }
 
     /**
@@ -305,8 +298,8 @@ public class GameView extends AbstractView
         playersScoresLB = new JLabel[GameConstants.MAX_NUMBER_OF_PLAYERS];
         for (int i = 0; i < playersScoresLB.length; i++) {
             playersScoresLB[i] = new JLabel(intToString(0, 3));
-            playersScoresLB[i].setForeground(findSnakeColor(playersSnakes.get(i + 1), i + 1));
             playersScoresLB[i].setFont(new Font("sans-serif", Font.BOLD, 20));
+            playersScoresLB[i].setForeground(new Color(0, 0, 0));
         }
     }
 
@@ -319,16 +312,39 @@ public class GameView extends AbstractView
     }
 
     /**
+     * This method generates the component represented by the specified component DTO
+     * 
+     * @param snakesMapping
+     *            The players' snakes mapping
+     * @param componentDto
+     *            The DTO representing the component to generate
+     * @return The component represented by the specified component DTO
+     */
+    private IComponent generateComponent(final Map<PlayerDTO, ComponentDTO> snakesMapping, final ComponentDTO componentDto) {
+        switch (componentDto.getType()) {
+            case SNAKE:
+                return new Snake(componentDto.getId(), componentDto.getX(), componentDto.getY(), findSnakeIconPath(snakesMapping, componentDto.getId()));
+            case SWEET:
+                return new Sweet(componentDto.getId(), componentDto.getX(), componentDto.getY());
+            default:
+                log.warn("Unknown component type {}", componentDto.getType());
+                return null;
+        }
+    }
+
+    /**
      * This method finds the snake icon path according to the specified snake id
      * 
+     * @param snakesMapping
+     *            The players' snakes mapping
      * @param snakeId
      *            The snake id
      * @return The snake icon path according to the specified snake id
      */
-    private String findSnakeIconPath(final String snakeId) {
-        for (final int player : playersSnakes.keySet()) {
-            if (playersSnakes.get(player).equals(snakeId)) {
-                switch (player) {
+    private String findSnakeIconPath(final Map<PlayerDTO, ComponentDTO> snakesMapping, final String snakeId) {
+        for (final PlayerDTO playerDto : snakesMapping.keySet()) {
+            if (snakesMapping.get(playerDto).getId().equals(snakeId)) {
+                switch (playerDto.getNumber()) {
                     case 2:
                         return ClientGuiConstants.RED_SNAKE_ICON_PATH;
                     case 3:

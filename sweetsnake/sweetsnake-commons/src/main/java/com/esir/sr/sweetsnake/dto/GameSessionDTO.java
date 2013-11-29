@@ -35,8 +35,8 @@ public class GameSessionDTO implements Serializable
     /** The players list DTO */
     private final List<PlayerDTO>      playersDto;
 
-    /** The game board DTO */
-    private final GameBoardDTO         gameBoardDto;
+    /** The game engine DTO */
+    private final GameEngineDTO        gameEngineDto;
 
     /** The session rmi callback */
     private final IGameSessionCallback callback;
@@ -55,17 +55,17 @@ public class GameSessionDTO implements Serializable
      *            The game session id
      * @param _playersDto
      *            The list of the DTO representing all the players taking part in the game session
-     * @param _gameBoardDto
-     *            The DTO representing the current gameboard
+     * @param _gameEngineDto
+     *            The DTO representing the game engine
      * @param _callback
      *            The game session callback
      * @param _isStarted
      *            Is the session started or not
      */
-    public GameSessionDTO(final String _id, final List<PlayerDTO> _playersDto, final GameBoardDTO _gameBoardDto, final IGameSessionCallback _callback, final boolean _isStarted) {
+    public GameSessionDTO(final String _id, final List<PlayerDTO> _playersDto, final GameEngineDTO _gameEngineDto, final IGameSessionCallback _callback, final boolean _isStarted) {
         id = _id;
         playersDto = new LinkedList<PlayerDTO>(_playersDto);
-        gameBoardDto = _gameBoardDto;
+        gameEngineDto = _gameEngineDto;
         callback = _callback;
         isStarted = _isStarted;
     }
@@ -112,12 +112,12 @@ public class GameSessionDTO implements Serializable
     }
 
     /**
-     * This method returns the DTO representing the current gameboard
+     * This method returns the DTO representing the game engine
      * 
-     * @return The DTO representing the current gameboard
+     * @return The DTO representing the game engine
      */
-    public GameBoardDTO getGameBoardDto() {
-        return gameBoardDto;
+    public GameEngineDTO getGameEngineDto() {
+        return gameEngineDto;
     }
 
     /**

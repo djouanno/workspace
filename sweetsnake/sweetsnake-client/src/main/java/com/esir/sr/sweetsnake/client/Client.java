@@ -411,8 +411,7 @@ public class Client implements IClientForServer, IClientForGui
     @Override
     public void refreshSession(final GameSessionDTO sessionDto) {
         session = sessionDto;
-        gui.refreshGameboard(session.getGameBoardDto());
-        gui.refreshScores(session.getPlayersDto());
+        gui.refreshSession(session);
     }
 
     /**********************************************************************************************

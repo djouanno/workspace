@@ -1,5 +1,6 @@
 package com.esir.sr.sweetsnake.game.engine;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class GameEngine
     private final GameBoard               gameBoard;
 
     /** The players' snakes mapping */
-    private final Map<Player, IComponent> playersMap;
+    private final Map<Player, IComponent> snakesMapping;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -61,7 +62,7 @@ public class GameEngine
         log.info("Initializing a new Game Engine for session {}", _session.getId());
         session = _session;
         gameBoard = GameBoardGenerator.generateBoard(GameConstants.GRID_SIZE, GameConstants.GRID_SIZE, GameConstants.NUMBER_OF_SWEETS);
-        playersMap = new LinkedHashMap<Player, IComponent>();
+        snakesMapping = new LinkedHashMap<Player, IComponent>();
 
         int i = 1;
         for (final Player player : _session.getPlayers()) {
@@ -69,7 +70,7 @@ public class GameEngine
             player.setSnakeId(snake.getId());
             final PlayerPosition position = new PlayerPosition(gameBoard.getWidth(), gameBoard.getHeight(), i);
             snake.setXYPos(position.getXPos(), position.getYPos());
-            playersMap.put(player, snake);
+            snakesMapping.put(player, snake);
             gameBoard.addComponent(snake);
             i++;
         }
@@ -88,7 +89,7 @@ public class GameEngine
      *            The player to whom belongs the snake to move
      */
     public void moveSnake(final MoveDirection direction, final Player player) {
-        final IComponent snake = playersMap.get(player);
+        final IComponent snake = snakesMapping.get(player);
         final int x = (snake.getXPos() + direction.getValue()[0] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
         final int y = (snake.getYPos() + direction.getValue()[1] + GameConstants.GRID_SIZE) % GameConstants.GRID_SIZE;
         final IComponent currentComponent = gameBoard.getComponent(x, y);
@@ -123,7 +124,7 @@ public class GameEngine
      *            The player to whom belongs the snake to remove
      */
     public void removeSnake(final Player player) {
-        final IComponent snake = playersMap.get(player);
+        final IComponent snake = snakesMapping.get(player);
         gameBoard.removeComponent(snake);
         player.setSnakeId(null);
     }
@@ -139,6 +140,15 @@ public class GameEngine
      */
     public GameBoard getGameBoard() {
         return gameBoard;
+    }
+
+    /**
+     * This method returns the players' snakes mapping
+     * 
+     * @return A map representing the players' snakes mapping
+     */
+    public Map<Player, IComponent> getSnakesMapping() {
+        return Collections.unmodifiableMap(snakesMapping);
     }
 
 }

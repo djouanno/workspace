@@ -128,7 +128,7 @@ public class UnreachableServerView extends AbstractView
      */
     private void initErrorLB() {
         errorLB = new JLabel("Server is not reachable");
-        errorLB.setForeground(Color.white);
+        errorLB.setForeground(Color.black);
         errorLB.setFont(new Font("sans-serif", Font.BOLD, 16));
     }
 

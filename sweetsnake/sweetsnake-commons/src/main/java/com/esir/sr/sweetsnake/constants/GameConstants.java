@@ -25,13 +25,13 @@ public class GameConstants
      **********************************************************************************************/
 
     /** The grid size */
-    public static final int GRID_SIZE             = 20;
+    public static final int GRID_SIZE             = 30;
 
     /** The cell size */
     public static final int CELL_SIZE             = 20;
 
     /** The starting number of sweets */
-    public static final int NUMBER_OF_SWEETS      = 1; // 20;
+    public static final int NUMBER_OF_SWEETS      = 50;
 
     /** The maximum number of players per session */
     public static final int MAX_NUMBER_OF_PLAYERS = 4;

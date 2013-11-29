@@ -2,6 +2,7 @@ package com.esir.sr.sweetsnake.component;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -57,6 +58,7 @@ public class ImagePanel extends JPanel
             setOpaque(false);
             setSize(dimension);
             setPreferredSize(dimension);
+            setLayout(new GridBagLayout());
             image = bimage;
         } catch (final IOException e) {
             log.error(e.getMessage(), e);

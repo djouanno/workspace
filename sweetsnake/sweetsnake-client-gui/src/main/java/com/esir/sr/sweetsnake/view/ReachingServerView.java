@@ -129,7 +129,7 @@ public class ReachingServerView extends AbstractView
      */
     private void initReachingLB() {
         reachingLB = new JLabel("Contacting server...");
-        reachingLB.setForeground(Color.white);
+        reachingLB.setForeground(Color.black);
         reachingLB.setFont(new Font("sans-serif", Font.BOLD, 16));
     }
 

@@ -9,7 +9,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -86,12 +85,6 @@ public class LobbyView extends AbstractView
     /** The waiting label */
     private JLabel              waitLB;
 
-    /** The current player's number */
-    private int                 playerNb;
-
-    /** The players list */
-    private List<PlayerDTO>     players;
-
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
@@ -146,8 +139,6 @@ public class LobbyView extends AbstractView
         centerPL.add(playersPL[2]);
         centerPL.add(playersPL[1]);
 
-        players = new LinkedList<PlayerDTO>();
-
         // bottom panel
         initBottomPL();
         add(bottomPL, BorderLayout.SOUTH);
@@ -169,8 +160,11 @@ public class LobbyView extends AbstractView
 
     /**
      * This method refresh the player panels
+     * 
+     * @param players
+     *            The list containing the DTO representing all the players
      */
-    public void refreshPlayers() {
+    public void refreshPlayers(final List<PlayerDTO> players) {
         for (final PlayerPanel panel : playersPL) {
             panel.removePlayer();
         }
@@ -183,10 +177,12 @@ public class LobbyView extends AbstractView
     /**
      * This method refresh the buttons
      * 
+     * @param leaderName
+     *            The name of the leader player
      * @param isStarted
      *            True if the session is started, false otherwise
      */
-    public void refreshButtons(final boolean isStarted) {
+    public void refreshButtons(final String leaderName, final boolean isStarted) {
         final GridBagConstraints gbc = new GridBagConstraints();
         if (startBTN != null) {
             bottomPL.remove(startBTN);
@@ -202,33 +198,13 @@ public class LobbyView extends AbstractView
         gbc.weighty = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(5, 0, 0, 0);
-        if (players.get(0).getNumber() == playerNb) {
+        if (leaderName.equals(client.getUsername())) {
             initStartBTN();
             bottomPL.add(startBTN, gbc);
         } else {
-            initWaitLB(isStarted, players.get(0).getName());
+            initWaitLB(isStarted, leaderName);
             bottomPL.add(waitLB, gbc);
         }
-    }
-
-    /**
-     * This method sets the current player's number in the game session
-     * 
-     * @param _playerNb
-     *            The player's number in the game session
-     */
-    public void setPlayerNb(final int _playerNb) {
-        playerNb = _playerNb;
-    }
-
-    /**
-     * This method sets the list of the DTO representing all the players present in the game session
-     * 
-     * @param _players
-     *            A list containing the DTO representing all the players present in the game session
-     */
-    public void setPlayers(final List<PlayerDTO> _players) {
-        players = new LinkedList<PlayerDTO>(_players);
     }
 
     /**********************************************************************************************

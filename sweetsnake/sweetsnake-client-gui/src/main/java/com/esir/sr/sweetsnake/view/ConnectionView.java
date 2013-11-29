@@ -154,7 +154,7 @@ public class ConnectionView extends AbstractView
      */
     private void initConnectLB() {
         connectLB = new JLabel("Connect to server");
-        connectLB.setForeground(Color.white);
+        connectLB.setForeground(Color.black);
         connectLB.setFont(new Font("sans-serif", Font.BOLD, 16));
     }
 

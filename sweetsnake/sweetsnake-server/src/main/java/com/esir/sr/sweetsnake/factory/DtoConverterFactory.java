@@ -1,17 +1,21 @@
 package com.esir.sr.sweetsnake.factory;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.esir.sr.sweetsnake.api.IComponent;
 import com.esir.sr.sweetsnake.dto.ComponentDTO;
 import com.esir.sr.sweetsnake.dto.GameBoardDTO;
 import com.esir.sr.sweetsnake.dto.GameBoardRefreshDTO;
+import com.esir.sr.sweetsnake.dto.GameEngineDTO;
 import com.esir.sr.sweetsnake.dto.GameRequestDTO;
 import com.esir.sr.sweetsnake.dto.GameSessionDTO;
 import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.game.board.GameBoard;
 import com.esir.sr.sweetsnake.game.board.GameBoardRefresh;
+import com.esir.sr.sweetsnake.game.engine.GameEngine;
 import com.esir.sr.sweetsnake.session.GameRequest;
 import com.esir.sr.sweetsnake.session.GameSession;
 import com.esir.sr.sweetsnake.session.Player;
@@ -59,10 +63,7 @@ public class DtoConverterFactory
      * @return The DTO representing the game session
      */
     public static GameSessionDTO convertGameSession(final GameSession session) {
-        if (session.getGameEngine() == null) {
-            return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), null, session.getCallback(), session.isStarted());
-        }
-        return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), convertGameBoard(session.getGameEngine().getGameBoard()), session.getCallback(), session.isStarted());
+        return new GameSessionDTO(session.getId(), convertPlayers(session.getPlayers()), convertGameEngine(session.getGameEngine()), session.getCallback(), session.isStarted());
     }
 
     /**
@@ -89,6 +90,20 @@ public class DtoConverterFactory
             playersDto.add(convertPlayer(player));
         }
         return playersDto;
+    }
+
+    /**
+     * This method converts a game engine into its corresponding DTO
+     * 
+     * @param gameEngine
+     *            The game engine to convert
+     * @return The DTO representing the game engine
+     */
+    public static GameEngineDTO convertGameEngine(final GameEngine gameEngine) {
+        if (gameEngine == null) {
+            return new GameEngineDTO(null, null);
+        }
+        return new GameEngineDTO(convertGameBoard(gameEngine.getGameBoard()), convertSnakesMapping(gameEngine.getSnakesMapping()));
     }
 
     /**
@@ -127,6 +142,19 @@ public class DtoConverterFactory
      */
     public static ComponentDTO convertComponent(final IComponent component) {
         return new ComponentDTO(component.getId(), component.getXPos(), component.getYPos(), component.getType());
+    }
+
+    /**
+     * This method converts a players' snakes mapping map into their corresponding DTO
+     * 
+     * @return The map containing the DTO representing the players and the snakes
+     */
+    public static Map<PlayerDTO, ComponentDTO> convertSnakesMapping(final Map<Player, IComponent> snakesMapping) {
+        final Map<PlayerDTO, ComponentDTO> snakesMap = new LinkedHashMap<PlayerDTO, ComponentDTO>();
+        for (final Player player : snakesMapping.keySet()) {
+            snakesMap.put(convertPlayer(player), convertComponent(snakesMapping.get(player)));
+        }
+        return snakesMap;
     }
 
 }
