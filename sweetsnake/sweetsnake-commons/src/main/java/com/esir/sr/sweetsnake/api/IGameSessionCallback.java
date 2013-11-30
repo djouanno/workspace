@@ -18,6 +18,18 @@ public interface IGameSessionCallback extends Remote
 {
 
     /**
+     * This method is called by the client in order to change its number in the session
+     * 
+     * @param client
+     *            The client callback
+     * @param number
+     *            The requested number
+     * @throws RemoteException
+     *             If the RMI fails
+     */
+    void changeNumber(IClientCallback client, int number) throws RemoteException;
+
+    /**
      * This method is called by the client in order to ask for a game session to start
      * 
      * @param client

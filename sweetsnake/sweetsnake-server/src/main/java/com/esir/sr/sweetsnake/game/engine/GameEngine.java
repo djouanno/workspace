@@ -64,15 +64,13 @@ public class GameEngine
         gameBoard = GameBoardGenerator.generateBoard(GameConstants.GRID_SIZE, GameConstants.GRID_SIZE, GameConstants.NUMBER_OF_SWEETS);
         snakesMapping = new LinkedHashMap<Player, IComponent>();
 
-        int i = 1;
         for (final Player player : _session.getPlayers()) {
             final Snake snake = new Snake();
             player.setSnakeId(snake.getId());
-            final PlayerPosition position = new PlayerPosition(gameBoard.getWidth(), gameBoard.getHeight(), i);
+            final PlayerPosition position = new PlayerPosition(gameBoard.getWidth(), gameBoard.getHeight(), player.getNumber());
             snake.setXYPos(position.getXPos(), position.getYPos());
             snakesMapping.put(player, snake);
             gameBoard.addComponent(snake);
-            i++;
         }
     }
 

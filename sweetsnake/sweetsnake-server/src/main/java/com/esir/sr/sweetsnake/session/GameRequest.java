@@ -108,13 +108,6 @@ public class GameRequest extends AbstractSession
      **********************************************************************************************/
 
     /**
-     * This method cancels the game request
-     */
-    public void cancel() {
-        // TODO
-    }
-
-    /**
      * This method denies a game request
      */
     public void deny() {

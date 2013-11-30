@@ -1,6 +1,7 @@
 package com.esir.sr.sweetsnake.component;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -49,6 +50,12 @@ public class PlayerPanel extends JPanel
     /** The score label */
     private final JLabel      scoreLB;
 
+    /** The player number associated to the panel */
+    private final int         playerNb;
+
+    /** Is the panel used */
+    private boolean           isUsed;
+
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
@@ -59,7 +66,9 @@ public class PlayerPanel extends JPanel
      * @param _playerNb
      *            The player's number in the game session
      */
-    public PlayerPanel(final int playerNb) {
+    public PlayerPanel(final int _playerNb) {
+        playerNb = _playerNb;
+
         final GridBagConstraints gbc = new GridBagConstraints();
         setLayout(new GridBagLayout());
         setOpaque(false);
@@ -104,24 +113,46 @@ public class PlayerPanel extends JPanel
      *            The player to display on the panel
      */
     public void refreshPlayer(final PlayerDTO player) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         playerLB.setText(player.getName());
         playerLB.setFont(new Font("sans-serif", Font.BOLD, 25));
         playerLB.setForeground(Color.black);
         statusLB.setText("" + player.getStatus());
         iconLB.setIcon(new ImageIcon(LobbyView.class.getResource(Snake.findSnakeIconPath(player.getNumber()))));
         scoreLB.setText("Score : " + player.getScore());
+        isUsed = true;
     }
 
     /**
      * This method remove any player displayed on the panel
      */
     public void removePlayer() {
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         playerLB.setText("Available");
         playerLB.setFont(new Font("sans-serif", Font.ITALIC, 15));
         playerLB.setForeground(Color.gray);
         statusLB.setText("");
         iconLB.setIcon(null);
         scoreLB.setText("");
+        isUsed = false;
+    }
+
+    /**
+     * This method returns the player number associated to the panel
+     * 
+     * @return An integer representing the player number associated to the panel
+     */
+    public int getPlayerNb() {
+        return playerNb;
+    }
+
+    /**
+     * This method checks whether the panel is currently used for a player or not
+     * 
+     * @return True if the panel is currently used for a player, false otherwise
+     */
+    public boolean isUsed() {
+        return isUsed;
     }
 
     /**********************************************************************************************

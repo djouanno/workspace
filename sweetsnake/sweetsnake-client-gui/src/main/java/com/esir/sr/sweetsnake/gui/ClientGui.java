@@ -71,13 +71,15 @@ public class ClientGui extends JFrame implements IGuiForClient
         final List<PlayerDTO> players = new LinkedList<PlayerDTO>();
         players.add(new PlayerDTO("toto", PlayerStatus.PLAYING, "1", 1, 0));
         players.add(new PlayerDTO("titi", PlayerStatus.PLAYING, "2", 2, 0));
-        players.add(new PlayerDTO("tata", PlayerStatus.PLAYING, "3", 3, 0));
-        players.add(new PlayerDTO("tutu", PlayerStatus.PLAYING, "4", 4, 0));
+        // players.add(new PlayerDTO("tata", PlayerStatus.PLAYING, "3", 3, 0));
+        // players.add(new PlayerDTO("tutu", PlayerStatus.PLAYING, "4", 4, 0));
         final List<GameBoardRefreshDTO> components = new LinkedList<GameBoardRefreshDTO>();
         components.add(new GameBoardRefreshDTO(new ComponentDTO("1", 0, 0, ComponentType.SNAKE), RefreshAction.ADD));
         components.add(new GameBoardRefreshDTO(new ComponentDTO("2", GameConstants.GRID_SIZE - 1, GameConstants.GRID_SIZE - 1, ComponentType.SNAKE), RefreshAction.ADD));
-        components.add(new GameBoardRefreshDTO(new ComponentDTO("3", 0, GameConstants.GRID_SIZE - 1, ComponentType.SNAKE), RefreshAction.ADD));
-        components.add(new GameBoardRefreshDTO(new ComponentDTO("4", GameConstants.GRID_SIZE - 1, 0, ComponentType.SNAKE), RefreshAction.ADD));
+        // components.add(new GameBoardRefreshDTO(new ComponentDTO("3", 0, GameConstants.GRID_SIZE - 1, ComponentType.SNAKE),
+        // RefreshAction.ADD));
+        // components.add(new GameBoardRefreshDTO(new ComponentDTO("4", GameConstants.GRID_SIZE - 1, 0, ComponentType.SNAKE),
+        // RefreshAction.ADD));
         components.add(new GameBoardRefreshDTO(new ComponentDTO("5", 10, 10, ComponentType.SWEET), RefreshAction.ADD));
         components.add(new GameBoardRefreshDTO(new ComponentDTO("6", 10, 20, ComponentType.SWEET), RefreshAction.ADD));
         components.add(new GameBoardRefreshDTO(new ComponentDTO("7", 11, 0, ComponentType.SWEET), RefreshAction.ADD));
@@ -86,12 +88,12 @@ public class ClientGui extends JFrame implements IGuiForClient
         final Map<PlayerDTO, ComponentDTO> snakesMapping = new LinkedHashMap<PlayerDTO, ComponentDTO>();
         snakesMapping.put(players.get(0), components.get(0).getComponentDto());
         snakesMapping.put(players.get(1), components.get(1).getComponentDto());
-        snakesMapping.put(players.get(2), components.get(2).getComponentDto());
-        snakesMapping.put(players.get(3), components.get(3).getComponentDto());
+        // snakesMapping.put(players.get(2), components.get(2).getComponentDto());
+        // snakesMapping.put(players.get(3), components.get(3).getComponentDto());
         final GameEngineDTO gameEngine = new GameEngineDTO(gameBoard, snakesMapping);
-        final GameSessionDTO session = new GameSessionDTO("id", players, gameEngine, null, true);
-        gui.sessionStarted(session);
-        // gui.sessionJoined(session, 1);
+        final GameSessionDTO session = new GameSessionDTO("id", players, gameEngine, null, true, players.get(0));
+        // gui.sessionStarted(session);
+        gui.sessionJoined(session, 1);
         // gui.serverReachable();
     }
 
@@ -358,7 +360,7 @@ public class ClientGui extends JFrame implements IGuiForClient
                 if (!currentView.equals(lobbyView) && !currentView.equals(gameView)) {
                     switchView(lobbyView, true);
                 }
-                refreshLobbyView(session.getPlayersDto(), session.isStarted());
+                refreshLobbyView(session, session.isStarted());
                 refreshUI();
             }
         });
@@ -399,7 +401,7 @@ public class ClientGui extends JFrame implements IGuiForClient
                         switchView(sessionsView, true);
                     } else {
                         switchView(lobbyView, false);
-                        refreshLobbyView(session.getPlayersDto(), session.isStarted());
+                        refreshLobbyView(session, session.isStarted());
                         refreshUI();
                     }
                 } else if (finished) {
@@ -409,7 +411,7 @@ public class ClientGui extends JFrame implements IGuiForClient
                     if (currentView.equals(gameView)) {
                         gameView.hideScore(leaver.getNumber());
                     } else if (currentView.equals(lobbyView)) {
-                        refreshLobbyView(session.getPlayersDto(), session.isStarted());
+                        refreshLobbyView(session, session.isStarted());
                     }
                     refreshUI();
                 }
@@ -428,7 +430,7 @@ public class ClientGui extends JFrame implements IGuiForClient
             @Override
             public void run() {
                 switchView(lobbyView, true);
-                refreshLobbyView(session.getPlayersDto(), session.isStarted());
+                refreshLobbyView(session, session.isStarted());
                 refreshUI();
             }
         });
@@ -598,14 +600,14 @@ public class ClientGui extends JFrame implements IGuiForClient
     /**
      * This method refreshes the lobby view
      * 
-     * @param players
-     *            The list of the players to display
+     * @param session
+     *            The DTO representing the session
      * @param isStarted
      *            True if the game session is started, false otherwise
      */
-    private void refreshLobbyView(final List<PlayerDTO> players, final boolean isStarted) {
-        lobbyView.refreshPlayers(players);
-        lobbyView.refreshButtons(players.get(0).getName(), isStarted);
+    private void refreshLobbyView(final GameSessionDTO session, final boolean isStarted) {
+        lobbyView.refreshPlayers(session.getPlayersDto());
+        lobbyView.refreshButtons(session.getLeader().getName(), isStarted);
     }
 
 }

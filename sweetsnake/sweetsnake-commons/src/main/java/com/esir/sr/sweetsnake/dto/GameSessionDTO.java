@@ -44,6 +44,9 @@ public class GameSessionDTO implements Serializable
     /** Is the session started */
     private final boolean              isStarted;
 
+    /** The leading player DTO */
+    private final PlayerDTO            leader;
+
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
      **********************************************************************************************/
@@ -61,13 +64,16 @@ public class GameSessionDTO implements Serializable
      *            The game session callback
      * @param _isStarted
      *            Is the session started or not
+     * @param _leader
+     *            The DTO representing the leading player
      */
-    public GameSessionDTO(final String _id, final List<PlayerDTO> _playersDto, final GameEngineDTO _gameEngineDto, final IGameSessionCallback _callback, final boolean _isStarted) {
+    public GameSessionDTO(final String _id, final List<PlayerDTO> _playersDto, final GameEngineDTO _gameEngineDto, final IGameSessionCallback _callback, final boolean _isStarted, final PlayerDTO _leader) {
         id = _id;
         playersDto = new LinkedList<PlayerDTO>(_playersDto);
         gameEngineDto = _gameEngineDto;
         callback = _callback;
         isStarted = _isStarted;
+        leader = _leader;
     }
 
     /**********************************************************************************************
@@ -127,6 +133,15 @@ public class GameSessionDTO implements Serializable
      */
     public boolean isStarted() {
         return isStarted;
+    }
+
+    /**
+     * This method returns the player leading the session, ie who can start it
+     * 
+     * @return The leading player of the session
+     * */
+    public PlayerDTO getLeader() {
+        return leader;
     }
 
     /**

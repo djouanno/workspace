@@ -59,6 +59,16 @@ public class GameSessionCallback extends UnicastRemoteObject implements IGameSes
     /*
      * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.IGameSessionCallback#changeNumber(com.esir.sr.sweetsnake.api.IClientCallback, int)
+     */
+    @Override
+    public void changeNumber(final IClientCallback client, final int number) throws RemoteException {
+        session.changeNumber(client, number);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.esir.sr.sweetsnake.api.IGameSessionCallback#startGame(com.esir.sr.sweetsnake.api.IClientCallback)
      */
     @Override

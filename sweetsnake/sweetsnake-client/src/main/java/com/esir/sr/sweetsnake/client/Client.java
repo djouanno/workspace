@@ -210,6 +210,25 @@ public class Client implements IClientForServer, IClientForGui
     /*
      * (non-Javadoc)
      * 
+     * @see com.esir.sr.sweetsnake.api.IClientForGui#changeNumber(int)
+     */
+    @Override
+    public void changeNumber(final int number) {
+        try {
+            log.debug("Requesting number change");
+            session.getCallback().changeNumber(callback, number);
+        } catch (final NullPointerException e) {
+            gui.displayErrorMessage("you are not currently playing");
+            log.warn(e.getMessage(), e);
+        } catch (final RemoteException e) {
+            gui.displayErrorMessage(e.getMessage());
+            log.warn(e.getMessage(), e);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.esir.sr.sweetsnake.api.IClientForGui#startSession()
      */
     @Override

@@ -183,8 +183,7 @@ public class Server implements IServer, IServerForAdmin
             // cancel sent requests
             for (final String requestId : player.getSentRequestsIds()) {
                 final GameRequest request = requestsRegistry.get(requestId);
-                request.cancel();
-                requestsRegistry.remove(requestId);
+                requestsRegistry.remove(request.getId());
             }
 
             // deny received requests
@@ -304,27 +303,6 @@ public class Server implements IServer, IServerForAdmin
         sendRefreshRequestsList();
 
         log.info("Request {} denied by {}", request.getId(), request.getRequestedPlayer().getName());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.esir.sr.sweetsnake.api.IServer#cancelRequest(com.esir.sr.sweetsnake.api.IClientCallback,
-     * com.esir.sr.sweetsnake.dto.GameRequestDTO)
-     */
-    @Override
-    public void cancelRequest(final IClientCallback client, final GameRequestDTO requestDto) throws GameRequestNotFoundException {
-        final GameRequest request = requestsRegistry.get(requestDto.getId());
-
-        // cancel and remove the request
-        request.cancel();
-        requestsRegistry.remove(request.getId());
-
-        sendRefreshPlayersList();
-        sendRefreshSessionsList();
-        sendRefreshRequestsList();
-
-        log.info("Request {} has been canceled by {}", request.getId(), request.getRequestingPlayer().getName());
     }
 
     /*

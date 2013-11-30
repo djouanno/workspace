@@ -22,7 +22,7 @@ import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
  */
 @Component
 @Scope("prototype")
-public class Player
+public class Player implements Comparable<Player>
 {
 
     /**********************************************************************************************
@@ -106,6 +106,16 @@ public class Player
      */
     public void removeSentRequestId(final String sentRequestId) {
         sentRequestsIds.remove(sentRequestId);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    @Override
+    public int compareTo(final Player otherPlayer) {
+        return new Integer(number).compareTo(new Integer(otherPlayer.number));
     }
 
     /*

@@ -55,16 +55,6 @@ public interface IServer
     void sendRequest(IClientCallback client, PlayerDTO otherPlayer) throws PlayerNotFoundException, PlayerNotAvailableException;
 
     /**
-     * This method is called by the client in order to cancel a sent game request to another player
-     * 
-     * @param client
-     *            The client callback
-     * @throws GameRequestNotFoundException
-     *             If the request is no more cancelable
-     */
-    void cancelRequest(IClientCallback client, GameRequestDTO requestDTO) throws GameRequestNotFoundException;
-
-    /**
      * This method is called by the client in order to accept a received game request from another player
      * 
      * @param client

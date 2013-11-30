@@ -1,12 +1,15 @@
 package com.esir.sr.sweetsnake.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -253,6 +256,7 @@ public class LobbyView extends AbstractView
         playersPL = new PlayerPanel[GameConstants.MAX_NUMBER_OF_PLAYERS];
         for (int i = 0; i < playersPL.length; i++) {
             playersPL[i] = new PlayerPanel(i + 1);
+            playersPL[i].addMouseListener(new SwitchListener());
         }
     }
 
@@ -309,6 +313,62 @@ public class LobbyView extends AbstractView
     /**********************************************************************************************
      * [BLOCK] INTERNAL LISTENERS
      **********************************************************************************************/
+
+    /**
+     * 
+     * @author Herminaël Rougier
+     * @author Damien Jouanno
+     * 
+     */
+    private class SwitchListener extends MouseAdapter
+    {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
+         */
+        @Override
+        public void mouseClicked(final MouseEvent e) {
+            if (e.getSource() instanceof PlayerPanel) {
+                final PlayerPanel pp = (PlayerPanel) e.getSource();
+                if (!pp.isUsed()) {
+                    client.changeNumber(pp.getPlayerNb());
+                }
+            }
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.MouseAdapter#mouseEntered(java.awt.event.MouseEvent)
+         */
+        @Override
+        public void mouseEntered(final MouseEvent e) {
+            if (e.getSource() instanceof PlayerPanel) {
+                final PlayerPanel pp = (PlayerPanel) e.getSource();
+                if (!pp.isUsed()) {
+                    pp.setOpaque(true);
+                    pp.setBackground(new Color(0, 0, 0, 30));
+                    repaint();
+                }
+            }
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.awt.event.MouseAdapter#mouseExited(java.awt.event.MouseEvent)
+         */
+        @Override
+        public void mouseExited(final MouseEvent e) {
+            final PlayerPanel pp = (PlayerPanel) e.getSource();
+            pp.setOpaque(false);
+            pp.setBackground(null);
+            repaint();
+        }
+
+    }
 
     /**
      * This class provides an action listener for the quit button by implementing the ActionListener interface.

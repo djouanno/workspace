@@ -31,7 +31,7 @@ public class GameConstants
     public static final int CELL_SIZE             = 20;
 
     /** The starting number of sweets */
-    public static final int NUMBER_OF_SWEETS      = 50;
+    public static final int NUMBER_OF_SWEETS      = 1;
 
     /** The maximum number of players per session */
     public static final int MAX_NUMBER_OF_PLAYERS = 4;

@@ -1,10 +1,11 @@
 package com.esir.sr.sweetsnake.session;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -60,6 +61,12 @@ public class GameSession extends AbstractSession
     /** The players list */
     private List<Player>        players;
 
+    /** The players ordered list */
+    private List<Player>        orderedPlayers;
+
+    /** The slots array */
+    private boolean[]           slots;
+
     /** The timelimit players mapping */
     private Map<Player, Long>   timeout;
 
@@ -90,32 +97,51 @@ public class GameSession extends AbstractSession
     protected void init() {
         log.info("Initializing a new game session");
         id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
-        players = new LinkedList<Player>();
+        players = new ArrayList<Player>();
+        orderedPlayers = new LinkedList<Player>();
+        slots = new boolean[GameConstants.MAX_NUMBER_OF_PLAYERS];
         timeout = new LinkedHashMap<Player, Long>();
         callback = beanProvider.getPrototype(GameSessionCallback.class, this);
-    }
-
-    /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
-     **********************************************************************************************/
-
-    /**
-     * This method decreases the player's number of all the player which number is superior or equal to the starting index
-     * 
-     * @param startIndex
-     *            The starting index
-     */
-    private void updatePlayersNumber(final int startIndex) {
-        final ListIterator<Player> it = players.listIterator(startIndex);
-        while (it.hasNext()) {
-            final Player player = it.next();
-            player.setNumber(player.getNumber() - 1);
+        for (int i = 0; i < slots.length; i++) {
+            slots[i] = true;
         }
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC CALLBACK METHODS
      **********************************************************************************************/
+
+    /**
+     * This method is called by the client in order to change its number in the session
+     * 
+     * @param client
+     *            The client callback
+     * @param number
+     *            The requested number
+     */
+    public void changeNumber(final IClientCallback client, final int number) {
+        try {
+            if (slots[number - 1]) {
+                final Player player = playersRegistry.get(client.getUsername());
+                log.debug("Player {} has requested to change his number from {} to {}", player.getName(), player.getNumber(), number);
+
+                slots[player.getNumber() - 1] = true;
+                player.setNumber(number);
+                slots[player.getNumber() - 1] = false;
+                Collections.sort(players);
+
+                final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
+
+                for (final Player playerToNotify : players) {
+                    playerToNotify.getCallback().sessionJoined(playerToNotify.getNumber(), sessionDto);
+                }
+
+                log.info("Player {} has changed his number to {}", player.getName(), player.getNumber());
+            }
+        } catch (final PlayerNotFoundException | RemoteException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
 
     /**
      * This method is called by the client in order to ask for a game session to start
@@ -129,7 +155,7 @@ public class GameSession extends AbstractSession
         try {
             final Player starter = playersRegistry.get(starterClient.getUsername());
 
-            if (starter.getNumber() != 1) {
+            if (!starter.equals(getLeader())) {
                 log.warn("Player {} tried to start session {} but was not authorized to", starter.getName(), id);
                 throw new UnauthorizedActionException("unauthorized start");
             }
@@ -262,8 +288,16 @@ public class GameSession extends AbstractSession
             throw new MaximumNumberOfPlayersException("session is full");
         }
 
-        players.add(player);
-        player.setNumber(players.size());
+        for (int i = 0; i < slots.length; i++) {
+            if (slots[i]) {
+                players.add(i, player);
+                orderedPlayers.add(player);
+                player.setNumber(i + 1);
+                slots[i] = false;
+                break;
+            }
+        }
+
         player.setGameSessionId(id);
         player.setStatus(PlayerStatus.READY);
 
@@ -271,17 +305,16 @@ public class GameSession extends AbstractSession
 
         final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
 
-        if (!isStarted) {
-            for (final Player _player : players) {
-                try {
-                    _player.getCallback().sessionJoined(_player.getNumber(), sessionDto);
-                } catch (final RemoteException e) {
-                    log.error(e.getMessage(), e);
-                }
-            }
+        final List<Player> playersToNotify = new LinkedList<Player>();
+        if (isStarted) {
+            playersToNotify.add(player);
         } else {
+            playersToNotify.addAll(players);
+        }
+
+        for (final Player playerToNotify : playersToNotify) {
             try {
-                player.getCallback().sessionJoined(player.getNumber(), sessionDto);
+                playerToNotify.getCallback().sessionJoined(playerToNotify.getNumber(), sessionDto);
             } catch (final RemoteException e) {
                 log.error(e.getMessage(), e);
             }
@@ -297,11 +330,8 @@ public class GameSession extends AbstractSession
     public void removePlayer(final Player player) {
         timeout.remove(player);
         players.remove(player);
-        if (!isStarted) { // FIXME !!!!
-            updatePlayersNumber(player.getNumber() - 1);
-        } else {
-            // TODO
-        }
+        orderedPlayers.remove(player);
+        slots[player.getNumber() - 1] = true;
         player.setStatus(PlayerStatus.AVAILABLE);
         player.setGameSessionId(null);
         player.setNumber(0);
@@ -415,7 +445,7 @@ public class GameSession extends AbstractSession
     }
 
     /**
-     * This methods tells if the session is started or not
+     * This method tells if the session is started or not
      * 
      * @return True if the session is started, false otherwise
      */
@@ -423,6 +453,19 @@ public class GameSession extends AbstractSession
         return isStarted;
     }
 
+    /**
+     * This method returns the player leading the session, ie who can start it
+     * 
+     * @return The leading player of the session
+     */
+    public Player getLeader() {
+        try {
+            return orderedPlayers.get(0);
+        } catch (final IndexOutOfBoundsException e) {
+            log.warn(e.getMessage());
+            return null;
+        }
+    }
 
     /**
      * This method returns the game session callback

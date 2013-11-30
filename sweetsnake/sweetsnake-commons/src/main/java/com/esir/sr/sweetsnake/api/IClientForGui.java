@@ -62,6 +62,14 @@ public interface IClientForGui extends IClient
     void joinSession(GameSessionDTO session);
 
     /**
+     * This method is called by the GUI in order to ask the client to change the current player's number in the session
+     * 
+     * @param number
+     *            The requested number
+     */
+    void changeNumber(int number);
+
+    /**
      * This method is called by the GUI in order to ask the client to start the joined session
      */
     void startSession();
