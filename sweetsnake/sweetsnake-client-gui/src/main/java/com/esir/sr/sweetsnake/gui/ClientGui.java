@@ -92,8 +92,8 @@ public class ClientGui extends JFrame implements IGuiForClient
         // snakesMapping.put(players.get(3), components.get(3).getComponentDto());
         final GameEngineDTO gameEngine = new GameEngineDTO(gameBoard, snakesMapping);
         final GameSessionDTO session = new GameSessionDTO("id", players, gameEngine, null, true, players.get(0));
-        // gui.sessionStarted(session);
-        gui.sessionJoined(session, 1);
+        gui.sessionStarted(session);
+        // gui.sessionJoined(session, 1);
         // gui.serverReachable();
     }
 

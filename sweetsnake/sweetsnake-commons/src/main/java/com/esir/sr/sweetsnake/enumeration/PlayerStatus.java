@@ -32,6 +32,9 @@ public enum PlayerStatus
     /** The loser status */
     LOSER("loser"),
 
+    /** The draw status */
+    DRAW("draw"),
+
     /** The denied status */
     DENIED("denied"),
 

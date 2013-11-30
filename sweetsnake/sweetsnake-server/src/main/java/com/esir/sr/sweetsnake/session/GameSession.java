@@ -2,7 +2,6 @@ package com.esir.sr.sweetsnake.session;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,9 +60,6 @@ public class GameSession extends AbstractSession
     /** The players list */
     private List<Player>        players;
 
-    /** The players ordered list */
-    private List<Player>        orderedPlayers;
-
     /** The slots array */
     private boolean[]           slots;
 
@@ -98,7 +94,6 @@ public class GameSession extends AbstractSession
         log.info("Initializing a new game session");
         id = RandomStringUtils.randomAlphanumeric(PropertiesConstants.GENERATED_ID_LENGTH);
         players = new ArrayList<Player>();
-        orderedPlayers = new LinkedList<Player>();
         slots = new boolean[GameConstants.MAX_NUMBER_OF_PLAYERS];
         timeout = new LinkedHashMap<Player, Long>();
         callback = beanProvider.getPrototype(GameSessionCallback.class, this);
@@ -128,7 +123,6 @@ public class GameSession extends AbstractSession
                 slots[player.getNumber() - 1] = true;
                 player.setNumber(number);
                 slots[player.getNumber() - 1] = false;
-                Collections.sort(players);
 
                 final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
 
@@ -257,8 +251,8 @@ public class GameSession extends AbstractSession
                     engine.moveSnake(direction, player);
 
                     final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
-                    for (final Player _player : players) {
-                        _player.getCallback().refreshSession(sessionDto);
+                    for (final Player playerToNotify : players) {
+                        playerToNotify.getCallback().refreshSession(sessionDto);
                     }
 
                     engine.getGameBoard().clearRefreshes();
@@ -290,8 +284,7 @@ public class GameSession extends AbstractSession
 
         for (int i = 0; i < slots.length; i++) {
             if (slots[i]) {
-                players.add(i, player);
-                orderedPlayers.add(player);
+                players.add(player);
                 player.setNumber(i + 1);
                 slots[i] = false;
                 break;
@@ -330,7 +323,6 @@ public class GameSession extends AbstractSession
     public void removePlayer(final Player player) {
         timeout.remove(player);
         players.remove(player);
-        orderedPlayers.remove(player);
         slots[player.getNumber() - 1] = true;
         player.setStatus(PlayerStatus.AVAILABLE);
         player.setGameSessionId(null);
@@ -369,8 +361,9 @@ public class GameSession extends AbstractSession
                     }
                     player.setStatus(PlayerStatus.LOSER);
                 }
+                final PlayerStatus status = winners.size() > 1 ? PlayerStatus.DRAW : PlayerStatus.WINNER;
                 for (final Player player : winners) {
-                    player.setStatus(PlayerStatus.WINNER);
+                    player.setStatus(status);
                 }
             } else {
                 for (final Player player : players) {
@@ -380,8 +373,8 @@ public class GameSession extends AbstractSession
 
             final GameSessionDTO sessionDto = DtoConverterFactory.convertGameSession(this);
 
-            for (final Player player : players) {
-                player.getCallback().sessionFinished(sessionDto);
+            for (final Player playerToNotify : players) {
+                playerToNotify.getCallback().sessionFinished(sessionDto);
             }
 
             server.sendRefreshPlayersList();
@@ -460,7 +453,7 @@ public class GameSession extends AbstractSession
      */
     public Player getLeader() {
         try {
-            return orderedPlayers.get(0);
+            return players.get(0);
         } catch (final IndexOutOfBoundsException e) {
             log.warn(e.getMessage());
             return null;

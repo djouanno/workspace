@@ -155,20 +155,27 @@ public class GameView extends AbstractView
         initBottomPL();
         add(bottomPL, BorderLayout.SOUTH);
 
+        final JPanel p = new JPanel(new GridBagLayout());
+        p.setOpaque(false);
+
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        bottomPL.add(playersScoresLB[2], gbc);
+        p.add(playersScoresLB[2], gbc);
 
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.EAST;
-        bottomPL.add(playersScoresLB[1], gbc);
+        p.add(playersScoresLB[1], gbc);
+        bottomPL.add(p, BorderLayout.NORTH);
+
+        final JPanel p2 = new JPanel(new GridBagLayout());
+        p2.setOpaque(false);
 
         initQuitBTN();
-        gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(5, 0, 0, 0);
-        bottomPL.add(quitBTN, gbc);
+        p2.add(quitBTN, gbc);
+        bottomPL.add(p2, BorderLayout.CENTER);
 
         addKeyListener(new KeyboardListener());
     }
@@ -180,15 +187,11 @@ public class GameView extends AbstractView
      *            The players list
      */
     public void refreshScores(final List<PlayerDTO> players) {
-        for (int i = 0; i < playersScoresLB.length; i++) {
-            try {
-                final PlayerDTO player = players.get(i);
-                final String text = i % 2 == 0 ? intToString(player.getScore(), 3) + " " + player.getName() : player.getName() + " " + intToString(player.getScore(), 3);
-                playersScoresLB[i].setText(text);
-                playersScoresLB[i].setForeground(findSnakeColor(player.getSnakeId(), player.getNumber()));
-            } catch (final IndexOutOfBoundsException e) {
-                playersScoresLB[i].setForeground(new Color(0, 0, 0, 0));
-            }
+        for (final PlayerDTO player : players) {
+            final int i = player.getNumber() - 1;
+            final String text = i % 2 == 0 ? intToString(player.getScore(), 3) + " " + player.getName() : player.getName() + " " + intToString(player.getScore(), 3);
+            playersScoresLB[i].setText(text);
+            playersScoresLB[i].setForeground(findSnakeColor(player.getSnakeId(), player.getNumber()));
         }
     }
 
@@ -280,7 +283,7 @@ public class GameView extends AbstractView
      */
     private void initBottomPL() {
         bottomPL = new JPanel();
-        bottomPL.setLayout(new GridBagLayout());
+        bottomPL.setLayout(new BorderLayout());
         bottomPL.setOpaque(false);
     }
 
@@ -299,7 +302,7 @@ public class GameView extends AbstractView
         for (int i = 0; i < playersScoresLB.length; i++) {
             playersScoresLB[i] = new JLabel(intToString(0, 3));
             playersScoresLB[i].setFont(new Font("sans-serif", Font.BOLD, 20));
-            playersScoresLB[i].setForeground(new Color(0, 0, 0));
+            playersScoresLB[i].setForeground(new Color(0, 0, 0, 0));
         }
     }
 
