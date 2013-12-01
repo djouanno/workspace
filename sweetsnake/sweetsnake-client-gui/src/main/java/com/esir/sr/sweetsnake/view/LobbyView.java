@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.esir.sr.sweetsnake.component.CustomButton;
 import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.component.PlayerPanel;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
@@ -170,19 +171,31 @@ public class LobbyView extends AbstractView
         bottomPL.add(startBTN, gbc);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.AbstractView#clear()
+     */
+    @Override
+    public void clear() {
+        // do nothing
+    }
+
     /**
      * This method refresh the player panels
      * 
+     * @param leaderName
+     *            The name of the leader player
      * @param players
      *            The list containing the DTO representing all the players
      */
-    public void refreshPlayers(final List<PlayerDTO> players) {
+    public void refreshPlayers(final String leaderName, final List<PlayerDTO> players) {
         for (final PlayerPanel panel : playersPL) {
             panel.removePlayer();
         }
         for (final PlayerDTO player : players) {
             final PlayerPanel playerPL = playersPL[player.getNumber() - 1];
-            playerPL.refreshPlayer(player);
+            playerPL.refreshPlayer(leaderName, player);
         }
     }
 
@@ -273,7 +286,7 @@ public class LobbyView extends AbstractView
      * This methods initializes the quit button
      */
     private void initQuitBTN() {
-        quitBTN = new JButton("quit game");
+        quitBTN = new CustomButton("quit game");
         quitBTN.addActionListener(new QuitGameListener());
     }
 
@@ -281,7 +294,7 @@ public class LobbyView extends AbstractView
      * This methods initializes the invite button
      */
     private void initInviteBTN() {
-        inviteBTN = new JButton("invite");
+        inviteBTN = new CustomButton("invite");
         inviteBTN.addActionListener(new InviteListener());
     }
 
@@ -289,7 +302,7 @@ public class LobbyView extends AbstractView
      * This methods initializes the start button
      */
     private void initStartBTN() {
-        startBTN = new JButton("start game");
+        startBTN = new CustomButton("start game");
         startBTN.addActionListener(new StartGameListener());
     }
 
@@ -303,9 +316,9 @@ public class LobbyView extends AbstractView
      */
     private void initWaitBTN(final boolean isStarted, final String playerName) {
         if (isStarted) {
-            waitBTN = new JButton("waiting for the game to end");
+            waitBTN = new CustomButton("waiting for the game to end");
         } else {
-            waitBTN = new JButton("waiting for " + playerName + " to start the game");
+            waitBTN = new CustomButton("waiting for " + playerName + " to start the game");
         }
         waitBTN.setEnabled(false);
     }
@@ -315,10 +328,12 @@ public class LobbyView extends AbstractView
      **********************************************************************************************/
 
     /**
+     * This class provides a mouse listener for the player panels by extending the MouseAdapter class.
      * 
      * @author Herminaël Rougier
      * @author Damien Jouanno
      * 
+     * @see java.awt.event.MouseAdapter
      */
     private class SwitchListener extends MouseAdapter
     {
@@ -362,10 +377,14 @@ public class LobbyView extends AbstractView
          */
         @Override
         public void mouseExited(final MouseEvent e) {
-            final PlayerPanel pp = (PlayerPanel) e.getSource();
-            pp.setOpaque(false);
-            pp.setBackground(null);
-            repaint();
+            if (e.getSource() instanceof PlayerPanel) {
+                final PlayerPanel pp = (PlayerPanel) e.getSource();
+                if (!pp.isUsed()) {
+                    pp.setOpaque(false);
+                    pp.setBackground(null);
+                    repaint();
+                }
+            }
         }
 
     }

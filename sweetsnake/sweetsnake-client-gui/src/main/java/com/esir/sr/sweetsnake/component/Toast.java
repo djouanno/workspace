@@ -2,16 +2,18 @@ package com.esir.sr.sweetsnake.component;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Insets;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
+
+import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 
 /**
  * This class provides a graphical Toast (Android-like) by extending the JDialog class.
@@ -33,6 +35,9 @@ public class Toast extends JDialog
 
     /** The displayed duration */
     private static final int  DURATION         = 2000;
+
+    /** The toast (only one at a time) */
+    private static Toast      toast;
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
@@ -82,17 +87,19 @@ public class Toast extends JDialog
      *            The message to display
      */
     public static void displayToast(final JFrame _gui, final String _msg) {
-        final JDialog dialog = new Toast(_gui, _msg);
-        final Timer timer = new Timer(DURATION, new ActionListener() {
+        if (toast != null) {
+            toast.dispose();
+        }
+
+        toast = new Toast(_gui, _msg);
+        toast.setVisible(true);
+        new Timer().schedule(new TimerTask() {
             @Override
-            public void actionPerformed(final ActionEvent e) {
-                dialog.setVisible(false);
-                dialog.dispose();
+            public void run() {
+                toast.setVisible(false);
+                toast.dispose();
             }
-        });
-        timer.setRepeats(false);
-        timer.start();
-        dialog.setVisible(true);
+        }, DURATION);
     }
 
     /**********************************************************************************************
@@ -107,20 +114,16 @@ public class Toast extends JDialog
 
         setFocusableWindowState(false);
         setUndecorated(true);
-        setSize(new Dimension(300, 50));
+        setSize(new Dimension(ClientGuiConstants.TOAST_WIDTH, ClientGuiConstants.TOAST_HEIGHT));
         setLocationRelativeTo(gui);
+        setLocation(getLocation().x, getLocation().y - ClientGuiConstants.GUI_HEIGHT / 2 + ClientGuiConstants.TOAST_HEIGHT + ClientGuiConstants.TOAST_MARGIN);
         getContentPane().setBackground(Color.BLACK);
-
-        final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        final GraphicsDevice gd = ge.getDefaultScreenDevice();
-        final boolean isTranslucencySupported = gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT);
-
-        if (isTranslucencySupported) {
-            setOpacity(0.5f);
-        }
+        setOpacity(0.6F);
 
         final JLabel label = new JLabel();
+        label.setFont(new Font("sans-serif", Font.PLAIN, 18));
         label.setForeground(Color.WHITE);
+        label.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
         label.setText(message);
         add(label);
     }

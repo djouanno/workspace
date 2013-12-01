@@ -92,8 +92,9 @@ public class ClientGui extends JFrame implements IGuiForClient
         // snakesMapping.put(players.get(3), components.get(3).getComponentDto());
         final GameEngineDTO gameEngine = new GameEngineDTO(gameBoard, snakesMapping);
         final GameSessionDTO session = new GameSessionDTO("id", players, gameEngine, null, true, players.get(0));
-        gui.sessionStarted(session);
-        // gui.sessionJoined(session, 1);
+        // gui.sessionStarted(session);
+        gui.sessionJoined(session, 1);
+        // gui.serverReachable();
         // gui.serverReachable();
     }
 
@@ -172,8 +173,12 @@ public class ClientGui extends JFrame implements IGuiForClient
                 log.info("Initializing the Client GUI");
                 initFrameParameters();
                 reachingServerView.build();
-                playersView.build();
+                unreachableServerView.build();
+                connectionView.build();
                 sessionsView.build();
+                playersView.build();
+                lobbyView.build();
+                gameView.build();
             }
         });
     }
@@ -200,9 +205,7 @@ public class ClientGui extends JFrame implements IGuiForClient
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (!currentView.equals(reachingServerView)) {
-                    switchView(reachingServerView, true);
-                }
+                switchView(reachingServerView);
             }
         });
     }
@@ -218,7 +221,7 @@ public class ClientGui extends JFrame implements IGuiForClient
             @Override
             public void run() {
                 if (!currentView.equals(connectionView)) {
-                    switchView(connectionView, true);
+                    switchView(connectionView);
                 }
             }
         });
@@ -235,7 +238,7 @@ public class ClientGui extends JFrame implements IGuiForClient
             @Override
             public void run() {
                 if (!currentView.equals(unreachableServerView)) {
-                    switchView(unreachableServerView, true);
+                    switchView(unreachableServerView);
                 } else {
                     displayErrorMessage("server is not reachable");
                 }
@@ -254,7 +257,7 @@ public class ClientGui extends JFrame implements IGuiForClient
             @Override
             public void run() {
                 if (!currentView.equals(connectionView)) {
-                    switchView(connectionView, true);
+                    switchView(connectionView);
                 }
             }
         });
@@ -270,7 +273,7 @@ public class ClientGui extends JFrame implements IGuiForClient
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                switchView(sessionsView, true);
+                switchView(sessionsView);
             }
         });
     }
@@ -358,7 +361,7 @@ public class ClientGui extends JFrame implements IGuiForClient
             @Override
             public void run() {
                 if (!currentView.equals(lobbyView) && !currentView.equals(gameView)) {
-                    switchView(lobbyView, true);
+                    switchView(lobbyView);
                 }
                 refreshLobbyView(session, session.isStarted());
                 refreshUI();
@@ -376,7 +379,7 @@ public class ClientGui extends JFrame implements IGuiForClient
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                switchView(gameView, true);
+                switchView(gameView);
                 gameView.drawGameboard(session.getGameEngineDto());
                 gameView.refreshScores(session.getPlayersDto());
                 refreshUI();
@@ -398,14 +401,14 @@ public class ClientGui extends JFrame implements IGuiForClient
             public void run() {
                 if (stopped && !finished) {
                     if (leaver.getName().equals(client.getUsername())) {
-                        switchView(sessionsView, true);
+                        switchView(sessionsView);
                     } else {
-                        switchView(lobbyView, false);
+                        switchView(lobbyView);
                         refreshLobbyView(session, session.isStarted());
                         refreshUI();
                     }
                 } else if (finished) {
-                    switchView(sessionsView, true);
+                    switchView(sessionsView);
                 } else {
                     displayToast(leaver + " has left the game :(");
                     if (currentView.equals(gameView)) {
@@ -429,7 +432,7 @@ public class ClientGui extends JFrame implements IGuiForClient
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                switchView(lobbyView, true);
+                switchView(lobbyView);
                 refreshLobbyView(session, session.isStarted());
                 refreshUI();
             }
@@ -518,14 +521,9 @@ public class ClientGui extends JFrame implements IGuiForClient
      * 
      * @param view
      *            The new view to display
-     * @param unbuildPrevious
-     *            True to unbuild the previous view, false otherwise
      */
-    private void switchView(final AbstractView view, final boolean unbuildPrevious) {
-        if (unbuildPrevious) {
-            currentView.unbuild();
-        }
-        view.build();
+    private void switchView(final AbstractView view) {
+        currentView.clear();
         getContentPane().removeAll();
         getContentPane().add(view);
         refreshUI();
@@ -606,7 +604,7 @@ public class ClientGui extends JFrame implements IGuiForClient
      *            True if the game session is started, false otherwise
      */
     private void refreshLobbyView(final GameSessionDTO session, final boolean isStarted) {
-        lobbyView.refreshPlayers(session.getPlayersDto());
+        lobbyView.refreshPlayers(session.getLeader().getName(), session.getPlayersDto());
         lobbyView.refreshButtons(session.getLeader().getName(), isStarted);
     }
 

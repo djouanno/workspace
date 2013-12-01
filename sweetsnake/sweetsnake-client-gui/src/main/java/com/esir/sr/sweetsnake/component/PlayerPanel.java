@@ -109,14 +109,20 @@ public class PlayerPanel extends JPanel
     /**
      * This method refreshes the panel with the specified player
      * 
+     * @param leaderName
+     *            The name of the leader player
      * @param player
      *            The player to display on the panel
      */
-    public void refreshPlayer(final PlayerDTO player) {
+    public void refreshPlayer(final String leaderName, final PlayerDTO player) {
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         playerLB.setText(player.getName());
         playerLB.setFont(new Font("sans-serif", Font.BOLD, 25));
         playerLB.setForeground(Color.black);
+        if (player.getName().equals(leaderName)) {
+            playerLB.setIcon(new ImageIcon(LobbyView.class.getResource("/img/crown.png")));
+            playerLB.setIconTextGap(8);
+        }
         statusLB.setText("" + player.getStatus());
         iconLB.setIcon(new ImageIcon(LobbyView.class.getResource(Snake.findSnakeIconPath(player.getNumber()))));
         scoreLB.setText("Score : " + player.getScore());
@@ -131,6 +137,8 @@ public class PlayerPanel extends JPanel
         playerLB.setText("Available");
         playerLB.setFont(new Font("sans-serif", Font.ITALIC, 15));
         playerLB.setForeground(Color.gray);
+        playerLB.setIcon(null);
+        playerLB.setIconTextGap(0);
         statusLB.setText("");
         iconLB.setIcon(null);
         scoreLB.setText("");

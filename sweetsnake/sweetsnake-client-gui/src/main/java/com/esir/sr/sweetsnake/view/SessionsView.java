@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.esir.sr.sweetsnake.component.CustomButton;
 import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.component.SessionsList;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
@@ -153,6 +154,16 @@ public class SessionsView extends AbstractView
         bottomPL.add(joinBTN, gbc);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.AbstractView#clear()
+     */
+    @Override
+    public void clear() {
+        // do nothing
+    }
+
     /**
      * This method refreshes the sessions list
      * 
@@ -230,7 +241,7 @@ public class SessionsView extends AbstractView
      * This methods initializes the disconnect button
      */
     private void initDisconnectBTN() {
-        disconnectBTN = new JButton("disconnect");
+        disconnectBTN = new CustomButton("disconnect");
         disconnectBTN.addActionListener(new DisconnectListener());
     }
 
@@ -238,7 +249,7 @@ public class SessionsView extends AbstractView
      * This methods initializes the create button
      */
     private void initCreateBTN() {
-        createBTN = new JButton("create game");
+        createBTN = new CustomButton("create game");
         createBTN.addActionListener(new CreateGameListener());
     }
 
@@ -246,7 +257,7 @@ public class SessionsView extends AbstractView
      * This methods initializes the join button
      */
     private void initJoinBTN() {
-        joinBTN = new JButton("join game");
+        joinBTN = new CustomButton("join game");
         joinBTN.addActionListener(new JoinGameListener());
     }
 

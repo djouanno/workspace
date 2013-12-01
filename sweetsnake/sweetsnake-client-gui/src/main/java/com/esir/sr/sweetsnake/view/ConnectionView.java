@@ -12,8 +12,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.annotation.PostConstruct;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
@@ -22,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.remoting.RemoteConnectFailureException;
 import org.springframework.stereotype.Component;
 
+import com.esir.sr.sweetsnake.component.CustomButton;
 import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
@@ -49,17 +52,17 @@ public class ConnectionView extends AbstractView
     private static final Logger log              = LoggerFactory.getLogger(ConnectionView.class);
 
     /** The username textfield text */
-    private static final String USERNAME_TF_TEXT = " choose an username";
-
-    /** The connect button text */
-    private static final String CONNECT_BTN_TEXT = "connect";
+    private static final String USERNAME_TF_TEXT = "choose an username";
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The logo panel */
-    private ImagePanel          logoPL;
+    /** The top image panel */
+    private ImagePanel          topPL;
+
+    /** The center panel */
+    private JPanel              centerPL;
 
     /** The connect label */
     private JLabel              connectLB;
@@ -105,37 +108,53 @@ public class ConnectionView extends AbstractView
     @Override
     protected void buildImpl() {
         setLayout(new GridBagLayout());
+
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        initLogoPL();
-        initConnectLB();
-        initUsernameTF();
-        initConnectBTN();
+        initTopPL();
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.anchor = GridBagConstraints.PAGE_START;
+        gbc.weightx = 1;
+        gbc.weighty = 0.1;
+        gbc.insets = new Insets(ClientGuiConstants.VIEW_HEIGHT / 4, 0, 0, 0);
+        add(topPL, gbc);
 
-        // logo
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.insets = new Insets(0, 0, 30, 0);
-        add(logoPL, gbc);
-
-        // label
+        initCenterPL();
         gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 10, 0);
-        add(connectLB, gbc);
+        gbc.weighty = 1000;
+        gbc.insets = new Insets(30, 0, 0, 0);
+        add(centerPL, gbc);
 
-        // text field
-        gbc.gridx = 0;
-        gbc.gridy = 2;
+        initConnectLB();
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.gridy = 0;
+        gbc.weighty = 0.1;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(0, 0, 10, 0);
+        centerPL.add(connectLB, gbc);
+
+        initUsernameTF();
+        gbc.gridy = 1;
+        gbc.weighty = 1000;
         gbc.gridwidth = 1;
         gbc.insets = new Insets(0, 0, 0, 5);
-        add(usernameTF, gbc);
+        centerPL.add(usernameTF, gbc);
 
-        // button
+        initConnectBTN();
         gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        add(connectBTN, gbc);
+        centerPL.add(connectBTN, gbc);
+
+        setFocusable(true);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.AbstractView#clear()
+     */
+    @Override
+    public void clear() {
+        usernameTF.setText(USERNAME_TF_TEXT);
     }
 
     /**********************************************************************************************
@@ -143,10 +162,19 @@ public class ConnectionView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * This methods initializes the logo panel
+     * This methods initializes the top image panel
      */
-    private void initLogoPL() {
-        logoPL = new ImagePanel(ClientGuiConstants.LOGO_PATH);
+    private void initTopPL() {
+        topPL = new ImagePanel(ClientGuiConstants.LOGO_PATH);
+    }
+
+    /**
+     * This methods initializes the center panel
+     */
+    private void initCenterPL() {
+        centerPL = new JPanel();
+        centerPL.setLayout(new GridBagLayout());
+        centerPL.setOpaque(false);
     }
 
     /**
@@ -163,9 +191,10 @@ public class ConnectionView extends AbstractView
      */
     private void initUsernameTF() {
         usernameTF = new JTextField(new String(USERNAME_TF_TEXT));
-        usernameTF.setBorder(new LineBorder(Color.black));
-        usernameTF.setSize(new Dimension(200, 28));
-        usernameTF.setPreferredSize(new Dimension(200, 28));
+        usernameTF.setPreferredSize(new Dimension(200, 26));
+        usernameTF.setFont(new Font("sans-serif", Font.ITALIC, 12));
+        usernameTF.setForeground(Color.gray);
+        usernameTF.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.gray), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         usernameTF.addFocusListener(new FocusClearListener());
         usernameTF.addActionListener(new ConnectListener());
     }
@@ -174,7 +203,7 @@ public class ConnectionView extends AbstractView
      * This methods initializes the connect button
      */
     private void initConnectBTN() {
-        connectBTN = new JButton(CONNECT_BTN_TEXT);
+        connectBTN = new CustomButton("connect");
         connectBTN.addActionListener(new ConnectListener());
     }
 
@@ -199,9 +228,11 @@ public class ConnectionView extends AbstractView
          * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
          */
         @Override
-        public void focusGained(final FocusEvent arg0) {
+        public void focusGained(final FocusEvent e) {
             if (usernameTF.getText().equals(USERNAME_TF_TEXT)) {
-                usernameTF.setText(" ");
+                usernameTF.setText("");
+                usernameTF.setFont(new Font("sans-serif", Font.BOLD, 12));
+                usernameTF.setForeground(Color.black);
             }
         }
 
@@ -211,9 +242,11 @@ public class ConnectionView extends AbstractView
          * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
          */
         @Override
-        public void focusLost(final FocusEvent arg0) {
-            if (usernameTF.getText().isEmpty() || " ".equals(usernameTF.getText())) {
+        public void focusLost(final FocusEvent e) {
+            if (usernameTF.getText().isEmpty()) {
                 usernameTF.setText(USERNAME_TF_TEXT);
+                usernameTF.setFont(new Font("sans-serif", Font.ITALIC, 12));
+                usernameTF.setForeground(Color.gray);
             }
         }
 

@@ -106,6 +106,16 @@ public class PlayersView extends AbstractView
         centerPL.add(new JScrollPane(playersLST));
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.AbstractView#clear()
+     */
+    @Override
+    public void clear() {
+        // do nothing
+    }
+
     /**
      * This method refreshes the players list
      * 

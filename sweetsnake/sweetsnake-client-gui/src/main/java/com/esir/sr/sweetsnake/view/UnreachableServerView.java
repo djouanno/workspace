@@ -11,11 +11,13 @@ import java.awt.event.ActionListener;
 import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.esir.sr.sweetsnake.component.CustomButton;
 import com.esir.sr.sweetsnake.component.ImagePanel;
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 
@@ -45,8 +47,11 @@ public class UnreachableServerView extends AbstractView
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The logo panel */
-    private ImagePanel          logoPL;
+    /** The top image panel */
+    private ImagePanel          topPL;
+
+    /** The center panel */
+    private JPanel              centerPL;
 
     /** The error label */
     private JLabel              errorLB;
@@ -89,27 +94,44 @@ public class UnreachableServerView extends AbstractView
     @Override
     protected void buildImpl() {
         setLayout(new GridBagLayout());
+
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        initLogoPL();
-        initErrorLB();
-        initRetryBTN();
+        initTopPL();
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.anchor = GridBagConstraints.PAGE_START;
+        gbc.weightx = 1;
+        gbc.weighty = 0.1;
+        gbc.insets = new Insets(ClientGuiConstants.VIEW_HEIGHT / 4, 0, 0, 0);
+        add(topPL, gbc);
 
-        // logo
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(0, 0, 30, 0);
-        add(logoPL, gbc);
-
-        // label
+        initCenterPL();
         gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 10, 0);
-        add(errorLB, gbc);
+        gbc.weighty = 1000;
+        gbc.insets = new Insets(30, 0, 0, 0);
+        add(centerPL, gbc);
 
-        // button
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        add(retryBTN, gbc);
+        initErrorLB();
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.gridy = 0;
+        gbc.weighty = 0.1;
+        gbc.insets = new Insets(0, 0, 10, 0);
+        centerPL.add(errorLB, gbc);
+
+        initRetryBTN();
+        gbc.gridy = 1;
+        gbc.weighty = 1000;
+        centerPL.add(retryBTN, gbc);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.AbstractView#clear()
+     */
+    @Override
+    public void clear() {
+        // do nothing
     }
 
     /**********************************************************************************************
@@ -117,10 +139,19 @@ public class UnreachableServerView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * This methods initializes the logo panel
+     * This methods initializes the top image panel
      */
-    private void initLogoPL() {
-        logoPL = new ImagePanel(ClientGuiConstants.LOGO_PATH);
+    private void initTopPL() {
+        topPL = new ImagePanel(ClientGuiConstants.LOGO_PATH);
+    }
+
+    /**
+     * This methods initializes the center panel
+     */
+    private void initCenterPL() {
+        centerPL = new JPanel();
+        centerPL.setLayout(new GridBagLayout());
+        centerPL.setOpaque(false);
     }
 
     /**
@@ -136,7 +167,7 @@ public class UnreachableServerView extends AbstractView
      * This methods initializes the retry button
      */
     private void initRetryBTN() {
-        retryBTN = new JButton("retry");
+        retryBTN = new CustomButton("retry");
         retryBTN.addActionListener(new RetryListener());
     }
 

@@ -79,16 +79,6 @@ public abstract class AbstractView extends JPanel
     }
 
     /**
-     * This method unbuilds the view if it has already been built
-     */
-    public void unbuild() {
-        if (isBuilded) {
-            removeAll();
-            isBuilded = false;
-        }
-    }
-
-    /**
      * This method provides the implemented code to build the view
      */
     protected abstract void buildImpl();

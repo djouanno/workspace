@@ -45,6 +45,15 @@ public class ClientGuiConstants
     /** The view height */
     public static final int     VIEW_HEIGHT           = VIEW_DIMENSION + GUI_HEIGHT_OFFSET;
 
+    /** The toast width */
+    public static final int     TOAST_WIDTH           = GUI_WIDTH / 2;
+
+    /** The toast height */
+    public static final int     TOAST_HEIGHT          = 50;
+
+    /** The toast margin */
+    public static final int     TOAST_MARGIN          = 10;
+
     /** The images folder path */
     public static final String  IMG_PATH              = "/img/";
 

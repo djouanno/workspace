@@ -77,9 +77,6 @@ public class ServerGui extends JFrame implements IGuiForServer
     @Autowired
     private RequestsView        requestsView;
 
-    /** The current view */
-    private AbstractView        currentView;
-
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR & INIT
      **********************************************************************************************/
@@ -101,7 +98,7 @@ public class ServerGui extends JFrame implements IGuiForServer
             public void run() {
                 log.info("Initializing the Server GUI");
                 initFrameParameters();
-                serverStarted();
+                mainView.build();
             }
         });
     }
@@ -125,16 +122,17 @@ public class ServerGui extends JFrame implements IGuiForServer
      */
     @Override
     public void serverStarted() {
-        switchView(mainView, true);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                switchView(mainView);
                 statusView.disableStartBTN();
                 statusView.enableStopBTN();
                 statusView.startTimer();
                 playersView.refreshPlayers(new LinkedList<PlayerDTO>());
                 sessionsView.refreshSessions(new LinkedList<GameSessionDTO>());
                 requestsView.refreshRequests(new LinkedList<GameRequestDTO>());
+                refreshUI();
             }
         });
     }
@@ -155,6 +153,7 @@ public class ServerGui extends JFrame implements IGuiForServer
                 playersView.refreshPlayers(new LinkedList<PlayerDTO>());
                 sessionsView.refreshSessions(new LinkedList<GameSessionDTO>());
                 requestsView.refreshRequests(new LinkedList<GameRequestDTO>());
+                refreshUI();
             }
         });
     }
@@ -208,20 +207,16 @@ public class ServerGui extends JFrame implements IGuiForServer
     }
 
     /**********************************************************************************************
-     * [BLOCK] PUBLIC METHODS
+     * [BLOCK] PRIVATE METHODS
      **********************************************************************************************/
 
     /**
      * This method refreshes the GUI
      */
-    public void refreshUI() {
+    private void refreshUI() {
         revalidate();
         repaint();
     }
-
-    /**********************************************************************************************
-     * [BLOCK] PRIVATE METHODS
-     **********************************************************************************************/
 
     /**
      * This method initializes the frame parameters
@@ -249,23 +244,11 @@ public class ServerGui extends JFrame implements IGuiForServer
      * 
      * @param view
      *            The new view to display
-     * @param unbuildPrevious
-     *            True to unbuild the previous view, false otherwise
      */
-    private void switchView(final AbstractView view, final boolean unbuildPrevious) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (currentView != null && unbuildPrevious) {
-                    currentView.unbuild();
-                }
-                view.build();
-                getContentPane().removeAll();
-                getContentPane().add(view);
-                refreshUI();
-                currentView = view;
-            }
-        });
+    private void switchView(final AbstractView view) {
+        getContentPane().removeAll();
+        getContentPane().add(view);
+        refreshUI();
     }
 
 }

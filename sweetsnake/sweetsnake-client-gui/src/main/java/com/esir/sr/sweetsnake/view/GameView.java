@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.esir.sr.sweetsnake.api.IComponent;
+import com.esir.sr.sweetsnake.component.CustomButton;
 import com.esir.sr.sweetsnake.component.GameBoardPanel;
 import com.esir.sr.sweetsnake.component.Snake;
 import com.esir.sr.sweetsnake.component.Sweet;
@@ -180,6 +181,19 @@ public class GameView extends AbstractView
         addKeyListener(new KeyboardListener());
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.AbstractView#clear()
+     */
+    @Override
+    public void clear() {
+        gameBoardPL.removeAll();
+        for (int i = 1; i <= GameConstants.MAX_NUMBER_OF_PLAYERS; i++) {
+            hideScore(i);
+        }
+    }
+
     /**
      * This method refreshes the displayed players' scores
      * 
@@ -310,7 +324,7 @@ public class GameView extends AbstractView
      * This methods initializes the quit button
      */
     private void initQuitBTN() {
-        quitBTN = new JButton("quit game");
+        quitBTN = new CustomButton("quit game");
         quitBTN.addActionListener(new QuitGameListener());
     }
 

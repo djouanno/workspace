@@ -1,5 +1,6 @@
 package com.esir.sr.sweetsnake.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -10,6 +11,7 @@ import java.awt.event.ActionListener;
 
 import javax.annotation.PostConstruct;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import org.slf4j.Logger;
@@ -45,8 +47,11 @@ public class ReachingServerView extends AbstractView
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The logo panel */
-    private ImagePanel          logoPL;
+    /** The top image panel */
+    private ImagePanel          topPL;
+
+    /** The center panel */
+    private JPanel              centerPL;
 
     /** The reaching label */
     private JLabel              reachingLB;
@@ -86,31 +91,45 @@ public class ReachingServerView extends AbstractView
     @Override
     protected void buildImpl() {
         setLayout(new GridBagLayout());
+
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        initLogoPL();
-        initReachingLB();
+        initTopPL();
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.anchor = GridBagConstraints.PAGE_START;
+        gbc.weightx = 1;
+        gbc.weighty = 0.1;
+        gbc.insets = new Insets(ClientGuiConstants.VIEW_HEIGHT / 4, 0, 0, 0);
+        add(topPL, gbc);
 
-        // logo
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(0, 0, 30, 0);
-        add(logoPL, gbc);
-
-        // label
+        initCenterPL();
         gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 10, 0);
-        add(reachingLB, gbc);
+        gbc.weighty = 1000;
+        gbc.insets = new Insets(30, 0, 0, 0);
+        add(centerPL, gbc);
+
+        initReachingLB();
+        centerPL.add(reachingLB, BorderLayout.NORTH);
 
         new Timer(500, new ActionListener() {
-            private int i = 1;
+            private int opacity = 255;
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                reachingLB.setForeground(new Color(255, 255, 255, i == 0 ? 0 : 255));
-                i = (i + 1) % 2;
+                opacity = opacity == 255 ? 0 : 255;
+                reachingLB.setForeground(new Color(0, 0, 0, opacity));
             }
         }).start();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.esir.sr.sweetsnake.view.AbstractView#clear()
+     */
+    @Override
+    public void clear() {
+        // do nothing
     }
 
     /**********************************************************************************************
@@ -118,10 +137,19 @@ public class ReachingServerView extends AbstractView
      **********************************************************************************************/
 
     /**
-     * This methods initializes the logo panel
+     * This methods initializes the top image panel
      */
-    private void initLogoPL() {
-        logoPL = new ImagePanel(ClientGuiConstants.LOGO_PATH);
+    private void initTopPL() {
+        topPL = new ImagePanel(ClientGuiConstants.LOGO_PATH);
+    }
+
+    /**
+     * This methods initializes the center panel
+     */
+    private void initCenterPL() {
+        centerPL = new JPanel();
+        centerPL.setLayout(new BorderLayout());
+        centerPL.setOpaque(false);
     }
 
     /**
