@@ -40,7 +40,7 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.MoveDirection;
 import com.esir.sr.sweetsnake.enumeration.RefreshAction;
 import com.esir.sr.sweetsnake.enumeration.SoundEffect;
-import com.esir.sr.sweetsnake.utils.SoundPlayer;
+import com.esir.sr.sweetsnake.sound.SoundPlayer;
 
 /**
  * This class graphically reprents the game view by extending the AbstractView class.

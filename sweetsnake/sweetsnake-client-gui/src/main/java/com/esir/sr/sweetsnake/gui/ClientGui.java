@@ -40,6 +40,8 @@ import com.esir.sr.sweetsnake.dto.PlayerDTO;
 import com.esir.sr.sweetsnake.enumeration.ComponentType;
 import com.esir.sr.sweetsnake.enumeration.PlayerStatus;
 import com.esir.sr.sweetsnake.enumeration.RefreshAction;
+import com.esir.sr.sweetsnake.enumeration.SoundEffect;
+import com.esir.sr.sweetsnake.sound.SoundPlayer;
 import com.esir.sr.sweetsnake.view.AbstractView;
 import com.esir.sr.sweetsnake.view.ConnectionView;
 import com.esir.sr.sweetsnake.view.GameView;
@@ -179,6 +181,7 @@ public class ClientGui extends JFrame implements IGuiForClient
                 playersView.build();
                 lobbyView.build();
                 gameView.build();
+                SoundPlayer.play(SoundEffect.AMBIANCE);
             }
         });
     }

@@ -102,6 +102,9 @@ public class ClientGuiConstants
     /** The sounds folder path */
     public static final String  SOUND_PATH            = "/sound/";
 
+    /** The ambiance sound path */
+    public static final String  AMBIANCE_PATH         = SOUND_PATH + "bg.wav";
+
     /** The move sound path */
     public static final String  MOVE_PATH             = SOUND_PATH + "move.wav";
 

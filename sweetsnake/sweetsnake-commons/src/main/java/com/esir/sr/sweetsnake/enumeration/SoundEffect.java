@@ -1,5 +1,7 @@
 package com.esir.sr.sweetsnake.enumeration;
 
+import javax.sound.sampled.Clip;
+
 import com.esir.sr.sweetsnake.constants.ClientGuiConstants;
 
 /**
@@ -16,18 +18,24 @@ public enum SoundEffect
      * [BLOCK] STATIC ENUMERATIONS
      **********************************************************************************************/
 
+    /** The ambiance effect */
+    AMBIANCE(ClientGuiConstants.AMBIANCE_PATH, Clip.LOOP_CONTINUOUSLY),
+
     /** The move effect */
-    MOVE(ClientGuiConstants.MOVE_PATH),
+    MOVE(ClientGuiConstants.MOVE_PATH, 0),
 
     /** The eat effect */
-    EAT(ClientGuiConstants.EAT_PATH);
+    EAT(ClientGuiConstants.EAT_PATH, 0);
 
     /**********************************************************************************************
      * [BLOCK] FIELDS
      **********************************************************************************************/
 
-    /** The sound effect value */
-    private String value;
+    /** The sound effect path */
+    private String path;
+
+    /** The sound effect looping */
+    private int    loop;
 
     /**********************************************************************************************
      * [BLOCK] CONSTRUCTOR
@@ -36,16 +44,37 @@ public enum SoundEffect
     /**
      * Creates a new sound effect
      * 
-     * @param _value
+     * @param _path
      *            The sound file path
+     * @param _loop
+     *            The sound looping
      */
-    SoundEffect(final String _value) {
-        value = _value;
+    SoundEffect(final String _path, final int _loop) {
+        path = _path;
+        loop = _loop;
     }
 
     /**********************************************************************************************
      * [BLOCK] PUBLIC METHOD
      **********************************************************************************************/
+
+    /**
+     * This method returns the path of the sound effect
+     * 
+     * @return
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * This method returns the looping value of the sound effect
+     * 
+     * @return
+     */
+    public int getLooping() {
+        return loop;
+    }
 
     /*
      * (non-Javadoc)
@@ -54,7 +83,7 @@ public enum SoundEffect
      */
     @Override
     public String toString() {
-        return value;
+        return name().toLowerCase();
     }
 
 }

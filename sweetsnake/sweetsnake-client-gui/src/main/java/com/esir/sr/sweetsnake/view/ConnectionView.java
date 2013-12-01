@@ -155,6 +155,8 @@ public class ConnectionView extends AbstractView
     @Override
     public void clear() {
         usernameTF.setText(USERNAME_TF_TEXT);
+        usernameTF.setFont(new Font("sans-serif", Font.ITALIC, 12));
+        usernameTF.setForeground(Color.gray);
     }
 
     /**********************************************************************************************
