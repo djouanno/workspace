@@ -6,11 +6,19 @@
 
   <context:annotation-config />
 
-  <bean id="sweetSnakeServiceRMI" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
-    <property name="serviceUrl" value="rmi://localhost:1199/SweetSnakeServer" />
+  <bean id="sweetSnakeService" class="com.esir.sr.sweetsnake.server.Server" />
+
+  <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+    <property name="serviceName" value="SweetSnakeServer" />
+    <property name="service" ref="sweetSnakeService" />
     <property name="serviceInterface" value="com.esir.sr.sweetsnake.api.IServer" />
+    <property name="registryPort" value="1199" />
   </bean>
 
-  <context:component-scan base-package="com.esir.sr.sweetsnake" />
+  <context:component-scan base-package="com.esir.sr.sweetsnake">
+    <context:exclude-filter type="regex" expression="com.esir.sr.sweetsnake.gui.*" />
+    <context:exclude-filter type="regex" expression="com.esir.sr.sweetsnake.component.*" />
+    <context:exclude-filter type="regex" expression="com.esir.sr.sweetsnake.view.*" />
+  </context:component-scan>
 
 </beans>

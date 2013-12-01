@@ -1,75 +1,107 @@
 package com.esir.sr.sweetsnake.server;
 
+import static org.mockito.Mockito.when;
+
+import java.rmi.RemoteException;
+
 import junit.framework.Assert;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.esir.sr.sweetsnake.api.IClientCallback;
 import com.esir.sr.sweetsnake.api.IServer;
 import com.esir.sr.sweetsnake.exception.UnableToConnectException;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:spring/sweetsnake-server-context-test.xml" })
+@RunWith(MockitoJUnitRunner.class)
 public class ServerTest
 {
 
-    private static final Logger                   log                   = LoggerFactory.getLogger(ServerTest.class);
-    // private static final String player1 = "player1", player2 = "player2";
+    /**********************************************************************************************
+     * [BLOCK] STATIC FIELDS
+     **********************************************************************************************/
+
+    /** The logger */
+    private static final Logger                   log = LoggerFactory.getLogger(ServerTest.class);
+
+    /** The spring context */
     private static ClassPathXmlApplicationContext context;
-    private static IClientCallback                client1, client2;
-    private static boolean                        runDataInitialization = true;
 
-    @Autowired
-    @Qualifier("sweetSnakeServiceRMI")
-    private IServer                               server;
+    /** The server instance */
+    private static IServer                        server;
 
+    /**********************************************************************************************
+     * [BLOCK] FIELDS
+     **********************************************************************************************/
+
+    /** The client mock */
+    @Mock
+    private IClientCallback                       client, client2;
+
+    /**********************************************************************************************
+     * [BLOCK] BEFORE & AFTER
+     **********************************************************************************************/
+
+    /**
+     * Initializes the server instance
+     */
     @BeforeClass
     public static void beforeClass() {
-        log.debug("Starting RMI server");
-        context = new ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-server-context.xml");
+        context = new ClassPathXmlApplicationContext("classpath*:spring/sweetsnake-server-context-test.xml");
+        server = (IServer) context.getBean("sweetSnakeService");
     }
 
+    /**
+     * Destroys the server instance
+     */
     @AfterClass
     public static void afterClass() {
-        log.debug("Stopping RMI server");
         context.close();
     }
 
-    @Before
-    public void before() throws UnableToConnectException {
-        if (runDataInitialization) {
-            log.info("Initializing test fields");
-            // client1 = new ClientCallbackMock(player1);
-            // client2 = new ClientCallbackMock(player2);
-            server.connect(client1);
-            server.connect(client2);
-            runDataInitialization = false;
-        }
-    }
+    /**********************************************************************************************
+     * [BLOCK] TESTS
+     **********************************************************************************************/
 
     @Test
-    public void rmiServiceTest() {
-        log.debug("---------------------------- rmiServiceTest() ----------------------------");
-
+    public void testRmiService() {
+        log.debug("---------------------------- testRmiService() ----------------------------");
         Assert.assertNotNull("RMI Server must not be null", server);
     }
 
-    @Test(expected = UnableToConnectException.class)
-    public void connectFailTest() throws UnableToConnectException {
-        log.debug("---------------------------- connectTest() ----------------------------");
+    @Test
+    public void testConnect() throws UnableToConnectException, RemoteException {
+        log.debug("---------------------------- testConnect() ----------------------------");
+        when(client.getUsername()).thenReturn("toto");
+        server.connect(client);
+    }
 
-        server.connect(client1);
+    @Test(expected = UnableToConnectException.class)
+    public void testConnectNullUsername() throws UnableToConnectException, RemoteException {
+        log.debug("---------------------------- testConnectNullUsername() ----------------------------");
+        when(client.getUsername()).thenReturn(null);
+        server.connect(client);
+    }
+
+    @Test(expected = UnableToConnectException.class)
+    public void testConnectBadUsername() throws UnableToConnectException, RemoteException {
+        log.debug("---------------------------- testConnectBadUsername() ----------------------------");
+        when(client.getUsername()).thenReturn("@ç! ~");
+        server.connect(client);
+    }
+
+    @Test(expected = UnableToConnectException.class)
+    public void testConnectDuplicatedUsername() throws UnableToConnectException, RemoteException {
+        log.debug("---------------------------- testConnectDuplicatedUsername() ----------------------------");
+        when(client.getUsername()).thenReturn("toto");
+        server.connect(client);
     }
 
 }

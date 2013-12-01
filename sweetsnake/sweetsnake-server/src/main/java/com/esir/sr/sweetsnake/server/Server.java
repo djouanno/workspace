@@ -84,7 +84,7 @@ public class Server implements IServer, IServerForAdmin
     private GameSessionsRegistry sessionsRegistry;
 
     /** The server GUI */
-    @Autowired
+    @Autowired(required = false)
     private IGuiForServer        gui;
 
     /**********************************************************************************************
@@ -107,7 +107,9 @@ public class Server implements IServer, IServerForAdmin
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                gui.serverStarted();
+                if (gui != null) {
+                    gui.serverStarted();
+                }
                 log.info("Server has been started");
             }
         }, 200);
@@ -479,7 +481,9 @@ public class Server implements IServer, IServerForAdmin
                         log.error(e.getMessage(), e);
                     }
                 }
-                gui.refreshPlayers(getPlayersList(null));
+                if (gui != null) {
+                    gui.refreshPlayers(getPlayersList(null));
+                }
             }
         }, 100);
     }
@@ -501,7 +505,9 @@ public class Server implements IServer, IServerForAdmin
                         log.error(e.getMessage(), e);
                     }
                 }
-                gui.refreshSessions(sessionsList);
+                if (gui != null) {
+                    gui.refreshSessions(sessionsList);
+                }
             }
         }, 100);
     }
@@ -514,7 +520,9 @@ public class Server implements IServer, IServerForAdmin
             @Override
             public void run() {
                 final List<GameRequestDTO> requestsList = getRequestsList();
-                gui.refreshRequests(requestsList);
+                if (gui != null) {
+                    gui.refreshRequests(requestsList);
+                }
             }
         }, 100);
     }
@@ -533,10 +541,10 @@ public class Server implements IServer, IServerForAdmin
     private String retrieveClientName(final IClientCallback client) {
         try {
             return client.getUsername().trim();
-        } catch (final RemoteException e) {
+        } catch (final NullPointerException | RemoteException e) {
             log.error(e.getMessage(), e);
         }
-        return "";
+        return null;
     }
 
     /**
